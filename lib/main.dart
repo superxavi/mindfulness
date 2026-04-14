@@ -1,6 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+import 'core/config/supabase_config.dart';
+
+/// Application entry point.
+/// Initializes Supabase before running the app.
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Supabase with configuration placeholders.
+  // Replace values using --dart-define or a secure dotenv loader in development.
+  await Supabase.initialize(
+    url: SupabaseConfig.url,
+    anonKey: SupabaseConfig.anonKey,
+  );
+
   runApp(const MyApp());
 }
 
@@ -10,19 +24,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false, // Quita la banda roja de "Debug"
+      debugShowCheckedModeBanner: false,
       title: 'Tesis Mindfulness',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal), // Color más zen para mindfulness
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
       ),
-      // Llamamos a nuestra función/clase principal
-      home: const MainScreen(), 
+      // Keep Spanish UI strings; business logic and comments are in English.
+      home: const MainScreen(),
     );
   }
 }
 
-// --- SECCIÓN DE COMPONENTES ORDENADOS ---
+// --- UI LAYER (Spanish text for end users) ---
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -34,13 +48,10 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(), // Llamada a función
-      body: _buildBody(),      // Llamada a función
-    );
+    return Scaffold(appBar: _buildAppBar(), body: _buildBody());
   }
 
-  // FUNCIÓN: Construye la barra superior
+  // Builds the top app bar.
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       title: const Text('Mindfulness App'),
@@ -49,7 +60,7 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  // FUNCIÓN: Construye el cuerpo de la app
+  // Builds the main body with Spanish UI strings.
   Widget _buildBody() {
     return Center(
       child: Padding(
@@ -57,7 +68,7 @@ class _MainScreenState extends State<MainScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildHeaderSection(), // Otra función interna para más orden
+            _buildHeaderSection(),
             const SizedBox(height: 30),
             _buildActionButtons(),
           ],
@@ -81,7 +92,7 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _buildActionButtons() {
     return ElevatedButton.icon(
-      onPressed: () => print("Iniciando meditación..."),
+      onPressed: () => print('Iniciando meditación...'),
       icon: const Icon(Icons.play_arrow),
       label: const Text('Comenzar Meditación'),
       style: ElevatedButton.styleFrom(
