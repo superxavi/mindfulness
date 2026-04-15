@@ -57,11 +57,11 @@ CREATE TABLE public.reminders (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     patient_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     trigger_time TIME WITHOUT TIME ZONE NOT NULL,
-    days_of_week SMALLINT NOT NULL, 
+    days_of_week SMALLINT NOT NULL,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
 -- ------------------------------------------------------------------------------
 -- PASO 3: Dominio Clínico y Catálogos de Rutinas
 -- ------------------------------------------------------------------------------
@@ -269,4 +269,4 @@ TO authenticated USING (professional_id = auth.uid() OR patient_id = auth.uid())
 
 -- Permite al profesional autorizado por el sistema institucional leer el cumplimiento de las rutinas de SU estudiante sin violar RLS.[3]
 CREATE POLICY "Auditoría de cumplimiento a pacientes" ON public.activity_sessions FOR SELECT 
-TO authenticated USING (auth.uid() = patient_id OR public.is_assigned_professional(patient_id));
+TO authenticated USING (auth.uid() = patient_id OR public.is_assigned_professional(patient_id));));

@@ -1,12 +1,12 @@
 -- ============================================
--- RLS (Row Level Security) Policies for Profiles Table
+-- RLS (Row Level Security) Policies & Hardening
 -- ============================================
--- Purpose: Implement Role-Based Access Control (RBAC)
--- Applied to table: public.profiles
+-- Purpose: Consolidate all security policies, triggers and indexes
+-- Applied to: public schema
 -- NOTE: This script is idempotent - safe to run multiple times.
 
 -- ============================================
--- Helper Functions for RBAC
+-- 1. Helper Functions for RBAC
 -- ============================================
 
 -- Function to get the current user's role
@@ -28,36 +28,25 @@ RETURNS boolean AS $$
 $$ LANGUAGE sql SECURITY DEFINER;
 
 -- ============================================
--- Enable RLS on profiles table (idempotent)
+-- 2. Profiles Table Hardening
 -- ============================================
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
--- ============================================
--- Drop existing policies if they already exist
--- ============================================
 DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;
 DROP POLICY IF EXISTS "Users can insert own profile" ON public.profiles;
 DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
-DROP POLICY IF EXISTS "Users can delete own profile" ON public.profiles;
 DROP POLICY IF EXISTS "Admins can view all profiles" ON public.profiles;
 DROP POLICY IF EXISTS "Admins can update all profiles" ON public.profiles;
 DROP POLICY IF EXISTS "Admins can delete profiles" ON public.profiles;
 DROP POLICY IF EXISTS "Professionals can view assigned patients" ON public.profiles;
 
--- ============================================
--- Create policies (RBAC)
--- ============================================
+CREATE POLICY "Users can view own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Users can insert own profile" ON public.profiles FOR INSERT WITH CHECK (auth.uid() = id);
+CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
+CREATE POLICY "Admins can view all profiles" ON public.profiles FOR SELECT USING (public.is_admin());
+CREATE POLICY "Admins can update all profiles" ON public.profiles FOR UPDATE USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "Admins can delete profiles" ON public.profiles FOR DELETE USING (public.is_admin());
 
--- 1. SELECT policies
-CREATE POLICY "Users can view own profile"
-ON public.profiles FOR SELECT
-USING (auth.uid() = id);
-
-CREATE POLICY "Admins can view all profiles"
-ON public.profiles FOR SELECT
-USING (public.is_admin());
-
--- Professionals can view patients assigned to them (logic placeholder for assignments table)
 CREATE POLICY "Professionals can view assigned patients"
 ON public.profiles FOR SELECT
 USING (
@@ -69,29 +58,8 @@ USING (
   )
 );
 
--- 2. INSERT policy
-CREATE POLICY "Users can insert own profile"
-ON public.profiles FOR INSERT
-WITH CHECK (auth.uid() = id);
-
--- 3. UPDATE policies
-CREATE POLICY "Users can update own profile"
-ON public.profiles FOR UPDATE
-USING (auth.uid() = id)
-WITH CHECK (auth.uid() = id);
-
-CREATE POLICY "Admins can update all profiles"
-ON public.profiles FOR UPDATE
-USING (public.is_admin())
-WITH CHECK (public.is_admin());
-
--- 4. DELETE policy
-CREATE POLICY "Admins can delete profiles"
-ON public.profiles FOR DELETE
-USING (public.is_admin());
-
 -- ============================================
--- TRIGGER: Auto-create profile on signup
+-- 3. TRIGGER: Auto-create profile on signup (Improved from PGS-6)
 -- ============================================
 CREATE OR REPLACE FUNCTION public.create_user_profile()
 RETURNS TRIGGER AS $$
@@ -100,11 +68,10 @@ DECLARE
     default_segment public.user_segment := 'student';
     metadata_full_name TEXT;
 BEGIN
-    -- Extract metadata with safety checks
+    -- Extract metadata with safety checks from Supabase Auth
     IF NEW.raw_user_meta_data IS NOT NULL THEN
         metadata_full_name := NEW.raw_user_meta_data ->> 'full_name';
         
-        -- Optional: Override defaults if provided in metadata
         IF NEW.raw_user_meta_data ? 'role' THEN
             default_role := (NEW.raw_user_meta_data ->> 'role')::public.user_role;
         END IF;
@@ -114,58 +81,70 @@ BEGIN
         END IF;
     END IF;
 
-    -- Insert into public.profiles
     INSERT INTO public.profiles (id, role, segment, full_name, is_active)
-    VALUES (
-        NEW.id, 
-        default_role, 
-        default_segment, 
-        metadata_full_name, 
-        TRUE
-    );
+    VALUES (NEW.id, default_role, default_segment, metadata_full_name, TRUE);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Ensure trigger exists
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
 AFTER INSERT ON auth.users
-FOR EACH ROW
-EXECUTE FUNCTION public.create_user_profile();
+FOR EACH ROW EXECUTE FUNCTION public.create_user_profile();
 
 -- ============================================
--- RLS (Row Level Security) Policies for Consents Table
+-- 4. Consents & Privacy Hardening
 -- ============================================
--- Purpose: Ensure users can only manage their own ethical consents
--- Applied to table: public.consents
-
--- Enable RLS on consents table
 ALTER TABLE public.consents ENABLE ROW LEVEL SECURITY;
 
--- Drop existing policies if they already exist (idempotent)
 DROP POLICY IF EXISTS "Users can view own consents" ON public.consents;
 DROP POLICY IF EXISTS "Users can insert own consents" ON public.consents;
 
--- 1. SELECT policy: Users can only see their own consent records
-CREATE POLICY "Users can view own consents"
-ON public.consents FOR SELECT
-USING (auth.uid() = patient_id);
+CREATE POLICY "Users can view own consents" ON public.consents FOR SELECT USING (auth.uid() = patient_id);
+CREATE POLICY "Users can insert own consents" ON public.consents FOR INSERT WITH CHECK (auth.uid() = patient_id);
 
--- 2. INSERT policy: Users can only insert their own consent
-CREATE POLICY "Users can insert own consents"
-ON public.consents FOR INSERT
-WITH CHECK (auth.uid() = patient_id);
-
--- Index to prevent duplicate consents for the same version by the same user
-CREATE UNIQUE INDEX IF NOT EXISTS idx_consents_unique_user_version 
-ON public.consents (patient_id, document_version);
-
--- Grant permissions
-GRANT ALL ON public.consents TO authenticated;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_consents_unique_user_version ON public.consents (patient_id, document_version);
 
 -- ============================================
--- Grant permissions
+-- 5. Reminders & Settings Hardening
+-- ============================================
+ALTER TABLE public.reminders ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users can manage own reminders" ON public.reminders;
+CREATE POLICY "Users can manage own reminders" ON public.reminders FOR ALL USING (auth.uid() = patient_id);
+
+-- ============================================
+-- 6. Risk Flags Hardening (Sensitive Isolation)
+-- ============================================
+ALTER TABLE public.risk_flags ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users can view own risk flags" ON public.risk_flags;
+DROP POLICY IF EXISTS "Professionals can view assigned risk flags" ON public.risk_flags;
+
+CREATE POLICY "Users can view own risk flags" ON public.risk_flags FOR SELECT USING (auth.uid() = patient_id);
+CREATE POLICY "Professionals can view assigned risk flags" 
+ON public.risk_flags FOR SELECT 
+USING (public.is_assigned_professional(patient_id));
+
+-- ============================================
+-- 7. Operational Triggers & Performance
+-- ============================================
+-- Ensure all tables have updated_at triggers (Idempotent)
+CREATE TRIGGER set_updated_at_profiles_p BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+CREATE TRIGGER set_updated_at_consents_p BEFORE UPDATE ON public.consents FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+CREATE TRIGGER set_updated_at_reminders_p BEFORE UPDATE ON public.reminders FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+CREATE TRIGGER set_updated_at_risk_flags_p BEFORE UPDATE ON public.risk_flags FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+-- Ensure indexes for sensitive lookups
+CREATE INDEX IF NOT EXISTS idx_risk_flags_patient ON public.risk_flags(patient_id);
+CREATE INDEX IF NOT EXISTS idx_reminders_patient ON public.reminders(patient_id);
+CREATE INDEX IF NOT EXISTS idx_consents_patient ON public.consents(patient_id);
+
+-- ============================================
+-- 8. Permissions & Final Grants
 -- ============================================
 GRANT ALL ON public.profiles TO authenticated;
+GRANT ALL ON public.consents TO authenticated;
+GRANT ALL ON public.reminders TO authenticated;
+GRANT ALL ON public.risk_flags TO authenticated;
 GRANT USAGE ON SCHEMA public TO authenticated;
