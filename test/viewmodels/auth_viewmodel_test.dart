@@ -28,7 +28,7 @@ class MockAuthRepositoryFailure extends AuthRepository {
   Future<UserEntity> register(String e, String p, String f) async {
     throw Exception('Error simulado');
   }
-  
+
   @override
   Future<UserEntity?> getCurrentUser() async => null;
   @override
@@ -39,13 +39,13 @@ void main() {
   group('AuthViewModel - State Management Tests', () {
     test('should update loading state during registration', () async {
       final viewModel = AuthViewModel();
-      // Nota: En un entorno ideal usaríamos inyección de dependencias, 
+      // Nota: En un entorno ideal usaríamos inyección de dependencias,
       // pero para este test rápido validaremos el flujo base.
-      
+
       expect(viewModel.isLoading, false);
-      // El test de flujo completo de ViewModel requiere que las 
-      // dependencias internas sean inyectables. 
-      // Dado que AuthViewModel las instancia en initialize(), 
+      // El test de flujo completo de ViewModel requiere que las
+      // dependencias internas sean inyectables.
+      // Dado que AuthViewModel las instancia en initialize(),
       // este test valida la estructura inicial.
     });
 
