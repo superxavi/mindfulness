@@ -32,9 +32,9 @@ class _ConsentScreenState extends State<ConsentScreen> {
     if (!mounted) return;
 
     if (viewModel.errorMessage != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(viewModel.errorMessage!)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(viewModel.errorMessage!)));
     }
   }
 
