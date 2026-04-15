@@ -39,85 +39,85 @@ Desarrollar una herramienta digital accesible, usable y centrada en el usuario q
 
 ---
 
+## 🚀 Cómo Empezar (Setup Local)
+
+Para colaborar en este proyecto, es **obligatorio** utilizar **FVM** (Flutter Version Manager) para garantizar la consistencia de la versión del SDK entre todos los desarrolladores.
+
+### 📋 Prerrequisitos
+
+- **Flutter SDK** (gestionado vía FVM)
+- **Dart SDK** (^3.11.0)
+- **Git**
+- **FVM:** `dart pub global activate fvm`
+
+### 🛠️ Pasos de Instalación
+
+1. **Clonar el repositorio:**
+   ```bash
+   git clone https://github.com/TitulacionEspe/mindfulness.git
+   cd mindfulness
+   ```
+2. **Instalar la versión de Flutter del proyecto:**
+   ```bash
+   fvm install
+   ```
+3. **Obtener dependencias:**
+   ```bash
+   fvm flutter pub get
+   ```
+4. **Configurar variables de entorno:**
+   Copia `.env.example` a `.env` y completa las llaves de Supabase (no compartas este archivo).
+
+### 🧪 Validación de Calidad (CI Local)
+
+Antes de realizar cualquier commit o push, **debes** ejecutar la secuencia de validación:
+```bash
+fvm dart format .
+fvm flutter analyze
+fvm flutter test
+```
+
+---
+
+## 📂 Mapa de Documentación (`docs/`)
+
+Para entender profundamente el sistema, consulta los siguientes documentos en la carpeta `docs/`:
+
+| Documento | Propósito |
+| :--- | :--- |
+| [**ERS.md**](./docs/ERS.md) | Especificación de Requisitos del Sistema (Funcionales y No Funcionales). |
+| [**PLANIFICACION.md**](./docs/PLANIFICACION.md) | Cronograma, hitos y hoja de ruta del MVP. |
+| [**README-dev.md**](./docs/README-dev.md) | Guía técnica detallada para desarrolladores y setup de Supabase. |
+| [**STORAGE-routines.md**](./docs/STORAGE-routines.md) | Protocolo de manejo de archivos de audio en Supabase Storage. |
+| [**Diseno_Centrado_Usuario.md**](./docs/Diseno_Centrado_Usuario_Presentacion.md) | Guía de UX, accesibilidad y modo nocturno. |
+
+---
+
 ## 🏗️ Arquitectura del Sistema
 
 El sistema sigue una arquitectura moderna basada en:
 
-### 🔹 Frontend
+### 🔹 Frontend (Flutter)
+- **Patrón:** MVVM (Model-View-ViewModel).
+- **Gestión de Estado:** `provider`.
+- **Estilo:** `AppTheme` centralizado (enfocado en modo oscuro).
 
-- Flutter (Mobile App)
-- Arquitectura: MVVM
-
-### 🔹 Backend (BaaS)
-
-- Supabase
-  - PostgreSQL (Base de datos)
-  - Auth (Autenticación)
-  - Storage (Audios y recursos)
-  - Realtime (sincronización)
-  - Edge Functions (lógica server-side ligera)
+### 🔹 Backend (Supabase BaaS)
+- **PostgreSQL:** Base de datos relacional con RLS (Row Level Security) estricto.
+- **Auth:** Gestión de identidad y perfiles automáticos vía triggers.
+- **Storage:** Almacenamiento de audios con URLs firmadas (TTL).
 
 ---
 
-## 🔄 Flujo General
+## 🔒 Reglas de Seguridad y Datos
 
-1. El usuario interactúa con la app Flutter
-2. Flutter se conecta directamente a Supabase
-3. Supabase gestiona:
-   - Autenticación
-   - Persistencia de datos
-   - Seguridad (RLS)
-4. Los datos se almacenan en PostgreSQL
+- **Aislamiento Total:** El acceso a datos transaccionales (sesiones, sueño, diarios) está restringido por `auth.uid()`.
+- **Diario Íntimo:** Los pensamientos se almacenan mediante cifrado asimétrico/KMS (ver ERS).
+- **Consentimiento:** Todo usuario debe aceptar el consentimiento informado antes de usar la app.
 
 ---
 
-## 🧩 Principales Módulos
-
-- Autenticación
-- Perfil de usuario
-- Configuración de sueño
-- Rutinas y contenido
-- Seguimiento emocional
-- Historial y métricas
-
----
-
-## 🛠️ Tecnologías
-
-- Flutter
-- Supabase
-- PostgreSQL
-- Dart
-
----
-
-## 🧪 Enfoque de Desarrollo
-
-- Metodología: Scrum
-- Diseño: DCU (Diseño Centrado en el Usuario)
-- Evaluación UX:
-  - SUS
-  - UEQ
-  - AttrakDiff
-
----
-
-## 🔒 Consideraciones
-
-- El sistema **no reemplaza terapia clínica**
-- Manejo seguro de datos (RLS)
-- Uso optimizado para contexto nocturno
-- Sesiones breves (5–8 minutos)
-
----
-
-## 🚀 Estado del Proyecto
-
-En desarrollo bajo un enfoque incremental por sprints.
-
----
-
-## 📚 Autor
-
-Proyecto de tesis – Ingeniería en Software  
-Universidad de las Fuerzas Armadas ESPE
+## 📚 Autor y Tesis
+**Proyecto de Tesis – Ingeniería en Software**  
+Universidad de las Fuerzas Armadas ESPE  
+*Investigador principal y desarrolladores.*
