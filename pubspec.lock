@@ -109,10 +109,10 @@ packages:
     dependency: "direct main"
     description:
       name: cupertino_icons
-      sha256: "41e005c33bd814be4d3096aff55b1908d419fde52ca656c8c47719ec745873cd"
+      sha256: ba631d1c7f7bef6b729a622b7b752645a2d076dba9976925b8f25725a30e1ee6
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.9"
+    version: "1.0.8"
   dart_jsonwebtoken:
     dependency: transitive
     description:
@@ -150,6 +150,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_dotenv:
+    dependency: "direct main"
+    description:
+      name: flutter_dotenv
+      sha256: d4130c4a43e0b13fefc593bc3961f2cb46e30cb79e253d4a526b1b5d24ae1ce4
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.0"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -536,30 +544,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.1"
-  sign_in_with_apple:
-    dependency: "direct main"
-    description:
-      name: sign_in_with_apple
-      sha256: "8bd875c8e8748272749eb6d25b896f768e7e9d60988446d543fe85a37a2392b8"
-      url: "https://pub.dev"
-    source: hosted
-    version: "7.0.1"
-  sign_in_with_apple_platform_interface:
-    dependency: transitive
-    description:
-      name: sign_in_with_apple_platform_interface
-      sha256: "981bca52cf3bb9c3ad7ef44aace2d543e5c468bb713fd8dda4275ff76dfa6659"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0"
-  sign_in_with_apple_web:
-    dependency: transitive
-    description:
-      name: sign_in_with_apple_web
-      sha256: f316400827f52cafcf50d00e1a2e8a0abc534ca1264e856a81c5f06bd5b10fed
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.0"
   sky_engine:
     dependency: transitive
     description: flutter

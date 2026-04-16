@@ -123,55 +123,48 @@ Tablas principales:
 
 ---
 
-## 🧪 Buenas Prácticas
+## 🔒 Seguridad y Modelo de Datos (PGS-7 Hardening)
 
-- Código limpio (Clean Code)
-- Separación de responsabilidades
-- Evitar lógica en la UI
-- Manejo de errores centralizado
-- Uso de estados (loading, error, success)
+El sistema aplica un aislamiento estricto de los datos. Todo el esquema de base de datos (`Supabase/shema.sql`) y seguridad (`Supabase/policies.sql`) debe ser idempotente y reproducible.
 
----
+### 🛡️ Políticas RLS Mandatorias
 
-## 📌 Convenciones
+| Entidad | Regla de Acceso | Justificación |
+| :--- | :--- | :--- |
+| **`profiles`** | `auth.uid() = id` | Privacidad de identidad. |
+| **`thought_entries`** | `auth.uid() = patient_id` | **Aislamiento Total.** Solo el dueño tiene acceso (ni siquiera el profesional). |
+| **`sleep_logs`** | `auth.uid() = patient_id` | Datos de salud privados. |
+| **`risk_flags`** | `auth.uid() = patient_id` OR `is_assigned_professional()` | Supervisión ética del paciente por un profesional. |
+| **`consents`** | `auth.uid() = patient_id` | Registro legal inmutable. |
 
-### Naming
+### 🛠️ Triggers de Integridad
 
-- snake_case → backend
-- camelCase → Dart
+- **Auditoría:** Todas las tablas transaccionales tienen un trigger `handle_updated_at` que actualiza automáticamente la columna `updated_at`.
+- **Identidad:** El trigger `on_auth_user_created` captura metadatos del registro (como `full_name`) y crea el perfil en la base de datos de forma atómica.
 
-### Archivos
+### 📊 Optimización (Índices)
 
-- auth_service.dart
-- user_model.dart
-
----
-
-## 🚫 Anti-patrones a evitar
-
-- Lógica en Widgets
-- Acceso directo a Supabase desde UI
-- Código duplicado
-- Ignorar manejo de errores
+- Las claves foráneas (`patient_id`, `routine_id`) deben tener índices B-Tree para optimizar las consultas del Dashboard.
+- Las tablas con filtros por fecha (`sleep_logs`, `activity_sessions`) deben usar índices descendentes.
 
 ---
 
-## 🧠 Consideraciones UX
+## 🧪 Buenas Prácticas de Código limpia (Clean Code)
 
-- Uso nocturno → modo oscuro
-- Interacción mínima
-- Flujo simple (≤ 3 pasos)
-- Baja carga cognitiva
+- Separación de responsabilidades: No mezclar lógica de Supabase en los Widgets.
+- Uso de estados: Siempre manejar estados de `loading`, `error` y `success` en los ViewModels.
+- **Validación de CI:** No realizar push si el linter (`flutter analyze`) o el formateador (`dart format`) fallan.
 
 ---
 
-## 🔁 Flujo de Desarrollo
+## 🔁 Flujo de Trabajo en Jira
 
-1. Crear historia en Jira
-2. Descomponer en subtareas
-3. Implementar en MVVM
-4. Validar funcionalidad
-5. Merge a develop
+1. Crear historia en Jira.
+2. Descomponer en subtareas.
+3. Implementar siguiendo el patrón MVVM.
+4. **Validar CI localmente (Format, Analyze, Test).**
+5. Crear PR y esperar a que el CI de GitHub confirme el éxito.
+6. Merge a develop/main.
 
 ---
 
