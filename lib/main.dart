@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-// En lugar de usar 'package:tesis_mindfulness/...'
-import 'viewmodels/psicologa_nav_view_model.dart';
-
-// Importaciones de tus archivos (Ajusta las rutas según tu carpetas)
+import 'viewmodels/psicologa_nav_viewmodel.dart';
 import 'core/config/supabase_config.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/login_screen.dart';
@@ -39,17 +36,7 @@ Future<void> main() async {
     debugPrint("Supabase initialization failed: $e");
   }
 
-  // 2. Ejecución de la App envuelta en MultiProvider
-  runApp(
-    MultiProvider(
-      providers: [
-        // Aquí "invocas" el cerebro de tu navegación
-        ChangeNotifierProvider(create: (_) => PsicologaNavViewModel()),
-        // Aquí podrías agregar más ViewModels en el futuro
-      ],
-      child: const MyApp(),
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -61,6 +48,10 @@ class MyApp extends StatelessWidget {
       providers: [
         // The ViewModel will handle its own initialization safely
         ChangeNotifierProvider(create: (_) => AuthViewModel()..initialize()),
+        //barra
+        // AGREGAMOS TU VIEWMODEL AQUÍ:
+      ChangeNotifierProvider(create: (_) => PsicologaNavViewModel()),
+      //fin
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
