@@ -26,10 +26,7 @@ class PsicologaWrapper extends StatelessWidget {
     ];
 
     return Scaffold(
-      body: IndexedStack(
-        index: navVM.currentIndex,
-        children: pages,
-      ),
+      body: IndexedStack(index: navVM.currentIndex, children: pages),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: navVM.currentIndex,
         onTap: (index) => navVM.updateIndex(index),
@@ -40,9 +37,15 @@ class PsicologaWrapper extends StatelessWidget {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Paciente'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_circle), label: 'cuestionario'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_circle),
+            label: 'cuestionario',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.star), label: 'Actividades'),
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'Cita'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: 'Cita',
+          ),
         ],
       ),
     );

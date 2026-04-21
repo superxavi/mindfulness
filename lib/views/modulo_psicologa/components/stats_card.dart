@@ -5,7 +5,7 @@ class StatsCard extends StatelessWidget {
   final IconData icon;
   final String titleLine1; // "Pacientes"
   final String titleLine2; // "totales"
-  final String value;     // "20"
+  final String value; // "20"
   final Color accentColor; // El color del icono y detalles
 
   const StatsCard({
@@ -23,7 +23,7 @@ class StatsCard extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final double cardHeight = constraints.maxHeight;
-        
+
         return Container(
           // Diseño de la tarjeta blanca según el mockup
           padding: const EdgeInsets.all(15),
@@ -75,10 +75,7 @@ class StatsCard extends StatelessWidget {
               ),
               Text(
                 titleLine2,
-                style: const TextStyle(
-                  color: Colors.black54,
-                  fontSize: 14,
-                ),
+                style: const TextStyle(color: Colors.black54, fontSize: 14),
               ),
             ],
           ),

@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 
-
-
-
 import 'pacientes/components/patient_search_bar.dart';
 import 'pacientes/components/patient_filter_row.dart';
 import 'pacientes/components/patient_card.dart';
 
-
 import 'pacientes/components/patient_header.dart';
 import 'pacientes/components/patient_search_row.dart';
 import 'pacientes/components/pacient_bar.dart';
-
-
 
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
@@ -47,7 +41,7 @@ class PacientesView extends StatelessWidget {
                 children: [
                   const SizedBox(height: 20),
 
-                                   // 3. FILA DE BÚSQUEDA (Botón circular + Buscador)
+                  // 3. FILA DE BÚSQUEDA (Botón circular + Buscador)
                   const PatientSearchRow(),
 
                   const SizedBox(height: 20),
@@ -72,7 +66,8 @@ class PacientesView extends StatelessWidget {
                   // 6. LISTA DE TARJETAS BLANCAS
                   // Usamos ListView.builder en el futuro para Supabase
                   ListView(
-                    shrinkWrap: true, // Para que funcione dentro de SingleChildScrollView
+                    shrinkWrap:
+                        true, // Para que funcione dentro de SingleChildScrollView
                     physics: const NeverScrollableScrollPhysics(),
                     children: const [
                       PatientCardWhite(
@@ -93,8 +88,8 @@ class PacientesView extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 20),
-                   // 2. REGISTRO DE DÍAS (Sección Blanca)
-                  const DayRegistry(), 
+                  // 2. REGISTRO DE DÍAS (Sección Blanca)
+                  const DayRegistry(),
 
                   const SizedBox(height: 25),
                 ],

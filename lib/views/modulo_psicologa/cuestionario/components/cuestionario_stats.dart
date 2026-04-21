@@ -21,15 +21,32 @@ class CuestionarioStats extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 12)],
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 12),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(emoji, style: const TextStyle(fontSize: 24)),
             const SizedBox(height: 5),
-            Text(title, textAlign: TextAlign.center, style: const TextStyle(color: Color(0xFF6C757D), fontSize: 10, fontWeight: FontWeight.bold)),
-            Text(count, style: const TextStyle(color: Color(0xFF6C757D), fontSize: 10, fontWeight: FontWeight.bold)),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Color(0xFF6C757D),
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              count,
+              style: const TextStyle(
+                color: Color(0xFF6C757D),
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
       ),

@@ -5,9 +5,9 @@ class CuestionarioCard extends StatelessWidget {
   final String duration;
 
   const CuestionarioCard({
-    super.key, 
-    required this.title, 
-    required this.duration
+    super.key,
+    required this.title,
+    required this.duration,
   });
 
   @override
@@ -23,7 +23,7 @@ class CuestionarioCard extends StatelessWidget {
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
-          )
+          ),
         ],
       ),
       child: Row(
@@ -37,9 +37,9 @@ class CuestionarioCard extends StatelessWidget {
                 Text(
                   title,
                   style: const TextStyle(
-                    fontWeight: FontWeight.bold, 
-                    fontSize: 16, 
-                    color: Colors.black87
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.black87,
                   ),
                 ),
                 Text(

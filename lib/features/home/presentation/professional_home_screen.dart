@@ -34,7 +34,10 @@ class ProfessionalHomeScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
-        title: const Text('Panel Profesional', style: TextStyle(color: Colors.white, fontSize: 18)),
+        title: const Text(
+          'Panel Profesional',
+          style: TextStyle(color: Colors.white, fontSize: 18),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: AppColors.accent),
@@ -45,10 +48,7 @@ class ProfessionalHomeScreen extends StatelessWidget {
         ],
       ),
       // 3. Tu cuerpo con IndexedStack
-      body: IndexedStack(
-        index: navVM.currentIndex,
-        children: pages,
-      ),
+      body: IndexedStack(index: navVM.currentIndex, children: pages),
       // 4. Tu barra de navegación
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: navVM.currentIndex,
@@ -60,9 +60,15 @@ class ProfessionalHomeScreen extends StatelessWidget {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Paciente'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_circle), label: 'Cuestionario'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_circle),
+            label: 'Cuestionario',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.star), label: 'Actividades'),
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'Cita'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: 'Cita',
+          ),
         ],
       ),
     );

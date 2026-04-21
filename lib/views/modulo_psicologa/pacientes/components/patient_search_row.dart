@@ -24,13 +24,24 @@ class PatientSearchRow extends StatelessWidget {
             style: const TextStyle(color: Colors.white),
             decoration: InputDecoration(
               hintText: "Busca el nombre del paciente",
-              hintStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
-              suffixIcon: const Icon(Icons.search, color: AppColors.textSecondary),
+              hintStyle: const TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+              ),
+              suffixIcon: const Icon(
+                Icons.search,
+                color: AppColors.textSecondary,
+              ),
               filled: true,
               fillColor: AppColors.cardBackground,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 15,
+              ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30), // Muy redondeado como la imagen
+                borderRadius: BorderRadius.circular(
+                  30,
+                ), // Muy redondeado como la imagen
                 borderSide: BorderSide.none,
               ),
             ),

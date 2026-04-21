@@ -6,7 +6,12 @@ class PatientCardWhite extends StatelessWidget {
   final String task;
   final double progress;
 
-  const PatientCardWhite({super.key, required this.name, required this.task, required this.progress});
+  const PatientCardWhite({
+    super.key,
+    required this.name,
+    required this.task,
+    required this.progress,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,18 +21,33 @@ class PatientCardWhite extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.sectionWhite,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
+        ],
       ),
       child: Row(
         children: [
-          const CircleAvatar(radius: 25, backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=a')),
+          const CircleAvatar(
+            radius: 25,
+            backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=a'),
+          ),
           const SizedBox(width: 15),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.textBlack)),
-                Text(task, style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: AppColors.textBlack,
+                  ),
+                ),
+                Text(
+                  task,
+                  style: const TextStyle(color: Colors.grey, fontSize: 13),
+                ),
                 const SizedBox(height: 8),
                 LinearProgressIndicator(
                   value: progress,

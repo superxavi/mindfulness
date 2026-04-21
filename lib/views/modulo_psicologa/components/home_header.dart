@@ -16,10 +16,7 @@ class HomeHeader extends StatelessWidget {
           children: [
             const Text(
               "¡Hola Buenos Dias!",
-              style: TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 16,
-              ),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
             ),
             const SizedBox(height: 4),
             Text(
@@ -56,7 +53,7 @@ class HomeHeader extends StatelessWidget {
                 ),
                 constraints: const BoxConstraints(minWidth: 12, minHeight: 12),
               ),
-            )
+            ),
           ],
         ),
       ],

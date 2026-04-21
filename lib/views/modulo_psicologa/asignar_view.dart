@@ -25,19 +25,27 @@ class AsignarView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const CuestionarioSearch(), // Buscador estilo Figma
-                  
+
                   const SizedBox(height: 25),
-                  
+
                   const CuestionarioStats(), // Los dos cuadros: Recientes y Pendientes
-                  
+
                   const SizedBox(height: 25),
 
                   // Botón de Filtrar (Negro como en el Figma)
                   Container(
                     width: double.infinity,
                     height: 42,
-                    decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(10)),
-                    child: const Center(child: Text('Filtrar', style: TextStyle(color: Colors.white, fontSize: 12))),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'Filtrar',
+                        style: TextStyle(color: Colors.white, fontSize: 12),
+                      ),
+                    ),
                   ),
 
                   const SizedBox(height: 25),

@@ -11,7 +11,8 @@ class HomePsicologaView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SingleChildScrollView( // Permite scroll para ver todo
+      body: SingleChildScrollView(
+        // Permite scroll para ver todo
         child: Column(
           children: [
             // 1. Banner con Imagen y Título
@@ -23,20 +24,45 @@ class HomePsicologaView extends StatelessWidget {
                 children: [
                   // 2. Grilla de Estadísticas (Fija, sin scroll propio)
                   GridView.count(
-                    shrinkWrap: true, // Importante dentro de SingleChildScrollView
+                    shrinkWrap:
+                        true, // Importante dentro de SingleChildScrollView
                     physics: const NeverScrollableScrollPhysics(),
                     crossAxisCount: 2,
                     crossAxisSpacing: 15,
                     mainAxisSpacing: 15,
                     childAspectRatio: 1.2,
                     children: const [
-                      StatsCard(icon: Icons.people, titleLine1: "Pacientes", titleLine2: "totales", value: "20", accentColor: Colors.blue),
-                      StatsCard(icon: Icons.task, titleLine1: "Taks Comple", titleLine2: "totales", value: "20", accentColor: Colors.green),
-                      StatsCard(icon: Icons.timer, titleLine1: "Citas", titleLine2: "Pendientes", value: "20", accentColor: Colors.blueGrey),
-                      StatsCard(icon: Icons.check_circle, titleLine1: "Cita", titleLine2: "Confirm", value: "20", accentColor: Colors.blue),
+                      StatsCard(
+                        icon: Icons.people,
+                        titleLine1: "Pacientes",
+                        titleLine2: "totales",
+                        value: "20",
+                        accentColor: Colors.blue,
+                      ),
+                      StatsCard(
+                        icon: Icons.task,
+                        titleLine1: "Taks Comple",
+                        titleLine2: "totales",
+                        value: "20",
+                        accentColor: Colors.green,
+                      ),
+                      StatsCard(
+                        icon: Icons.timer,
+                        titleLine1: "Citas",
+                        titleLine2: "Pendientes",
+                        value: "20",
+                        accentColor: Colors.blueGrey,
+                      ),
+                      StatsCard(
+                        icon: Icons.check_circle,
+                        titleLine1: "Cita",
+                        titleLine2: "Confirm",
+                        value: "20",
+                        accentColor: Colors.blue,
+                      ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 30),
 
                   // 3. Acciones Rápidas

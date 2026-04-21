@@ -11,7 +11,10 @@ class CitasView extends StatelessWidget {
       body: Center(
         child: Text(
           "ESTÁS EN: GESTIÓN DE CITAS",
-          style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );

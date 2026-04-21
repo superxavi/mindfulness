@@ -50,8 +50,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthViewModel()..initialize()),
         //barra
         // AGREGAMOS TU VIEWMODEL AQUÍ:
-      ChangeNotifierProvider(create: (_) => PsicologaNavViewModel()),
-      //fin
+        ChangeNotifierProvider(create: (_) => PsicologaNavViewModel()),
+        //fin
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

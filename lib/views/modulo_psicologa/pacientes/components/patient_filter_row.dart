@@ -8,7 +8,10 @@ class PatientFilterRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Text("Filtrar por", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        const Text(
+          "Filtrar por",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(width: 15),
         _buildFilterChip("Ultimos", true),
         const SizedBox(width: 10),
@@ -26,7 +29,10 @@ class PatientFilterRow extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: TextStyle(color: isSelected ? Colors.white : AppColors.textSecondary, fontSize: 12),
+        style: TextStyle(
+          color: isSelected ? Colors.white : AppColors.textSecondary,
+          fontSize: 12,
+        ),
       ),
     );
   }

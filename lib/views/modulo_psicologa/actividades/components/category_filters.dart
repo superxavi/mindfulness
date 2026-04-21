@@ -11,7 +11,11 @@ class CategoryFilters extends StatelessWidget {
       children: [
         const Text(
           'Categorías',
-          style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         const SizedBox(height: 15),
         Wrap(
@@ -58,7 +62,11 @@ class CategoryFilters extends StatelessWidget {
       ),
       child: const Text(
         'Crear',
-        style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w400),
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 13,
+          fontWeight: FontWeight.w400,
+        ),
       ),
     );
   }

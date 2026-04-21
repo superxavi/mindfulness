@@ -7,10 +7,10 @@ class PatientCard extends StatelessWidget {
   final double progress;
 
   const PatientCard({
-    super.key, 
-    required this.name, 
-    required this.condition, 
-    required this.progress
+    super.key,
+    required this.name,
+    required this.condition,
+    required this.progress,
   });
 
   @override
@@ -38,11 +38,18 @@ class PatientCard extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
                 Text(
                   condition,
-                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 13,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 // Barra de progreso delgada
@@ -51,7 +58,9 @@ class PatientCard extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: progress,
                     backgroundColor: Colors.white.withOpacity(0.05),
-                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF76C121)),
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                      Color(0xFF76C121),
+                    ),
                     minHeight: 5,
                   ),
                 ),
@@ -72,7 +81,11 @@ class PatientCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              const Icon(Icons.check_circle, color: Color(0xFF76C121), size: 22),
+              const Icon(
+                Icons.check_circle,
+                color: Color(0xFF76C121),
+                size: 22,
+              ),
             ],
           ),
         ],

@@ -31,10 +31,7 @@ class PatientHeader extends StatelessWidget {
         const SizedBox(height: 8),
         const Text(
           "Lista de pacientes para asignar una nueva actividad o cuestionario",
-          style: TextStyle(
-            color: AppColors.textSecondary,
-            fontSize: 14,
-          ),
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
         ),
       ],
     );
