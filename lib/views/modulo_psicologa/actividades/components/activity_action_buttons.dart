@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mindfulness_app/moduloPsiquiatra/view_ps/favoritos_view.dart';
 import 'package:mindfulness_app/moduloPsiquiatra/view_ps/recursos.dart';
 
 class ActivityActionButtons extends StatelessWidget {
@@ -18,6 +19,11 @@ class ActivityActionButtons extends StatelessWidget {
   // Función para navegar a la pantalla de Favoritos
   void _goToFavorites(BuildContext context) {
     // Navigator.push(context, MaterialPageRoute(builder: (context) => TuPantallaDeFavoritos()));
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => FavoritosView()),
+    );
+
     print("Navegando a Favoritos...");
   }
 
@@ -38,8 +44,8 @@ class ActivityActionButtons extends StatelessWidget {
         // Botón Favoritos
         Expanded(
           child: _ActionButton(
-            label: 'Favoritos',
-            icon: Icons.favorite,
+            label: 'Biblioteca',
+            icon: Icons.collections_bookmark,
             color: const Color(0xFFFF5A5F), // Un rojo suave
             onTap: () => _goToFavorites(context),
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:mindfulness_app/moduloPsiquiatra/viewmodels_ps/favorites_viewmodel.dart';
 import 'package:mindfulness_app/moduloPsiquiatra/viewmodels_ps/freesound_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -54,6 +55,8 @@ class MyApp extends StatelessWidget {
         // AGREGAMOS TU VIEWMODEL AQUÍ:
         ChangeNotifierProvider(create: (_) => PsicologaNavViewModel()),
         ChangeNotifierProvider(create: (_) => FreesoundViewModel()),
+
+        ChangeNotifierProvider(create: (_) => FavoritesViewModel()),
         //fin
       ],
       child: MaterialApp(
