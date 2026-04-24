@@ -11,16 +11,13 @@ class SleepHabitsView extends StatefulWidget {
 }
 
 class _SleepHabitsViewState extends State<SleepHabitsView> {
-  bool _isInit = false;
-
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_isInit) {
-      final viewModel = context.read<SleepHabitsViewModel>();
-      Future.microtask(viewModel.loadSettings);
-      _isInit = true;
-    }
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<SleepHabitsViewModel>().loadSettings();
+    });
   }
 
   @override

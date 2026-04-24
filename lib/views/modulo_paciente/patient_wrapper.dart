@@ -4,7 +4,8 @@ import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../viewmodels/sleep_habits_viewmodel.dart';
-import 'profile_view.dart'; // Importamos la nueva vista
+import 'profile_view.dart';
+import 'routines_library_view.dart';
 import 'sleep_habits_view.dart';
 
 class PatientWrapper extends StatefulWidget {
@@ -17,18 +18,25 @@ class PatientWrapper extends StatefulWidget {
 class _PatientWrapperState extends State<PatientWrapper> {
   int _selectedIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<SleepHabitsViewModel>().loadSettings();
+    });
+  }
+
   final List<Widget> _pages = [
     const Center(
       child: Text('Home', style: TextStyle(color: AppColors.textPrimary)),
     ),
-    const Center(
-      child: Text('Tareas', style: TextStyle(color: AppColors.textPrimary)),
-    ),
-    const CitaCont(), // Reemplazamos el placeholder por SolicitarCitaView
+    const RoutinesLibraryView(),
+    const CitaCont(),
     const Center(
       child: Text('Logros', style: TextStyle(color: AppColors.textPrimary)),
     ),
-    const ProfileView(), // Reemplazamos el placeholder por ProfileView
+    const ProfileView(),
   ];
 
   void _onItemTapped(int index) {

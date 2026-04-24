@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mindfulness_app/views/modulo_paciente/mis_citas_view.dart';
 import 'package:mindfulness_app/views/modulo_paciente/solicitar_cita_view.dart';
 
-import './componet/action_button.dart'; // Importas el componente visual
+import '../../core/theme/app_colors.dart';
+import './componet/action_button.dart';
 
 class CitaCont extends StatelessWidget {
   const CitaCont({super.key});
@@ -10,38 +11,37 @@ class CitaCont extends StatelessWidget {
   void _goToResources(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SolicitarCitaView()),
+      MaterialPageRoute(builder: (context) => const SolicitarCitaView()),
     );
   }
 
   void _goToFavorites(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => MisCitasView()),
+      MaterialPageRoute(builder: (context) => const MisCitasView()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    // Esqueleto: Cuadrícula que sostiene los componentes
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 2, // 2 columnas como en la foto
-      crossAxisSpacing: 15, // Espacio horizontal entre cards
-      mainAxisSpacing: 15, // Espacio vertical
-      childAspectRatio: 0.9, // Para que sean ligeramente más altos que anchos
+      crossAxisCount: 2,
+      crossAxisSpacing: 15,
+      mainAxisSpacing: 15,
+      childAspectRatio: 0.9,
       children: [
         ActionButton(
           label: 'Solicitar Cita',
-          icon: Icons.abc_sharp, // Icono nuevo
-          color: const Color(0xFFFF5A8D), // Color rosado/fucsia de la foto
+          icon: Icons.calendar_month_rounded,
+          color: AppColors.lavender,
           onTap: () => _goToResources(context),
         ),
         ActionButton(
           label: 'Mis Citas',
-          icon: Icons.event_note_rounded, // Icono nuevo
-          color: const Color(0xFFFFA726), // Color naranja de la foto
+          icon: Icons.event_note_rounded,
+          color: AppColors.mint,
           onTap: () => _goToFavorites(context),
         ),
       ],
