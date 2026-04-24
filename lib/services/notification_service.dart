@@ -81,7 +81,8 @@ class NotificationService {
 
     if (android != null) {
       if (requestRuntimePermissions) {
-        final notificationRequest = await android.requestNotificationsPermission();
+        final notificationRequest = await android
+            .requestNotificationsPermission();
         if (notificationRequest != null) {
           notificationsGranted = notificationRequest;
         }

@@ -44,9 +44,13 @@ class HomeSwitcher extends StatelessWidget {
       case UserRole.patient:
       default:
         // Cargamos los settings proactivamente antes de entrar al wrapper
-        final sleepViewModel = Provider.of<SleepHabitsViewModel>(context, listen: false);
-        if (!sleepViewModel.hasCompletedOnboarding && !sleepViewModel.isLoading) {
-           Future.microtask(() => sleepViewModel.loadSettings());
+        final sleepViewModel = Provider.of<SleepHabitsViewModel>(
+          context,
+          listen: false,
+        );
+        if (!sleepViewModel.hasCompletedOnboarding &&
+            !sleepViewModel.isLoading) {
+          Future.microtask(() => sleepViewModel.loadSettings());
         }
         return const PatientWrapper();
     }

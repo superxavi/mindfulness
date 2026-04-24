@@ -45,7 +45,8 @@ class ReminderModel {
   final String? id;
   final String patientId;
   final TimeOfDay triggerTime;
-  final int daysOfWeek; // Máscara de bits: 1=Lun, 2=Mar, 4=Mié, 8=Jue, 16=Vie, 32=Sáb, 64=Dom
+  final int
+  daysOfWeek; // Máscara de bits: 1=Lun, 2=Mar, 4=Mié, 8=Jue, 16=Vie, 32=Sáb, 64=Dom
   final bool isActive;
   final ReminderType type;
 
@@ -81,7 +82,7 @@ class ReminderModel {
   factory ReminderModel.fromJson(Map<String, dynamic> json) {
     final timeStr = json['trigger_time'] as String;
     final parts = timeStr.split(':');
-    
+
     return ReminderModel(
       id: json['id'],
       patientId: json['patient_id'],
@@ -96,8 +97,9 @@ class ReminderModel {
   }
 
   Map<String, dynamic> toJson() {
-    final timeStr = '${triggerTime.hour.toString().padLeft(2, '0')}:${triggerTime.minute.toString().padLeft(2, '0')}:00';
-    
+    final timeStr =
+        '${triggerTime.hour.toString().padLeft(2, '0')}:${triggerTime.minute.toString().padLeft(2, '0')}:00';
+
     final map = {
       'patient_id': patientId,
       'trigger_time': timeStr,
@@ -109,7 +111,7 @@ class ReminderModel {
     if (id != null) {
       map['id'] = id!;
     }
-    
+
     return map;
   }
 }

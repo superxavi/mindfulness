@@ -74,7 +74,7 @@ class RemindersViewModel extends ChangeNotifier {
       if (newReminder.isActive) {
         await _notificationService.scheduleReminder(newReminder);
       }
-      
+
       notifyListeners();
       return true;
     } catch (e) {
