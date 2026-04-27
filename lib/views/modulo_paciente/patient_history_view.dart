@@ -26,7 +26,7 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<PatientHistoryViewModel>();
-    final summary = viewModel.summary;
+    final metrics = viewModel.historyMetrics;
 
     return DefaultTabController(
       length: 2,
@@ -66,12 +66,25 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
                   ],
                 ),
               ),
-              _HistorySummaryCard(summary: summary),
+              _ProgressMetricsCard(
+                metrics: metrics,
+                selectedRangeDays: viewModel.selectedRangeDays,
+              ),
               const SizedBox(height: 12),
               _RangeSelector(
                 selectedDays: viewModel.selectedRangeDays,
                 onChanged: (days) => viewModel.setRangeDays(days),
               ),
+              if (viewModel.errorMessage != null)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+                  child: _InlineFeedback(
+                    text: viewModel.errorMessage!,
+                    icon: Icons.error_outline_rounded,
+                    color: AppColors.error,
+                    background: AppColors.tertiaryBg,
+                  ),
+                ),
               const SizedBox(height: 10),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -155,90 +168,179 @@ class _RangeSelector extends StatelessWidget {
   }
 }
 
-class _HistorySummaryCard extends StatelessWidget {
-  const _HistorySummaryCard({required this.summary});
+class _ProgressMetricsCard extends StatelessWidget {
+  const _ProgressMetricsCard({
+    required this.metrics,
+    required this.selectedRangeDays,
+  });
 
-  final HistorySummary summary;
+  final ProgressMetrics metrics;
+  final int selectedRangeDays;
 
   @override
   Widget build(BuildContext context) {
+    final frequencyProgress = selectedRangeDays <= 0
+        ? 0.0
+        : (metrics.activeDaysInRange / selectedRangeDays).clamp(0.0, 1.0);
+    final weeklyProgress = metrics.weeklyTargetDays <= 0
+        ? 0.0
+        : (metrics.weeklyActiveDays / metrics.weeklyTargetDays).clamp(0.0, 1.0);
+    final sessionsProgress = selectedRangeDays <= 0
+        ? 0.0
+        : (metrics.completedSessionsInRange / selectedRangeDays).clamp(
+            0.0,
+            1.0,
+          );
+    final hasPerceptionData = metrics.assessableSessions > 0;
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surfaceHigh,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: AppColors.outlineVariant),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: _SummaryMetric(
-              icon: Icons.task_alt_rounded,
-              value: '${summary.completedSessions}/${summary.totalSessions}',
-              label: 'Sesiones',
-              color: AppColors.mint,
+          Text(
+            'Metricas iniciales',
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
             ),
           ),
-          Expanded(
-            child: _SummaryMetric(
+          const SizedBox(height: 12),
+          _MetricProgressRow(
+            icon: Icons.calendar_today_outlined,
+            title: 'Frecuencia de uso',
+            value:
+                '${metrics.activeDaysInRange} de $selectedRangeDays dias activos',
+            progress: frequencyProgress,
+            color: AppColors.lavender,
+          ),
+          const SizedBox(height: 12),
+          _MetricProgressRow(
+            icon: Icons.task_alt_rounded,
+            title: 'Sesiones completadas',
+            value: '${metrics.completedSessionsInRange}',
+            progress: sessionsProgress,
+            color: AppColors.mint,
+          ),
+          const SizedBox(height: 12),
+          _MetricProgressRow(
+            icon: Icons.local_fire_department_outlined,
+            title: 'Constancia semanal',
+            value: '${metrics.weeklyActiveDays}/${metrics.weeklyTargetDays}',
+            progress: weeklyProgress,
+            color: AppColors.tertiaryOnContainer,
+          ),
+          const SizedBox(height: 12),
+          if (hasPerceptionData)
+            _MetricProgressRow(
               icon: Icons.psychology_alt_outlined,
-              value: '${summary.totalEmotionLogs}',
-              label: 'Emociones',
-              color: AppColors.lavender,
+              title: 'Percepcion general',
+              value:
+                  '${(metrics.improvementRate * 100).round()}% de sesiones con mejora',
+              progress: metrics.improvementRate.clamp(0.0, 1.0),
+              color: AppColors.mint,
+            )
+          else
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceHigh,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.outlineVariant),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.psychology_alt_outlined,
+                    size: 18,
+                    color: AppColors.textSecondary,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Percepcion general: Sin datos suficientes',
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: _SummaryMetric(
-              icon: Icons.edit_note_rounded,
-              value: '${summary.totalThoughts}',
-              label: 'Pensamientos',
-              color: AppColors.tertiaryOnContainer,
-            ),
-          ),
         ],
       ),
     );
   }
 }
 
-class _SummaryMetric extends StatelessWidget {
-  const _SummaryMetric({
+class _MetricProgressRow extends StatelessWidget {
+  const _MetricProgressRow({
     required this.icon,
+    required this.title,
     required this.value,
-    required this.label,
+    required this.progress,
     required this.color,
   });
 
   final IconData icon;
+  final String title;
   final String value;
-  final String label;
+  final double progress;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(icon, color: color, size: 20),
-        const SizedBox(height: 6),
-        Text(
-          value,
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
+    return Semantics(
+      label: '$title: $value',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 18, color: color),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              Text(
+                value,
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          label,
-          style: TextStyle(
-            color: AppColors.textSecondary,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 8,
+              backgroundColor: AppColors.surfaceHigh,
+              valueColor: AlwaysStoppedAnimation<Color>(color),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

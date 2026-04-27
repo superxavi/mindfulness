@@ -94,6 +94,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Historial personal'), findsOneWidget);
+    expect(find.text('Metricas iniciales'), findsOneWidget);
+    expect(find.text('Frecuencia de uso'), findsOneWidget);
+    expect(find.text('Sesiones completadas'), findsOneWidget);
+    expect(find.text('Constancia semanal'), findsOneWidget);
     expect(find.text('Sesiones'), findsAtLeastNWidgets(1));
     expect(find.text('Pensamientos'), findsAtLeastNWidgets(1));
     expect(find.text('Escaneo corporal nocturno'), findsOneWidget);
@@ -138,10 +142,21 @@ void main() {
 
     await tester.pumpWidget(_buildApp(repository));
     await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    final context = tester.element(find.byType(PatientHistoryView));
+    final viewModel = Provider.of<PatientHistoryViewModel>(
+      context,
+      listen: false,
+    );
+    expect(
+      viewModel.errorMessage,
+      'No se pudo cargar el historial personal. Intenta nuevamente.',
+    );
 
     expect(
       find.text('No se pudo cargar el historial personal. Intenta nuevamente.'),
-      findsOneWidget,
+      findsAtLeastNWidgets(1),
     );
   });
 }

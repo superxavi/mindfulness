@@ -85,3 +85,34 @@ class HistorySummary {
   final int totalThoughts;
   final int totalEmotionLogs;
 }
+
+class ProgressMetrics {
+  const ProgressMetrics({
+    required this.activeDaysInRange,
+    required this.completedSessionsInRange,
+    required this.weeklyActiveDays,
+    this.weeklyTargetDays = 7,
+    required this.improvedSessions,
+    required this.assessableSessions,
+  });
+
+  const ProgressMetrics.empty()
+    : activeDaysInRange = 0,
+      completedSessionsInRange = 0,
+      weeklyActiveDays = 0,
+      weeklyTargetDays = 7,
+      improvedSessions = 0,
+      assessableSessions = 0;
+
+  final int activeDaysInRange;
+  final int completedSessionsInRange;
+  final int weeklyActiveDays;
+  final int weeklyTargetDays;
+  final int improvedSessions;
+  final int assessableSessions;
+
+  double get improvementRate {
+    if (assessableSessions <= 0) return 0;
+    return improvedSessions / assessableSessions;
+  }
+}
