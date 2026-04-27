@@ -3,7 +3,10 @@ import 'package:mindfulness_app/views/modulo_paciente/conten_cita.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../viewmodels/patient_history_viewmodel.dart';
 import '../../viewmodels/sleep_habits_viewmodel.dart';
+import 'patient_home_view.dart';
+import 'patient_history_view.dart';
 import 'profile_view.dart';
 import 'routines_library_view.dart';
 import 'sleep_habits_view.dart';
@@ -24,18 +27,15 @@ class _PatientWrapperState extends State<PatientWrapper> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<SleepHabitsViewModel>().loadSettings();
+      context.read<PatientHistoryViewModel>().loadHistory();
     });
   }
 
   final List<Widget> _pages = [
-    const Center(
-      child: Text('Home', style: TextStyle(color: AppColors.textPrimary)),
-    ),
+    const PatientHomeView(),
     const RoutinesLibraryView(),
     const CitaCont(),
-    const Center(
-      child: Text('Logros', style: TextStyle(color: AppColors.textPrimary)),
-    ),
+    const PatientHistoryView(),
     const ProfileView(),
   ];
 
@@ -50,11 +50,11 @@ class _PatientWrapperState extends State<PatientWrapper> {
     final sleepViewModel = context.watch<SleepHabitsViewModel>();
 
     if (!sleepViewModel.hasCompletedOnboarding && !sleepViewModel.isLoading) {
-      return const SleepHabitsView();
+      return SleepHabitsView();
     }
 
     if (sleepViewModel.isLoading && !sleepViewModel.hasCompletedOnboarding) {
-      return const Scaffold(
+      return Scaffold(
         backgroundColor: AppColors.background,
         body: Center(child: CircularProgressIndicator(color: AppColors.mint)),
       );
@@ -64,7 +64,7 @@ class _PatientWrapperState extends State<PatientWrapper> {
       backgroundColor: AppColors.background,
       body: _pages[_selectedIndex],
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           border: Border(
             top: BorderSide(color: AppColors.navBorder, width: 1.0),
           ),

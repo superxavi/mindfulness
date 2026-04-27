@@ -7,11 +7,18 @@ import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../models/routine_model.dart';
 import '../../viewmodels/routines_viewmodel.dart';
+import '../../viewmodels/self_assessments_viewmodel.dart';
+import 'self_assessment_flow.dart';
 
 class RoutineSessionView extends StatefulWidget {
-  const RoutineSessionView({super.key, required this.routine});
+  const RoutineSessionView({
+    super.key,
+    required this.routine,
+    required this.sessionId,
+  });
 
   final RoutineModel routine;
+  final String sessionId;
 
   @override
   State<RoutineSessionView> createState() => _RoutineSessionViewState();
@@ -19,7 +26,6 @@ class RoutineSessionView extends StatefulWidget {
 
 class _RoutineSessionViewState extends State<RoutineSessionView>
     with SingleTickerProviderStateMixin {
-  late final DateTime _startedAt;
   late final AnimationController _breathingController;
   Timer? _timer;
   int _remainingSeconds = 0;
@@ -28,7 +34,6 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
   @override
   void initState() {
     super.initState();
-    _startedAt = DateTime.now();
     _remainingSeconds = widget.routine.durationSeconds;
     _breathingController = AnimationController(
       vsync: this,
@@ -54,6 +59,8 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<RoutinesViewModel>();
+    final assessmentsViewModel = context.watch<SelfAssessmentsViewModel>();
+    final isBusy = viewModel.isCompleting || assessmentsViewModel.isSaving;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -64,29 +71,24 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               IconButton(
-                onPressed: viewModel.isCompleting
-                    ? null
-                    : () => Navigator.of(context).pop(),
-                icon: const Icon(Icons.close, color: AppColors.textPrimary),
+                onPressed: isBusy ? null : () => Navigator.of(context).pop(),
+                icon: Icon(Icons.close, color: AppColors.textPrimary),
                 tooltip: 'Salir de la sesion',
               ),
-              const SizedBox(height: 14),
+              SizedBox(height: 14),
               Text(
                 widget.routine.title,
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.textPrimary,
                   fontSize: 28,
                   fontWeight: FontWeight.w700,
                   height: 1.15,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Text(
                 'Tiempo restante ${_formatTime(_remainingSeconds)}',
-                style: const TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 16,
-                ),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
               ),
               const Spacer(),
               Center(
@@ -107,16 +109,16 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
                           240,
                         ),
                         alignment: Alignment.center,
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           color: AppColors.successBg,
                           shape: BoxShape.circle,
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(28),
+                          padding: EdgeInsets.all(28),
                           child: Text(
                             phaseText,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.textPrimary,
                               fontSize: 22,
                               fontWeight: FontWeight.w700,
@@ -129,22 +131,22 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
                   },
                 ),
               ),
-              const Spacer(),
+              Spacer(),
               Text(
                 _guidanceText(widget.routine),
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 16,
                   height: 1.45,
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 height: 54,
                 child: ElevatedButton(
-                  onPressed: viewModel.isCompleting ? null : _finishSession,
+                  onPressed: isBusy ? null : _finishSession,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.buttonPrimary,
                     foregroundColor: AppColors.buttonPrimaryText,
@@ -218,11 +220,24 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
     _timer?.cancel();
     if (!mounted) return;
 
+    final postRecorded = await _requestPostAssessment();
+    if (!mounted || !postRecorded) {
+      _finishRequested = false;
+      if (_remainingSeconds > 0) {
+        _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+          if (!mounted) return;
+          if (_remainingSeconds <= 1) {
+            _finishSession();
+            return;
+          }
+          setState(() => _remainingSeconds--);
+        });
+      }
+      return;
+    }
+
     final viewModel = context.read<RoutinesViewModel>();
-    final saved = await viewModel.completeSession(
-      routine: widget.routine,
-      startedAt: _startedAt,
-    );
+    final saved = await viewModel.completeSession(sessionId: widget.sessionId);
 
     if (!mounted) return;
 
@@ -231,10 +246,29 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
         backgroundColor: saved ? AppColors.surface : AppColors.error,
         content: Text(
           saved ? 'Sesion registrada correctamente.' : viewModel.errorMessage!,
-          style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+          style: TextStyle(color: AppColors.textPrimary, fontSize: 14),
         ),
       ),
     );
     Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  Future<bool> _requestPostAssessment() async {
+    final response = await showModalBottomSheet<bool>(
+      context: context,
+      isDismissible: false,
+      enableDrag: false,
+      isScrollControlled: true,
+      backgroundColor: AppColors.surfaceHigh,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (_) => PostSessionAssessmentSheet(
+        sessionId: widget.sessionId,
+        routineTitle: widget.routine.title,
+      ),
+    );
+
+    return response == true;
   }
 }

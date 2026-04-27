@@ -28,6 +28,7 @@ CREATE TABLE public.profiles (
     role user_role NOT NULL DEFAULT 'patient',
     segment user_segment NOT NULL DEFAULT 'student',
     full_name TEXT,
+    theme_mode TEXT NOT NULL DEFAULT 'light' CHECK (theme_mode IN ('light', 'dark')),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     is_active BOOLEAN NOT NULL DEFAULT TRUE
@@ -47,7 +48,7 @@ CREATE TABLE public.patient_settings (
     patient_id UUID PRIMARY KEY REFERENCES public.profiles(id) ON DELETE CASCADE,
     habitual_bedtime TIME WITHOUT TIME ZONE,
     habitual_wake_time TIME WITHOUT TIME ZONE,
-    dark_mode_enforced BOOLEAN NOT NULL DEFAULT TRUE,
+    dark_mode_enforced BOOLEAN NOT NULL DEFAULT FALSE,
     preferred_voice TEXT,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -145,7 +146,8 @@ CREATE TABLE public.thought_entries (
     patient_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     content_ciphertext TEXT NOT NULL, 
     key_id UUID, 
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- Alertas internas (Flags) por si se detecta texto de riesgo para la vida del usuario.
@@ -208,7 +210,11 @@ CREATE INDEX idx_routines_category ON public.routines(category);
 CREATE INDEX idx_routine_assets_routine ON public.routine_assets(routine_id);
 CREATE INDEX idx_activity_sessions_patient ON public.activity_sessions(patient_id);
 CREATE INDEX idx_self_assessments_patient ON public.self_assessments(patient_id);
-CREATE INDEX idx_thought_entries_patient ON public.thought_entries(patient_id);
+CREATE UNIQUE INDEX idx_self_assessments_session_context_unique
+ON public.self_assessments(session_id, context)
+WHERE session_id IS NOT NULL
+  AND context IN ('pre_session', 'post_session');
+CREATE INDEX idx_thought_entries_patient_created_desc ON public.thought_entries(patient_id, created_at DESC);
 CREATE INDEX idx_assignments_composite ON public.assignments(professional_id, patient_id);
 CREATE INDEX idx_sleep_logs_patient_date ON public.sleep_logs(patient_id, log_date DESC);
 
@@ -244,10 +250,21 @@ CREATE POLICY "Modifica sus configuraciones" ON public.patient_settings FOR ALL 
 CREATE POLICY "Inserta sus propias sesiones" ON public.activity_sessions FOR INSERT TO authenticated WITH CHECK (auth.uid() = patient_id);
 CREATE POLICY "Inserta su autoevaluación" ON public.self_assessments FOR INSERT TO authenticated WITH CHECK (auth.uid() = patient_id);
 CREATE POLICY "Inserta registro de sueño" ON public.sleep_logs FOR INSERT TO authenticated WITH CHECK (auth.uid() = patient_id);
+CREATE POLICY "Actualiza sus propias sesiones" ON public.activity_sessions FOR UPDATE TO authenticated USING (auth.uid() = patient_id) WITH CHECK (auth.uid() = patient_id);
 
 -- 7.3 Privacidad Extrema para el Diario Intimo
 -- Ni siquiera el profesional de Bienestar Universitario tiene permiso de leer esto.
-CREATE POLICY "Privacidad inquebrantable de pensamientos" ON public.thought_entries FOR ALL TO authenticated USING (auth.uid() = patient_id);
+CREATE POLICY "thought_entries_select_own" ON public.thought_entries
+FOR SELECT TO authenticated USING (auth.uid() = patient_id);
+
+CREATE POLICY "thought_entries_insert_own" ON public.thought_entries
+FOR INSERT TO authenticated WITH CHECK (auth.uid() = patient_id);
+
+CREATE POLICY "thought_entries_update_own" ON public.thought_entries
+FOR UPDATE TO authenticated USING (auth.uid() = patient_id) WITH CHECK (auth.uid() = patient_id);
+
+CREATE POLICY "thought_entries_delete_own" ON public.thought_entries
+FOR DELETE TO authenticated USING (auth.uid() = patient_id);
 
 -- 7.4 Políticas Multitenantes (Profesionales monitorizando a los pacientes asignados)
 -- Utilizamos SECURITY DEFINER para que la evaluación sea de muy bajo impacto y no escanee todo.
