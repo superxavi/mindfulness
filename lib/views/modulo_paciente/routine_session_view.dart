@@ -7,11 +7,18 @@ import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../models/routine_model.dart';
 import '../../viewmodels/routines_viewmodel.dart';
+import '../../viewmodels/self_assessments_viewmodel.dart';
+import 'self_assessment_flow.dart';
 
 class RoutineSessionView extends StatefulWidget {
-  const RoutineSessionView({super.key, required this.routine});
+  const RoutineSessionView({
+    super.key,
+    required this.routine,
+    required this.sessionId,
+  });
 
   final RoutineModel routine;
+  final String sessionId;
 
   @override
   State<RoutineSessionView> createState() => _RoutineSessionViewState();
@@ -19,7 +26,6 @@ class RoutineSessionView extends StatefulWidget {
 
 class _RoutineSessionViewState extends State<RoutineSessionView>
     with SingleTickerProviderStateMixin {
-  late final DateTime _startedAt;
   late final AnimationController _breathingController;
   Timer? _timer;
   int _remainingSeconds = 0;
@@ -28,7 +34,6 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
   @override
   void initState() {
     super.initState();
-    _startedAt = DateTime.now();
     _remainingSeconds = widget.routine.durationSeconds;
     _breathingController = AnimationController(
       vsync: this,
@@ -54,6 +59,8 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<RoutinesViewModel>();
+    final assessmentsViewModel = context.watch<SelfAssessmentsViewModel>();
+    final isBusy = viewModel.isCompleting || assessmentsViewModel.isSaving;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -64,9 +71,7 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               IconButton(
-                onPressed: viewModel.isCompleting
-                    ? null
-                    : () => Navigator.of(context).pop(),
+                onPressed: isBusy ? null : () => Navigator.of(context).pop(),
                 icon: Icon(Icons.close, color: AppColors.textPrimary),
                 tooltip: 'Salir de la sesion',
               ),
@@ -141,7 +146,7 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
                 width: double.infinity,
                 height: 54,
                 child: ElevatedButton(
-                  onPressed: viewModel.isCompleting ? null : _finishSession,
+                  onPressed: isBusy ? null : _finishSession,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.buttonPrimary,
                     foregroundColor: AppColors.buttonPrimaryText,
@@ -215,11 +220,24 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
     _timer?.cancel();
     if (!mounted) return;
 
+    final postRecorded = await _requestPostAssessment();
+    if (!mounted || !postRecorded) {
+      _finishRequested = false;
+      if (_remainingSeconds > 0) {
+        _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+          if (!mounted) return;
+          if (_remainingSeconds <= 1) {
+            _finishSession();
+            return;
+          }
+          setState(() => _remainingSeconds--);
+        });
+      }
+      return;
+    }
+
     final viewModel = context.read<RoutinesViewModel>();
-    final saved = await viewModel.completeSession(
-      routine: widget.routine,
-      startedAt: _startedAt,
-    );
+    final saved = await viewModel.completeSession(sessionId: widget.sessionId);
 
     if (!mounted) return;
 
@@ -233,5 +251,24 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
       ),
     );
     Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  Future<bool> _requestPostAssessment() async {
+    final response = await showModalBottomSheet<bool>(
+      context: context,
+      isDismissible: false,
+      enableDrag: false,
+      isScrollControlled: true,
+      backgroundColor: AppColors.surfaceHigh,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (_) => PostSessionAssessmentSheet(
+        sessionId: widget.sessionId,
+        routineTitle: widget.routine.title,
+      ),
+    );
+
+    return response == true;
   }
 }

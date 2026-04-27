@@ -5,10 +5,10 @@ import '../models/routine_model.dart';
 import '../services/routines_repository.dart';
 
 class RoutinesViewModel extends ChangeNotifier {
-  RoutinesViewModel({RoutinesRepository? repository})
+  RoutinesViewModel({RoutinesDataSource? repository})
     : _repository = repository ?? RoutinesRepository();
 
-  final RoutinesRepository _repository;
+  final RoutinesDataSource _repository;
   bool _hasLoadedData = false;
 
   bool _isLoading = false;
@@ -69,7 +69,7 @@ class RoutinesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> completeSession({
+  Future<String?> startSession({
     required RoutineModel routine,
     required DateTime startedAt,
   }) async {
@@ -78,9 +78,28 @@ class RoutinesViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _repository.completeSession(
+      return await _repository.startSession(
         routineId: routine.id,
         startedAt: startedAt,
+      );
+    } catch (_) {
+      _errorMessage =
+          'No se pudo iniciar la sesion. Verifica tu conexion e intenta nuevamente.';
+      return null;
+    } finally {
+      _isCompleting = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> completeSession({required String sessionId}) async {
+    _isCompleting = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _repository.completeSession(
+        sessionId: sessionId,
         completedAt: DateTime.now(),
       );
       return true;
