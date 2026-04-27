@@ -127,7 +127,45 @@ ON public.risk_flags FOR SELECT
 USING (public.is_assigned_professional(patient_id));
 
 -- ============================================
--- 7. Thought Entries Hardening (Private Emotional Discharge)
+-- 7. Sessions & Self-Assessments Hardening
+-- ============================================
+ALTER TABLE public.activity_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.self_assessments ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Visualiza sus propias sesiones" ON public.activity_sessions;
+DROP POLICY IF EXISTS "Inserta sus propias sesiones" ON public.activity_sessions;
+DROP POLICY IF EXISTS "Actualiza sus propias sesiones" ON public.activity_sessions;
+DROP POLICY IF EXISTS "Visualiza sus propias autoevaluaciones" ON public.self_assessments;
+DROP POLICY IF EXISTS "Inserta su autoevaluación" ON public.self_assessments;
+
+CREATE POLICY "Visualiza sus propias sesiones" ON public.activity_sessions
+FOR SELECT TO authenticated
+USING (auth.uid() = patient_id);
+
+CREATE POLICY "Inserta sus propias sesiones" ON public.activity_sessions
+FOR INSERT TO authenticated
+WITH CHECK (auth.uid() = patient_id);
+
+CREATE POLICY "Actualiza sus propias sesiones" ON public.activity_sessions
+FOR UPDATE TO authenticated
+USING (auth.uid() = patient_id)
+WITH CHECK (auth.uid() = patient_id);
+
+CREATE POLICY "Visualiza sus propias autoevaluaciones" ON public.self_assessments
+FOR SELECT TO authenticated
+USING (auth.uid() = patient_id);
+
+CREATE POLICY "Inserta su autoevaluación" ON public.self_assessments
+FOR INSERT TO authenticated
+WITH CHECK (auth.uid() = patient_id);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_self_assessments_session_context_unique
+ON public.self_assessments(session_id, context)
+WHERE session_id IS NOT NULL
+  AND context IN ('pre_session', 'post_session');
+
+-- ============================================
+-- 8. Thought Entries Hardening (Private Emotional Discharge)
 -- ============================================
 ALTER TABLE public.thought_entries ENABLE ROW LEVEL SECURITY;
 
@@ -158,7 +196,7 @@ CREATE INDEX IF NOT EXISTS idx_thought_entries_patient_created_desc
 ON public.thought_entries(patient_id, created_at DESC);
 
 -- ============================================
--- 8. Operational Triggers & Performance
+-- 9. Operational Triggers & Performance
 -- ============================================
 -- Ensure all tables have updated_at triggers (Idempotent)
 CREATE TRIGGER set_updated_at_profiles_p BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
@@ -174,11 +212,13 @@ CREATE INDEX IF NOT EXISTS idx_reminders_patient ON public.reminders(patient_id)
 CREATE INDEX IF NOT EXISTS idx_consents_patient ON public.consents(patient_id);
 
 -- ============================================
--- 9. Permissions & Final Grants
+-- 10. Permissions & Final Grants
 -- ============================================
 GRANT ALL ON public.profiles TO authenticated;
 GRANT ALL ON public.consents TO authenticated;
 GRANT ALL ON public.reminders TO authenticated;
 GRANT ALL ON public.risk_flags TO authenticated;
+GRANT ALL ON public.activity_sessions TO authenticated;
+GRANT ALL ON public.self_assessments TO authenticated;
 GRANT ALL ON public.thought_entries TO authenticated;
 GRANT USAGE ON SCHEMA public TO authenticated;

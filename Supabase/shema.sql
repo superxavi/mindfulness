@@ -210,6 +210,10 @@ CREATE INDEX idx_routines_category ON public.routines(category);
 CREATE INDEX idx_routine_assets_routine ON public.routine_assets(routine_id);
 CREATE INDEX idx_activity_sessions_patient ON public.activity_sessions(patient_id);
 CREATE INDEX idx_self_assessments_patient ON public.self_assessments(patient_id);
+CREATE UNIQUE INDEX idx_self_assessments_session_context_unique
+ON public.self_assessments(session_id, context)
+WHERE session_id IS NOT NULL
+  AND context IN ('pre_session', 'post_session');
 CREATE INDEX idx_thought_entries_patient_created_desc ON public.thought_entries(patient_id, created_at DESC);
 CREATE INDEX idx_assignments_composite ON public.assignments(professional_id, patient_id);
 CREATE INDEX idx_sleep_logs_patient_date ON public.sleep_logs(patient_id, log_date DESC);
@@ -246,6 +250,7 @@ CREATE POLICY "Modifica sus configuraciones" ON public.patient_settings FOR ALL 
 CREATE POLICY "Inserta sus propias sesiones" ON public.activity_sessions FOR INSERT TO authenticated WITH CHECK (auth.uid() = patient_id);
 CREATE POLICY "Inserta su autoevaluación" ON public.self_assessments FOR INSERT TO authenticated WITH CHECK (auth.uid() = patient_id);
 CREATE POLICY "Inserta registro de sueño" ON public.sleep_logs FOR INSERT TO authenticated WITH CHECK (auth.uid() = patient_id);
+CREATE POLICY "Actualiza sus propias sesiones" ON public.activity_sessions FOR UPDATE TO authenticated USING (auth.uid() = patient_id) WITH CHECK (auth.uid() = patient_id);
 
 -- 7.3 Privacidad Extrema para el Diario Intimo
 -- Ni siquiera el profesional de Bienestar Universitario tiene permiso de leer esto.

@@ -3,12 +3,26 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/assigned_activity_model.dart';
 import '../models/routine_model.dart';
 
-class RoutinesRepository {
+abstract class RoutinesDataSource {
+  Future<List<RoutineModel>> fetchRoutines();
+  Future<String> startSession({
+    required String routineId,
+    required DateTime startedAt,
+  });
+  Future<void> completeSession({
+    required String sessionId,
+    required DateTime completedAt,
+  });
+  Future<List<AssignedActivityModel>> fetchAssignedActivities();
+}
+
+class RoutinesRepository implements RoutinesDataSource {
   RoutinesRepository({SupabaseClient? client})
     : _client = client ?? Supabase.instance.client;
 
   final SupabaseClient _client;
 
+  @override
   Future<List<RoutineModel>> fetchRoutines() async {
     final routinesResponse = await _client
         .from('routines')
@@ -43,25 +57,45 @@ class RoutinesRepository {
         .toList();
   }
 
-  Future<void> completeSession({
+  @override
+  Future<String> startSession({
     required String routineId,
     required DateTime startedAt,
-    required DateTime completedAt,
   }) async {
     final user = _client.auth.currentUser;
     if (user == null) {
       throw Exception('Usuario no autenticado');
     }
 
-    await _client.from('activity_sessions').insert({
-      'patient_id': user.id,
-      'routine_id': routineId,
-      'started_at': startedAt.toIso8601String(),
-      'completed_at': completedAt.toIso8601String(),
-      'status': 'completed',
-    });
+    final response = await _client
+        .from('activity_sessions')
+        .insert({
+          'patient_id': user.id,
+          'routine_id': routineId,
+          'started_at': startedAt.toIso8601String(),
+          'status': 'interrupted',
+        })
+        .select('id')
+        .single();
+
+    return response['id'] as String;
   }
 
+  @override
+  Future<void> completeSession({
+    required String sessionId,
+    required DateTime completedAt,
+  }) async {
+    await _client
+        .from('activity_sessions')
+        .update({
+          'completed_at': completedAt.toIso8601String(),
+          'status': 'completed',
+        })
+        .eq('id', sessionId);
+  }
+
+  @override
   Future<List<AssignedActivityModel>> fetchAssignedActivities() async {
     final user = _client.auth.currentUser;
     if (user == null) return const [];

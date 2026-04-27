@@ -21,6 +21,7 @@ import 'viewmodels/routines_viewmodel.dart';
 import 'viewmodels/sleep_habits_viewmodel.dart';
 import 'viewmodels/theme_viewmodel.dart';
 import 'viewmodels/thought_entries_viewmodel.dart';
+import 'viewmodels/self_assessments_viewmodel.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -72,6 +73,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RoutinesViewModel()),
         ChangeNotifierProvider(create: (_) => RemindersViewModel()),
         ChangeNotifierProvider(create: (_) => ThoughtEntriesViewModel()),
+        ChangeNotifierProvider(create: (_) => SelfAssessmentsViewModel()),
       ],
       child: Consumer<ThemeViewModel>(
         builder: (context, themeViewModel, _) {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../models/routine_model.dart';
-import 'routine_session_view.dart';
+import 'self_assessment_flow.dart';
 
 class RoutineDetailView extends StatelessWidget {
   const RoutineDetailView({super.key, required this.routine});
@@ -118,7 +118,7 @@ class RoutineDetailView extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (_) => RoutineSessionView(routine: routine),
+                    builder: (_) => PreSessionAssessmentView(routine: routine),
                   ),
                 );
               },
