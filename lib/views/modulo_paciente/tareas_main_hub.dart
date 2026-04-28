@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mindfulness_app/views/modulo_paciente/routine_detail_view.dart';
 import 'package:provider/provider.dart';
+
 import '../../moduloTareas/viewmodels/tasks_viewmodel.dart';
 import 'componet/tarea_card_widget.dart';
-import 'ejecutar_respiracion_view.dart';
 
 class TareasMainHub extends StatefulWidget {
   const TareasMainHub({super.key});
@@ -73,7 +74,7 @@ class _TaskListView extends StatelessWidget {
               const Icon(Icons.cloud_off, size: 64, color: Colors.grey),
               const SizedBox(height: 16),
               Text(
-                vm.error ?? "Ocurrió un error inesperado", 
+                vm.error ?? "Ocurrió un error inesperado",
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: Colors.grey),
               ),
@@ -106,8 +107,8 @@ class _TaskListView extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    isPending 
-                        ? "¡No tienes tareas pendientes!\nBuen trabajo." 
+                    isPending
+                        ? "¡No tienes tareas pendientes!\nBuen trabajo."
                         : "Aún no has completado actividades.",
                     textAlign: TextAlign.center,
                     style: const TextStyle(color: Colors.grey, fontSize: 16),
@@ -137,7 +138,10 @@ class _TaskListView extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => EjecutarRespiracionView(assignment: task),
+                  builder: (_) => RoutineDetailView(
+                    routine: task.toRoutineModel(),
+                    assignmentId: task.id,
+                  ),
                 ),
               );
             },

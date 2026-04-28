@@ -1,3 +1,5 @@
+import '../../models/routine_model.dart';
+
 class Assignment {
   final String id;
   final String routineId;
@@ -17,11 +19,30 @@ class Assignment {
     required this.breathingPattern,
   });
 
+  /// Convierte esta asignación al modelo base de Rutinas para reusar vistas
+  RoutineModel toRoutineModel() {
+    return RoutineModel(
+      id: routineId,
+      title: title,
+      description: description,
+      category: RoutineCategoryX.fromValue(category),
+      durationSeconds: totalDuration,
+      breathingPattern: BreathingPatternModel(
+        routineId: routineId,
+        inhaleSec: breathingPattern['inhale_sec'] ?? 4,
+        holdInSec: breathingPattern['hold_in_sec'] ?? 0,
+        exhaleSec: breathingPattern['exhale_sec'] ?? 6,
+        holdOutSec: breathingPattern['hold_out_sec'] ?? 0,
+        cyclesRecommended: breathingPattern['cycles_recommended'] ?? 5,
+      ),
+    );
+  }
+
   factory Assignment.fromJson(Map<String, dynamic> json) {
     // Supabase Join: 'routines' puede venir como objeto o lista
     final dynamic routineRaw = json['routines'];
-    final Map<String, dynamic> routine = (routineRaw is List) 
-        ? (routineRaw.isNotEmpty ? routineRaw[0] : {}) 
+    final Map<String, dynamic> routine = (routineRaw is List)
+        ? (routineRaw.isNotEmpty ? routineRaw[0] : {})
         : (routineRaw ?? {});
 
     // Extraer patrón de respiración (breathing_patterns es 1:1 con routines)
