@@ -8,7 +8,6 @@ import '../../core/theme/app_colors.dart';
 import '../../models/routine_model.dart';
 import '../../moduloTareas/viewmodels/tasks_viewmodel.dart';
 import '../../viewmodels/routines_viewmodel.dart';
-import '../../viewmodels/self_assessments_viewmodel.dart';
 import 'componet/breathing_sphere.dart';
 import 'componet/session_progress_widgets.dart';
 import 'self_assessment_flow.dart';
@@ -34,7 +33,8 @@ class _SessionState {
     required this.totalCycles,
   });
 
-  double get progress => phaseDuration > 0 ? (phaseElapsed / phaseDuration).clamp(0.0, 1.0) : 0.0;
+  double get progress =>
+      phaseDuration > 0 ? (phaseElapsed / phaseDuration).clamp(0.0, 1.0) : 0.0;
   String get label => switch (phase) {
     _BreathPhase.inhale => 'Inhala',
     _BreathPhase.holdIn => 'Retén',
@@ -65,16 +65,15 @@ class RoutineSessionView extends StatefulWidget {
 
 class _RoutineSessionViewState extends State<RoutineSessionView>
     with SingleTickerProviderStateMixin {
-  
   bool _countdownDone = false;
   bool _finishRequested = false;
   late final AnimationController _sphereController;
-  
+
   Timer? _timer;
   _BreathPhase _phase = _BreathPhase.inhale;
   int _phaseElapsed = 0;
   int _cyclesCompleted = 0;
-  
+
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
@@ -105,17 +104,22 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
     });
   }
 
-  int _getDurationFor(_BreathPhase phase, BreathingPatternModel p) => switch (phase) {
-    _BreathPhase.inhale => p.inhaleSec,
-    _BreathPhase.holdIn => p.holdInSec,
-    _BreathPhase.exhale => p.exhaleSec,
-    _BreathPhase.holdOut => p.holdOutSec,
-  };
+  int _getDurationFor(_BreathPhase phase, BreathingPatternModel p) =>
+      switch (phase) {
+        _BreathPhase.inhale => p.inhaleSec,
+        _BreathPhase.holdIn => p.holdInSec,
+        _BreathPhase.exhale => p.exhaleSec,
+        _BreathPhase.holdOut => p.holdOutSec,
+      };
 
   void _advancePhase(BreathingPatternModel p) {
-    final phases = [_BreathPhase.inhale, _BreathPhase.holdIn, _BreathPhase.exhale, _BreathPhase.holdOut]
-        .where((ph) => _getDurationFor(ph, p) > 0).toList();
-    
+    final phases = [
+      _BreathPhase.inhale,
+      _BreathPhase.holdIn,
+      _BreathPhase.exhale,
+      _BreathPhase.holdOut,
+    ].where((ph) => _getDurationFor(ph, p) > 0).toList();
+
     int currentIndex = phases.indexOf(_phase);
     if (currentIndex == phases.length - 1) {
       _cyclesCompleted++;
@@ -127,7 +131,7 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
     } else {
       _phase = phases[currentIndex + 1];
     }
-    
+
     _phaseElapsed = 0;
     _playBell();
     _updatePhaseUI();
@@ -161,10 +165,19 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
     );
 
     if (ok == true && mounted) {
-      await context.read<RoutinesViewModel>().completeSession(sessionId: widget.sessionId);
+      await context.read<RoutinesViewModel>().completeSession(
+            sessionId: widget.sessionId,
+          );
+
+      if (!mounted) return;
+
       if (widget.assignmentId != null) {
-        await context.read<TasksViewModel>().markAsDone(widget.sessionId, widget.assignmentId!);
+        await context.read<TasksViewModel>().markAsDone(
+              widget.sessionId,
+              widget.assignmentId!,
+            );
       }
+
       if (mounted) Navigator.popUntil(context, (r) => r.isFirst);
     } else {
       _finishRequested = false;
@@ -194,10 +207,7 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
             children: [
               _buildHeader(),
               const Spacer(),
-              BreathingSphere(
-                animation: _sphereController,
-                label: state.label,
-              ),
+              BreathingSphere(animation: _sphereController, label: state.label),
               const Spacer(),
               PhaseProgressBar(
                 label: state.label,
@@ -225,7 +235,10 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(widget.routine.title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            Text(
+              widget.routine.title,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 40),
             ElevatedButton(
               onPressed: _startSession,
@@ -241,8 +254,18 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close, color: Colors.white70)),
-        Text(widget.routine.title, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
+        IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.close, color: Colors.white70),
+        ),
+        Text(
+          widget.routine.title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         const SizedBox(width: 48),
       ],
     );
@@ -254,8 +277,16 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
       height: 54,
       child: ElevatedButton(
         onPressed: _finishSession,
-        style: ElevatedButton.styleFrom(backgroundColor: Colors.cyanAccent.withValues(alpha: 0.2)),
-        child: const Text("FINALIZAR", style: TextStyle(color: Colors.cyanAccent, fontWeight: FontWeight.bold)),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.cyanAccent.withValues(alpha: 0.2),
+        ),
+        child: const Text(
+          "FINALIZAR",
+          style: TextStyle(
+            color: Colors.cyanAccent,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }

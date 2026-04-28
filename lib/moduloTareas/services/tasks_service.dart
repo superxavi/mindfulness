@@ -32,7 +32,9 @@ class TasksService {
           .eq('patient_id', user.id)
           .order('assigned_at', ascending: false);
 
-      return (response as List).map((json) => Assignment.fromJson(json)).toList();
+      return (response as List)
+          .map((json) => Assignment.fromJson(json))
+          .toList();
     } catch (e) {
       debugPrint("TasksService Error (getAllPatientTasks): $e");
       return [];
@@ -44,12 +46,16 @@ class TasksService {
     final user = _db.auth.currentUser;
     if (user == null) throw Exception("No autenticado");
 
-    final res = await _db.from('activity_sessions').insert({
-      'patient_id': user.id,
-      'routine_id': routineId,
-      'status': 'interrupted',
-      'started_at': DateTime.now().toIso8601String(),
-    }).select('id').single();
+    final res = await _db
+        .from('activity_sessions')
+        .insert({
+          'patient_id': user.id,
+          'routine_id': routineId,
+          'status': 'interrupted',
+          'started_at': DateTime.now().toIso8601String(),
+        })
+        .select('id')
+        .single();
 
     return res['id'].toString();
   }
@@ -58,16 +64,20 @@ class TasksService {
   Future<void> completeTask(String sessionId, String assignmentId) async {
     try {
       // 1. Actualizar sesión de actividad
-      await _db.from('activity_sessions').update({
-        'status': 'completed',
-        'completed_at': DateTime.now().toIso8601String(),
-      }).eq('id', sessionId);
+      await _db
+          .from('activity_sessions')
+          .update({
+            'status': 'completed',
+            'completed_at': DateTime.now().toIso8601String(),
+          })
+          .eq('id', sessionId);
 
       // 2. Actualizar estado de la asignación
-      await _db.from('assignments').update({
-        'status': 'completed',
-      }).eq('id', assignmentId);
-      
+      await _db
+          .from('assignments')
+          .update({'status': 'completed'})
+          .eq('id', assignmentId);
+
       debugPrint("Sincronización de completado exitosa para: $assignmentId");
     } catch (e) {
       debugPrint("TasksService Error (completeTask): $e");

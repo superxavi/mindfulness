@@ -100,7 +100,7 @@ class _AsignarTareaViewState extends State<AsignarTareaView> {
                         : routines.map((r) {
                             return DropdownMenuItem(
                               value: r.id,
-                              child: Text(r.title ?? "Rutina sin título"),
+                              child: Text(r.title),
                             );
                           }).toList(),
                     onChanged: (val) =>

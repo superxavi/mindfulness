@@ -68,11 +68,10 @@ class TareaCardWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    tarea.description.isNotEmpty ? tarea.description : "Sin descripción",
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey[600],
-                    ),
+                    tarea.description.isNotEmpty
+                        ? tarea.description
+                        : "Sin descripción",
+                    style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

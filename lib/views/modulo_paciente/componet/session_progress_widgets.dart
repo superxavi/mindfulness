@@ -90,7 +90,8 @@ class CycleSegmentsBar extends StatelessWidget {
         LayoutBuilder(
           builder: (context, constraints) {
             const gap = 4.0;
-            final segmentWidth = (constraints.maxWidth - gap * (total - 1)) / total;
+            final segmentWidth =
+                (constraints.maxWidth - gap * (total - 1)) / total;
             return Row(
               children: List.generate(total, (i) {
                 final isDone = i < completed;

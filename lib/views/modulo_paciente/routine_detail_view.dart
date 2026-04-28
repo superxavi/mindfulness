@@ -5,7 +5,11 @@ import '../../models/routine_model.dart';
 import 'self_assessment_flow.dart';
 
 class RoutineDetailView extends StatelessWidget {
-  const RoutineDetailView({super.key, required this.routine, this.assignmentId});
+  const RoutineDetailView({
+    super.key,
+    required this.routine,
+    this.assignmentId,
+  });
 
   final RoutineModel routine;
   final String? assignmentId;
