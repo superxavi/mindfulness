@@ -22,11 +22,12 @@ class Assignment {
   /// Convierte esta asignación al modelo base de Rutinas para reusar vistas
   RoutineModel toRoutineModel() {
     final cat = RoutineCategoryX.fromValue(category);
-    
+
     // Solo asignar patrón de respiración si la categoría lo requiere
     // O si los datos del patrón tienen sentido (ciclos > 0)
-    final hasPattern = cat == RoutineCategory.breathing || 
-                      (breathingPattern['cycles_recommended'] ?? 0) > 0;
+    final hasPattern =
+        cat == RoutineCategory.breathing ||
+        (breathingPattern['cycles_recommended'] ?? 0) > 0;
 
     return RoutineModel(
       id: routineId,
@@ -34,14 +35,16 @@ class Assignment {
       description: description,
       category: cat,
       durationSeconds: totalDuration,
-      breathingPattern: hasPattern ? BreathingPatternModel(
-        routineId: routineId,
-        inhaleSec: breathingPattern['inhale_sec'] ?? 4,
-        holdInSec: breathingPattern['hold_in_sec'] ?? 0,
-        exhaleSec: breathingPattern['exhale_sec'] ?? 6,
-        holdOutSec: breathingPattern['hold_out_sec'] ?? 0,
-        cyclesRecommended: breathingPattern['cycles_recommended'] ?? 5,
-      ) : null,
+      breathingPattern: hasPattern
+          ? BreathingPatternModel(
+              routineId: routineId,
+              inhaleSec: breathingPattern['inhale_sec'] ?? 4,
+              holdInSec: breathingPattern['hold_in_sec'] ?? 0,
+              exhaleSec: breathingPattern['exhale_sec'] ?? 6,
+              holdOutSec: breathingPattern['hold_out_sec'] ?? 0,
+              cyclesRecommended: breathingPattern['cycles_recommended'] ?? 5,
+            )
+          : null,
     );
   }
 

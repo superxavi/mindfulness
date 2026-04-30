@@ -112,15 +112,14 @@ class _BreathingRunnerState extends State<BreathingRunner>
   @override
   Widget build(BuildContext context) {
     final duration = _getDurationFor(_phase, widget.pattern);
-    final progress = duration > 0 ? (_phaseElapsed / duration).clamp(0.0, 1.0) : 0.0;
+    final progress = duration > 0
+        ? (_phaseElapsed / duration).clamp(0.0, 1.0)
+        : 0.0;
 
     return Column(
       children: [
         const Spacer(),
-        BreathingSphere(
-          animation: _sphereController, 
-          label: _getPhaseLabel(),
-        ),
+        BreathingSphere(animation: _sphereController, label: _getPhaseLabel()),
         const Spacer(),
         PhaseProgressBar(
           label: _getPhaseLabel(),

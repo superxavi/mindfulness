@@ -47,7 +47,10 @@ class _TareasMainHubState extends State<TareasMainHub> {
             indicatorSize: TabBarIndicatorSize.label,
             labelColor: AppColors.mint,
             unselectedLabelColor: AppColors.textSecondary,
-            labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+            labelStyle: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 16,
+            ),
             tabs: const [
               Tab(text: "Pendientes"),
               Tab(text: "Completadas"),
@@ -134,7 +137,9 @@ class _TaskListView extends StatelessWidget {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () => vm.loadTasks(),
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.surface),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.surface,
+              ),
               child: const Text("Reintentar"),
             ),
           ],
@@ -161,16 +166,16 @@ class _TaskListView extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    isPending ? Icons.auto_awesome_rounded : Icons.task_alt_rounded,
+                    isPending
+                        ? Icons.auto_awesome_rounded
+                        : Icons.task_alt_rounded,
                     size: 64,
                     color: AppColors.mint.withValues(alpha: 0.5),
                   ),
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  isPending
-                      ? "¡Todo al día!"
-                      : "Aún no hay tareas completadas",
+                  isPending ? "¡Todo al día!" : "Aún no hay tareas completadas",
                   style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 20,
@@ -185,7 +190,10 @@ class _TaskListView extends StatelessWidget {
                         ? "No tienes tareas pendientes asignadas por tu psicóloga."
                         : "Tus actividades terminadas aparecerán aquí.",
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: AppColors.textSecondary, fontSize: 15),
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 15,
+                    ),
                   ),
                 ),
               ],

@@ -30,7 +30,7 @@ class _TimedRunnerState extends State<TimedRunner>
       vsync: this,
       duration: const Duration(seconds: 8),
     )..repeat(reverse: true);
-    
+
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (!mounted) return;
       setState(() {
@@ -53,10 +53,7 @@ class _TimedRunnerState extends State<TimedRunner>
     return Column(
       children: [
         const Spacer(),
-        BreathingSphere(
-          animation: _animationController,
-          label: '',
-        ),
+        BreathingSphere(animation: _animationController, label: ''),
         const Spacer(),
         PhaseProgressBar(
           label: 'Sesión en curso',

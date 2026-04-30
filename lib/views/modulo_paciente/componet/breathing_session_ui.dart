@@ -27,10 +27,7 @@ class BreathingSessionUI extends StatelessWidget {
     return Column(
       children: [
         const Spacer(),
-        BreathingSphere(
-          animation: animationController, 
-          label: currentLabel,
-        ),
+        BreathingSphere(animation: animationController, label: currentLabel),
         const Spacer(),
         PhaseProgressBar(
           label: currentLabel,
@@ -38,10 +35,7 @@ class BreathingSessionUI extends StatelessWidget {
           progress: phaseProgress,
         ),
         const SizedBox(height: 16),
-        CycleSegmentsBar(
-          total: totalCycles,
-          completed: completedCycles,
-        ),
+        CycleSegmentsBar(total: totalCycles, completed: completedCycles),
         const SizedBox(height: 32),
         _buildFinishButton(),
       ],

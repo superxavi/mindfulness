@@ -123,13 +123,15 @@ class _RoutinesLibraryViewState extends State<RoutinesLibraryView> {
     );
   }
 
-  void _openRoutine(BuildContext context, RoutineModel routine, {String? assignmentId}) {
+  void _openRoutine(
+    BuildContext context,
+    RoutineModel routine, {
+    String? assignmentId,
+  }) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => RoutineDetailView(
-          routine: routine,
-          assignmentId: assignmentId,
-        ),
+        builder: (_) =>
+            RoutineDetailView(routine: routine, assignmentId: assignmentId),
       ),
     );
   }

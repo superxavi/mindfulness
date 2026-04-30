@@ -29,10 +29,7 @@ class TimedSessionUI extends StatelessWidget {
       children: [
         const Spacer(),
         // Animación tranquila pulsante
-        BreathingSphere(
-          animation: animationController,
-          label: '',
-        ),
+        BreathingSphere(animation: animationController, label: ''),
         const Spacer(),
         PhaseProgressBar(
           label: 'Sesión en curso',
