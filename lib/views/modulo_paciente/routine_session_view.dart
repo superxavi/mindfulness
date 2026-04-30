@@ -8,44 +8,11 @@ import '../../core/theme/app_colors.dart';
 import '../../models/routine_model.dart';
 import '../../moduloTareas/viewmodels/tasks_viewmodel.dart';
 import '../../viewmodels/routines_viewmodel.dart';
-import 'componet/breathing_sphere.dart';
-import 'componet/session_progress_widgets.dart';
+import 'componet/breathing_session_ui.dart';
+import 'componet/timed_session_ui.dart';
 import 'self_assessment_flow.dart';
 
-// ─────────────────────────────────────────────
-// Lógica de Estado y Control de Sesión
-// ─────────────────────────────────────────────
-
 enum _BreathPhase { inhale, holdIn, exhale, holdOut }
-
-class _SessionState {
-  final _BreathPhase phase;
-  final int phaseElapsed;
-  final int phaseDuration;
-  final int cyclesCompleted;
-  final int totalCycles;
-
-  _SessionState({
-    required this.phase,
-    required this.phaseElapsed,
-    required this.phaseDuration,
-    required this.cyclesCompleted,
-    required this.totalCycles,
-  });
-
-  double get progress =>
-      phaseDuration > 0 ? (phaseElapsed / phaseDuration).clamp(0.0, 1.0) : 0.0;
-  String get label => switch (phase) {
-    _BreathPhase.inhale => 'Inhala',
-    _BreathPhase.holdIn => 'Retén',
-    _BreathPhase.exhale => 'Exhala',
-    _BreathPhase.holdOut => 'Pausa',
-  };
-}
-
-// ─────────────────────────────────────────────
-// VISTA PRINCIPAL
-// ─────────────────────────────────────────────
 
 class RoutineSessionView extends StatefulWidget {
   final RoutineModel routine;
@@ -70,6 +37,8 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
   late final AnimationController _sphereController;
 
   Timer? _timer;
+  
+  // Estado para rutinas de respiración
   _BreathPhase _phase = _BreathPhase.inhale;
   int _phaseElapsed = 0;
   int _cyclesCompleted = 0;
@@ -93,15 +62,25 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
 
   void _tick() {
     if (!mounted) return;
-    final p = widget.routine.breathingPattern!;
-    final duration = _getDurationFor(_phase, p);
 
-    setState(() {
-      _phaseElapsed++;
-      if (_phaseElapsed >= duration) {
-        _advancePhase(p);
-      }
-    });
+    if (widget.routine.breathingPattern != null) {
+      final p = widget.routine.breathingPattern!;
+      final duration = _getDurationFor(_phase, p);
+
+      setState(() {
+        _phaseElapsed++;
+        if (_phaseElapsed >= duration) {
+          _advancePhase(p);
+        }
+      });
+    } else {
+      setState(() {
+        _phaseElapsed++;
+        if (_phaseElapsed >= widget.routine.durationSeconds) {
+          _finishSession();
+        }
+      });
+    }
   }
 
   int _getDurationFor(_BreathPhase phase, BreathingPatternModel p) =>
@@ -138,6 +117,12 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
   }
 
   void _updatePhaseUI() {
+    if (widget.routine.breathingPattern == null) {
+      _sphereController.duration = const Duration(seconds: 8);
+      _sphereController.repeat(reverse: true);
+      return;
+    }
+
     final p = widget.routine.breathingPattern!;
     _sphereController.duration = Duration(seconds: _getDurationFor(_phase, p));
     if (_phase == _BreathPhase.inhale) _sphereController.forward(from: 0);
@@ -169,9 +154,7 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
         sessionId: widget.sessionId,
       );
 
-      if (!mounted) return;
-
-      if (widget.assignmentId != null) {
+      if (widget.assignmentId != null && mounted) {
         await context.read<TasksViewModel>().markAsDone(
           widget.sessionId,
           widget.assignmentId!,
@@ -181,22 +164,13 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
       if (mounted) Navigator.popUntil(context, (r) => r.isFirst);
     } else {
       _finishRequested = false;
-      _startSession(); // Reanudar si cancela
+      _startSession();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     if (!_countdownDone) return _buildCountdown();
-
-    final p = widget.routine.breathingPattern!;
-    final state = _SessionState(
-      phase: _phase,
-      phaseElapsed: _phaseElapsed,
-      phaseDuration: _getDurationFor(_phase, p),
-      cyclesCompleted: _cyclesCompleted,
-      totalCycles: p.cyclesRecommended,
-    );
 
     return Scaffold(
       backgroundColor: const Color(0xFF0F172A),
@@ -206,27 +180,49 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
           child: Column(
             children: [
               _buildHeader(),
-              const Spacer(),
-              BreathingSphere(animation: _sphereController, label: state.label),
-              const Spacer(),
-              PhaseProgressBar(
-                label: state.label,
-                time: '${state.phaseDuration - state.phaseElapsed}s',
-                progress: state.progress,
+              Expanded(
+                child: _buildSessionUI(),
               ),
-              const SizedBox(height: 16),
-              CycleSegmentsBar(
-                total: state.totalCycles,
-                completed: state.cyclesCompleted,
-              ),
-              const SizedBox(height: 32),
-              _buildFinishButton(),
             ],
           ),
         ),
       ),
     );
   }
+
+  Widget _buildSessionUI() {
+    final pattern = widget.routine.breathingPattern;
+    
+    // GUARDIA: Si tiene patrón de respiración, usar UI especializada
+    if (pattern != null) {
+      final phaseDuration = _getDurationFor(_phase, pattern);
+      return BreathingSessionUI(
+        currentLabel: _getPhaseLabel(_phase),
+        remainingTime: '${phaseDuration - _phaseElapsed}s',
+        phaseProgress: phaseDuration > 0 ? (_phaseElapsed / phaseDuration).clamp(0.0, 1.0) : 0.0,
+        completedCycles: _cyclesCompleted,
+        totalCycles: pattern.cyclesRecommended,
+        animationController: _sphereController,
+        onFinish: _finishSession,
+      );
+    }
+
+    // De lo contrario, usar UI de tiempo genérica
+    return TimedSessionUI(
+      title: widget.routine.title,
+      elapsedSeconds: _phaseElapsed,
+      totalSeconds: widget.routine.durationSeconds,
+      animationController: _sphereController,
+      onFinish: _finishSession,
+    );
+  }
+
+  String _getPhaseLabel(_BreathPhase phase) => switch (phase) {
+    _BreathPhase.inhale => 'Inhala',
+    _BreathPhase.holdIn => 'Retén',
+    _BreathPhase.exhale => 'Exhala',
+    _BreathPhase.holdOut => 'Pausa',
+  };
 
   Widget _buildCountdown() {
     return Scaffold(
@@ -239,10 +235,20 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
               widget.routine.title,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
+            const SizedBox(height: 12),
+            Text(
+              widget.routine.category.label,
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
+            ),
             const SizedBox(height: 40),
             ElevatedButton(
               onPressed: _startSession,
-              child: const Text("Comenzar Ahora"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.mint,
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              ),
+              child: const Text("Comenzar Sesión"),
             ),
           ],
         ),
@@ -268,26 +274,6 @@ class _RoutineSessionViewState extends State<RoutineSessionView>
         ),
         const SizedBox(width: 48),
       ],
-    );
-  }
-
-  Widget _buildFinishButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 54,
-      child: ElevatedButton(
-        onPressed: _finishSession,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.cyanAccent.withValues(alpha: 0.2),
-        ),
-        child: const Text(
-          "FINALIZAR",
-          style: TextStyle(
-            color: Colors.cyanAccent,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
     );
   }
 
