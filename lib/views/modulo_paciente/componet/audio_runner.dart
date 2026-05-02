@@ -24,7 +24,7 @@ class _AudioRunnerState extends State<AudioRunner>
     with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
   final AudioPlayer _player = AudioPlayer();
-  
+
   Timer? _timer;
   int _elapsed = 0;
   bool _isPlaying = false;
@@ -53,7 +53,11 @@ class _AudioRunnerState extends State<AudioRunner>
       debugPrint("Error cargando audio: $e");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("No se pudo cargar el audio. Iniciando temporizador sin sonido.")),
+          const SnackBar(
+            content: Text(
+              "No se pudo cargar el audio. Iniciando temporizador sin sonido.",
+            ),
+          ),
         );
         _startTimer(); // Fallback a temporizador solo
       }
@@ -64,7 +68,7 @@ class _AudioRunnerState extends State<AudioRunner>
         setState(() {
           _isPlaying = state.playing;
           _isBuffering = state.processingState == ProcessingState.buffering;
-          
+
           if (state.processingState == ProcessingState.completed) {
             widget.onComplete();
           }
@@ -102,13 +106,17 @@ class _AudioRunnerState extends State<AudioRunner>
         else
           BreathingSphere(animation: _animationController, label: ''),
         const Spacer(),
-        
+
         // Controles de audio
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             IconButton(
-              icon: Icon(_isPlaying ? Icons.pause_circle_filled : Icons.play_circle_filled),
+              icon: Icon(
+                _isPlaying
+                    ? Icons.pause_circle_filled
+                    : Icons.play_circle_filled,
+              ),
               iconSize: 64,
               color: Colors.white,
               onPressed: () {
@@ -121,7 +129,7 @@ class _AudioRunnerState extends State<AudioRunner>
             ),
           ],
         ),
-        
+
         const Spacer(),
         PhaseProgressBar(
           label: _isBuffering ? 'Cargando audio...' : 'Escuchando rutina',

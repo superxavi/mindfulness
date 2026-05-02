@@ -29,7 +29,7 @@ class RoutinesService {
       'breathing',
       'sleep_induction',
       'soundscape',
-      'terapia_sonido'
+      'terapia_sonido',
     ];
   }
 

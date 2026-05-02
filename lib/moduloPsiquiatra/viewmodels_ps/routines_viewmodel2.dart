@@ -68,7 +68,10 @@ class RoutinesViewModel2 extends ChangeNotifier {
 
       // Paso C: Lógica condicional según categoría
       if (category == 'breathing') {
-        if (inhale == null || holdIn == null || exhale == null || holdOut == null) {
+        if (inhale == null ||
+            holdIn == null ||
+            exhale == null ||
+            holdOut == null) {
           throw Exception("Faltan datos del patron de respiracion");
         }
         await _service.saveBreathingPattern(
@@ -80,7 +83,9 @@ class RoutinesViewModel2 extends ChangeNotifier {
         );
       } else if (category == 'soundscape' || category == 'relaxation') {
         if (audioFile == null) {
-          throw Exception("Debes subir un archivo de audio para esta categoria");
+          throw Exception(
+            "Debes subir un archivo de audio para esta categoria",
+          );
         }
         await _service.uploadRoutineAudio(
           routineId: routineId,

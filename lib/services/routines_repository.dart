@@ -61,7 +61,7 @@ class RoutinesRepository implements RoutinesDataSource {
 
     final assetRows = List<Map<String, dynamic>>.from(assetsResponse as List);
     final audiosByRoutine = <String, String>{};
-    
+
     for (final row in assetRows) {
       final path = row['storage_path'] as String;
       // Generamos la URL pública firmada o directa desde el Storage
@@ -205,7 +205,7 @@ class RoutinesRepository implements RoutinesDataSource {
 
   // ────────────────────────────────────────────────────────────────────────────
   // RUTINAS DE RESPALDO (OFFLINE FALLBACK)
-  // Estas rutinas tienen IDs estáticos fijos y solo se muestran si la app 
+  // Estas rutinas tienen IDs estáticos fijos y solo se muestran si la app
   // no logra conectar con Supabase. No afectan la creación de nuevas rutinas.
   // ────────────────────────────────────────────────────────────────────────────
   static const List<RoutineModel> fallbackRoutines = [

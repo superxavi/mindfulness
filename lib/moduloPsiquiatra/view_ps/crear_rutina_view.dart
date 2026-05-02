@@ -159,8 +159,10 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
                         child: Text(c.replaceAll('_', ' ').toUpperCase()),
                       );
                     }).toList(),
-                    onChanged: (val) => setState(() => _selectedCategory = val!),
-                    validator: (v) => v == null ? "Selecciona una categoria" : null,
+                    onChanged: (val) =>
+                        setState(() => _selectedCategory = val!),
+                    validator: (v) =>
+                        v == null ? "Selecciona una categoria" : null,
                   ),
                   const SizedBox(height: 16),
                   _buildSlider(

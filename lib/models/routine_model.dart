@@ -68,7 +68,14 @@ class BreathingPatternModel {
   }
 }
 
-enum RoutineCategory { all, breathing, relaxation, sleepInduction, soundscape, terapiaSonido }
+enum RoutineCategory {
+  all,
+  breathing,
+  relaxation,
+  sleepInduction,
+  soundscape,
+  terapiaSonido,
+}
 
 extension RoutineCategoryX on RoutineCategory {
   static RoutineCategory fromValue(String? value) {
