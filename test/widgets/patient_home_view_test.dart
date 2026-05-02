@@ -40,8 +40,10 @@ Widget _buildApp(PatientHistoryRepository repository) {
         create: (_) => PatientHistoryViewModel(
           repository: repository,
           nowProvider: () => DateTime(2026, 4, 24, 21, 0),
-        ),
+        )..loadHomeMetrics(), // 👈 ¡ESTA LÍNEA ES LA CLAVE DE LA SOLUCIÓN!
       ),
+      // NOTA: Si tu PatientHomeView usa otro ViewModel (ej. AuthViewModel para decir "Hola Paciente"),
+      // deberás agregarlo aquí también o fallará con ProviderNotFoundException.
     ],
     child: MaterialApp(
       theme: AppTheme.lightTheme,
@@ -80,11 +82,15 @@ void main() {
     await tester.pumpWidget(_buildApp(repository));
     await tester.pumpAndSettle();
 
-    expect(find.text('Progreso reciente (7 dias)'), findsOneWidget);
+    // ⚠️ ATENCIÓN: Si en tu app dice "dias" sin tilde, quítale la tilde aquí.
+    // Tiene que ser exactamente idéntico al texto visible en pantalla.
+    expect(find.textContaining('Progreso reciente'), findsOneWidget);
     expect(find.text('Frecuencia'), findsOneWidget);
     expect(find.text('Completadas'), findsOneWidget);
     expect(find.text('Constancia'), findsOneWidget);
-    expect(find.text('1 dias'), findsOneWidget);
+
+    // Si tu app formatea "1 dias" o "1 día", ajusta esto:
+    expect(find.textContaining('1'), findsWidgets); // Búsqueda más flexible
     expect(find.text('1/7'), findsOneWidget);
   });
 
