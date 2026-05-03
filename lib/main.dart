@@ -86,7 +86,8 @@ class MyApp extends StatelessWidget {
 
         ChangeNotifierProvider(create: (_) => TasksViewModel()),
         ChangeNotifierProvider(
-          create: (_) => PatientsViewModel(repository: PsychologistRepository()),
+          create: (_) =>
+              PatientsViewModel(repository: PsychologistRepository()),
         ),
         ChangeNotifierProvider(create: (_) => PatientDetailsViewModel()),
       ],

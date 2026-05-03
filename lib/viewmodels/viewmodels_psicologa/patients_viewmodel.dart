@@ -6,15 +6,15 @@ class PatientsViewModel extends ChangeNotifier {
   final PsychologistRepository _repository;
 
   PatientsViewModel({PsychologistRepository? repository})
-      : _repository = repository ?? PsychologistRepository();
+    : _repository = repository ?? PsychologistRepository();
 
   List<PatientModel> _allPatients = [];
   List<PatientModel> _filteredPatients = [];
-  
+
   bool _isLoading = false;
   String? _errorMessage;
   String _searchQuery = '';
-  
+
   // Filtro de estado: 'all', 'completed', 'pending'
   String _statusFilter = 'all';
 
@@ -54,7 +54,8 @@ class PatientsViewModel extends ChangeNotifier {
   void _applyFilters() {
     _filteredPatients = _allPatients.where((patient) {
       // Filtro por búsqueda (nombre) - a partir de 2 letras como pediste
-      final matchesSearch = _searchQuery.length < 2 || 
+      final matchesSearch =
+          _searchQuery.length < 2 ||
           patient.fullName.toLowerCase().contains(_searchQuery.toLowerCase());
 
       // Filtro por estado
@@ -67,7 +68,7 @@ class PatientsViewModel extends ChangeNotifier {
 
       return matchesSearch && matchesStatus;
     }).toList();
-    
+
     notifyListeners();
   }
 

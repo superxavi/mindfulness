@@ -14,14 +14,29 @@ class StatusFilters extends StatelessWidget {
       children: [
         _filterChip(context, "Todos", viewModel.statusFilter == 'all', 'all'),
         const SizedBox(width: 10),
-        _filterChip(context, "Realizados", viewModel.statusFilter == 'completed', 'completed'),
+        _filterChip(
+          context,
+          "Realizados",
+          viewModel.statusFilter == 'completed',
+          'completed',
+        ),
         const SizedBox(width: 10),
-        _filterChip(context, "No realizados", viewModel.statusFilter == 'pending', 'pending'),
+        _filterChip(
+          context,
+          "No realizados",
+          viewModel.statusFilter == 'pending',
+          'pending',
+        ),
       ],
     );
   }
 
-  Widget _filterChip(BuildContext context, String label, bool isSelected, String value) {
+  Widget _filterChip(
+    BuildContext context,
+    String label,
+    bool isSelected,
+    String value,
+  ) {
     return GestureDetector(
       onTap: () {
         context.read<PatientsViewModel>().setStatusFilter(value);
@@ -31,12 +46,16 @@ class StatusFilters extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected ? AppColors.accent : AppColors.surface,
           borderRadius: BorderRadius.circular(20),
-          border: isSelected ? null : Border.all(color: AppColors.outlineVariant),
+          border: isSelected
+              ? null
+              : Border.all(color: AppColors.outlineVariant),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? AppColors.buttonPrimaryText : AppColors.textPrimary,
+            color: isSelected
+                ? AppColors.buttonPrimaryText
+                : AppColors.textPrimary,
             fontWeight: FontWeight.w500,
             fontSize: 13,
           ),

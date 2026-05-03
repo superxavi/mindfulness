@@ -44,7 +44,7 @@ class PatientDetailsViewModel extends ChangeNotifier {
           .select('*')
           .eq('patient_id', patientId)
           .order('started_at', ascending: false);
-      
+
       final sessionsList = sessionsRes as List;
 
       // 3. Obtener TODAS las evaluaciones emocionales del paciente
@@ -52,34 +52,36 @@ class PatientDetailsViewModel extends ChangeNotifier {
           .from('self_assessments')
           .select('*')
           .eq('patient_id', patientId);
-      
+
       final emotionsList = emotionsRes as List;
 
       // 4. Mapear asignaciones a HistorySessionItem
       _sessions = assignmentsList.map((a) {
         final routineId = a['routine_id'];
         final statusStr = a['status'];
-        
+
         // Buscamos la sesión más reciente que coincida con esta rutina
         // para extraer detalles como el impacto emocional real si está completada.
-        final matchingSession = sessionsList.cast<Map<String, dynamic>?>().firstWhere(
-          (s) => s?['routine_id'] == routineId,
-          orElse: () => null
-        );
+        final matchingSession = sessionsList
+            .cast<Map<String, dynamic>?>()
+            .firstWhere(
+              (s) => s?['routine_id'] == routineId,
+              orElse: () => null,
+            );
 
         return HistorySessionItem(
           // Usamos el ID de la sesión para vincular las emociones en la vista
           id: matchingSession != null ? matchingSession['id'] : a['id'],
           routineTitle: a['routines']?['title'] ?? 'Rutina eliminada',
-          startedAt: matchingSession != null 
-              ? DateTime.parse(matchingSession['started_at']) 
+          startedAt: matchingSession != null
+              ? DateTime.parse(matchingSession['started_at'])
               : DateTime.parse(a['assigned_at']),
-          completedAt: (matchingSession != null && matchingSession['completed_at'] != null)
-              ? DateTime.parse(matchingSession['completed_at']) 
+          completedAt:
+              (matchingSession != null &&
+                  matchingSession['completed_at'] != null)
+              ? DateTime.parse(matchingSession['completed_at'])
               : null,
-          status: statusStr == 'completed' 
-              ? HistorySessionStatus.completed 
-              : (statusStr == 'pending' ? HistorySessionStatus.unknown : HistorySessionStatus.interrupted),
+          status: _parseStatus(statusStr),
           assignmentContext: 'assigned',
         );
       }).toList();
@@ -96,7 +98,6 @@ class PatientDetailsViewModel extends ChangeNotifier {
           postIntensity: e['context'] == 'post' ? e['intensity'] : null,
         );
       }).toList();
-
     } catch (e) {
       debugPrint('Error en loadPatientHistory: $e');
       _errorMessage = 'Error al cargar el historial: $e';
@@ -106,10 +107,12 @@ class PatientDetailsViewModel extends ChangeNotifier {
     }
   }
 
-  HistorySessionStatus _parseStatus(String status) {
+  HistorySessionStatus _parseStatus(String? status) {
     switch (status) {
       case 'completed':
         return HistorySessionStatus.completed;
+      case 'pending':
+        return HistorySessionStatus.unknown;
       case 'interrupted':
         return HistorySessionStatus.interrupted;
       default:

@@ -27,29 +27,33 @@ class PsychologistRepository {
             .eq('patient_id', patientId);
 
         final List<dynamic> assignments = assignmentsResponse as List<dynamic>;
-        
+
         int total = assignments.length;
-        int completed = assignments.where((a) => a['status'] == 'completed').length;
-        
+        int completed = assignments
+            .where((a) => a['status'] == 'completed')
+            .length;
+
         double progress = total > 0 ? (completed / total) : 0.0;
-        
+
         // Obtener la tarea más reciente (asumiendo que la última en la lista es la más nueva o podríamos ordenar por fecha)
         String? latestTask;
         if (assignments.isNotEmpty) {
-           // Intentamos sacar el título de la rutina si existe el join
-           final routineData = assignments.last['routines'];
-           if (routineData != null) {
-             latestTask = routineData['title'] as String?;
-           }
+          // Intentamos sacar el título de la rutina si existe el join
+          final routineData = assignments.last['routines'];
+          if (routineData != null) {
+            latestTask = routineData['title'] as String?;
+          }
         }
 
-        patients.add(PatientModel.fromMap(
-          data as Map<String, dynamic>,
-          progress: progress,
-          totalAssigned: total,
-          totalCompleted: completed,
-          currentTask: latestTask,
-        ));
+        patients.add(
+          PatientModel.fromMap(
+            data as Map<String, dynamic>,
+            progress: progress,
+            totalAssigned: total,
+            totalCompleted: completed,
+            currentTask: latestTask,
+          ),
+        );
       }
 
       return patients;
@@ -84,8 +88,10 @@ class PsychologistRepository {
           .select('*')
           .eq('is_active', true)
           .eq('is_visible_to_patients', true);
-      
-      return data.map((r) => RoutineModel.fromMap(r as Map<String, dynamic>)).toList();
+
+      return data
+          .map((r) => RoutineModel.fromMap(r as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       throw Exception('Error al obtener rutinas: $e');
     }

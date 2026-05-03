@@ -63,7 +63,10 @@ class _AsignarPacienteViewState extends State<AsignarPacienteView> {
         ),
         title: Text(
           "Asignar a ${widget.patient.fullName}",
-          style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       body: routinesVM.isLoading
@@ -79,15 +82,22 @@ class _AsignarPacienteViewState extends State<AsignarPacienteView> {
                       final isSelected = _selectedRoutineId == routine.id;
 
                       return GestureDetector(
-                        onTap: () => setState(() => _selectedRoutineId = routine.id),
+                        onTap: () =>
+                            setState(() => _selectedRoutineId = routine.id),
                         child: Container(
                           margin: const EdgeInsets.only(bottom: 12),
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: isSelected ? AppColors.accent.withValues(alpha: 0.1) : AppColors.surface,
+                            color: isSelected
+                                ? AppColors.accent.withValues(alpha: 0.1)
+                                : AppColors.surface,
                             borderRadius: BorderRadius.circular(15),
                             border: Border.all(
-                              color: isSelected ? AppColors.accent : AppColors.outlineVariant.withValues(alpha: 0.5),
+                              color: isSelected
+                                  ? AppColors.accent
+                                  : AppColors.outlineVariant.withValues(
+                                      alpha: 0.5,
+                                    ),
                               width: isSelected ? 2 : 1,
                             ),
                           ),
@@ -119,13 +129,19 @@ class _AsignarPacienteViewState extends State<AsignarPacienteView> {
                                     ),
                                     Text(
                                       _getLabelForCategory(routine.category),
-                                      style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                                      style: TextStyle(
+                                        color: AppColors.textSecondary,
+                                        fontSize: 12,
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
                               if (isSelected)
-                                Icon(Icons.check_circle_rounded, color: AppColors.accent),
+                                Icon(
+                                  Icons.check_circle_rounded,
+                                  color: AppColors.accent,
+                                ),
                             ],
                           ),
                         ),
@@ -141,11 +157,16 @@ class _AsignarPacienteViewState extends State<AsignarPacienteView> {
                       backgroundColor: AppColors.mint,
                       foregroundColor: Colors.white,
                       minimumSize: const Size(double.infinity, 56),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                     ),
                     child: const Text(
                       "Confirmar Asignación",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -156,19 +177,27 @@ class _AsignarPacienteViewState extends State<AsignarPacienteView> {
 
   IconData _getIconForCategory(String category) {
     switch (category) {
-      case 'breathing': return Icons.air_rounded;
-      case 'relaxation': return Icons.self_improvement_rounded;
-      case 'sleep_induction': return Icons.bedtime_rounded;
-      default: return Icons.spa_rounded;
+      case 'breathing':
+        return Icons.air_rounded;
+      case 'relaxation':
+        return Icons.self_improvement_rounded;
+      case 'sleep_induction':
+        return Icons.bedtime_rounded;
+      default:
+        return Icons.spa_rounded;
     }
   }
 
   String _getLabelForCategory(String category) {
     switch (category) {
-      case 'breathing': return "Respiración";
-      case 'relaxation': return "Relajación";
-      case 'sleep_induction': return "Sueño";
-      default: return "Mindfulness";
+      case 'breathing':
+        return "Respiración";
+      case 'relaxation':
+        return "Relajación";
+      case 'sleep_induction':
+        return "Sueño";
+      default:
+        return "Mindfulness";
     }
   }
 }

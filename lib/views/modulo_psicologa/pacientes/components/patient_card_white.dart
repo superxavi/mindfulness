@@ -7,10 +7,7 @@ import '../paciente_historial_view.dart';
 class PatientCardWhite extends StatelessWidget {
   final PatientModel patient;
 
-  const PatientCardWhite({
-    super.key,
-    required this.patient,
-  });
+  const PatientCardWhite({super.key, required this.patient});
 
   void _showOptions(BuildContext context) {
     showModalBottomSheet(
@@ -92,7 +89,10 @@ class PatientCardWhite extends StatelessWidget {
           fontWeight: FontWeight.w600,
         ),
       ),
-      trailing: Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
+      trailing: Icon(
+        Icons.chevron_right_rounded,
+        color: AppColors.textSecondary,
+      ),
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 10),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),

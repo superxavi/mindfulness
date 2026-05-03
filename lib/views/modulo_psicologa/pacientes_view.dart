@@ -84,9 +84,7 @@ class _PacientesViewState extends State<PacientesView> {
                         itemCount: viewModel.patients.length,
                         itemBuilder: (context, index) {
                           final patient = viewModel.patients[index];
-                          return PatientCardWhite(
-                            patient: patient,
-                          );
+                          return PatientCardWhite(patient: patient);
                         },
                       ),
 

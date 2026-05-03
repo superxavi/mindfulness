@@ -1,5 +1,3 @@
-import '../../models/assigned_activity_model.dart';
-
 class PatientModel {
   final String id;
   final String fullName;
@@ -21,7 +19,8 @@ class PatientModel {
     this.totalCompleted = 0,
   });
 
-  factory PatientModel.fromMap(Map<String, dynamic> map, {
+  factory PatientModel.fromMap(
+    Map<String, dynamic> map, {
     double progress = 0.0,
     String? currentTask,
     int totalAssigned = 0,
