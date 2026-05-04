@@ -84,7 +84,7 @@ class RoutinesService {
   }) async {
     final fileName =
         '${DateTime.now().millisecondsSinceEpoch}_${p.basename(audioFile.path)}';
-    
+
     // Nueva ruta organizada dentro de tu bucket 'psicologos'
     final storagePath = 'sonidos/routines/$routineId/$fileName';
 
@@ -107,7 +107,9 @@ class RoutinesService {
         'file_size_bytes': await audioFile.length(),
       });
     } catch (e) {
-      throw Exception("Error de Storage: Verifica que el bucket 'psicologos' exista y tenga políticas RLS. Detalle: $e");
+      throw Exception(
+        "Error de Storage: Verifica que el bucket 'psicologos' exista y tenga políticas RLS. Detalle: $e",
+      );
     }
   }
 

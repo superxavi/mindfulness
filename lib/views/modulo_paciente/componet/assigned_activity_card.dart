@@ -52,8 +52,8 @@ class AssignedActivityCard extends StatelessWidget {
                               color: AppColors.textPrimary,
                               decoration:
                                   activity.status == AssignmentStatus.completed
-                                      ? TextDecoration.lineThrough
-                                      : TextDecoration.none,
+                                  ? TextDecoration.lineThrough
+                                  : TextDecoration.none,
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
                               height: 1.2,

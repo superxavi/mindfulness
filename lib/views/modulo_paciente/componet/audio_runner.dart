@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import '../../../models/routine_model.dart';
-import 'breathing_sphere.dart';
 import 'session_progress_widgets.dart';
 
 class AudioRunner extends StatefulWidget {
@@ -202,7 +201,9 @@ class _CategoryVisualizer extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Colors.cyanAccent.withValues(alpha: 0.15 * animation.value),
+                color: Colors.cyanAccent.withValues(
+                  alpha: 0.15 * animation.value,
+                ),
                 blurRadius: 40,
                 spreadRadius: 20 * animation.value,
               ),
@@ -215,7 +216,9 @@ class _CategoryVisualizer extends StatelessWidget {
           child: Icon(
             icon,
             size: 80,
-            color: Colors.cyanAccent.withValues(alpha: 0.6 + (0.4 * animation.value)),
+            color: Colors.cyanAccent.withValues(
+              alpha: 0.6 + (0.4 * animation.value),
+            ),
           ),
         );
       },

@@ -19,8 +19,9 @@ class SoundCard extends StatelessWidget {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           title: const Text("Guardar Recurso"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -55,8 +56,9 @@ class SoundCard extends StatelessWidget {
               Wrap(
                 spacing: 8,
                 runSpacing: 4,
-                children:
-                    ["Relajación", "Naturaleza", "Focalización"].map((cat) {
+                children: ["Relajación", "Naturaleza", "Focalización"].map((
+                  cat,
+                ) {
                   final isSelected = selectedFromChips == cat;
                   return ChoiceChip(
                     label: Text(cat),
@@ -74,8 +76,9 @@ class SoundCard extends StatelessWidget {
                     selectedColor: AppColors.lavender.withValues(alpha: 0.3),
                     labelStyle: TextStyle(
                       color: isSelected ? AppColors.lavender : Colors.black87,
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ),
                   );
                 }).toList(),

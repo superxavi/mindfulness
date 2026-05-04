@@ -26,7 +26,8 @@ class MultimediaSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasSelection = selectedAudioFile != null || selectedExternalUrl != null;
+    final hasSelection =
+        selectedAudioFile != null || selectedExternalUrl != null;
 
     return Card(
       color: AppColors.surface,
@@ -48,10 +49,11 @@ class MultimediaSelector extends StatelessWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      selectedAudioName ?? (selectedAudioFile != null ? p.basename(selectedAudioFile!.path) : "Audio seleccionado"),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                      ),
+                      selectedAudioName ??
+                          (selectedAudioFile != null
+                              ? p.basename(selectedAudioFile!.path)
+                              : "Audio seleccionado"),
+                      style: const TextStyle(fontWeight: FontWeight.w600),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -64,7 +66,7 @@ class MultimediaSelector extends StatelessWidget {
               ),
               const SizedBox(height: 12),
             ],
-            
+
             // Botón Favoritos
             ElevatedButton.icon(
               onPressed: () => onShowFavorites(viewModel),
@@ -79,9 +81,12 @@ class MultimediaSelector extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 12),
-            const Text("o también puedes", style: TextStyle(fontSize: 12, color: Colors.grey)),
+            const Text(
+              "o también puedes",
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+            ),
             const SizedBox(height: 12),
 
             // Botón Subir Archivo

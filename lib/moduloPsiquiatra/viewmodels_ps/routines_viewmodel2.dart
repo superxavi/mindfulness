@@ -84,8 +84,9 @@ class RoutinesViewModel2 extends ChangeNotifier {
 
         // CALCULO DE CICLOS: duracion / (suma de segundos del patron)
         final cycleSeconds = inhale + holdIn + exhale + holdOut;
-        final cyclesRecommended =
-            cycleSeconds > 0 ? (durationSeconds / cycleSeconds).floor() : 1;
+        final cyclesRecommended = cycleSeconds > 0
+            ? (durationSeconds / cycleSeconds).floor()
+            : 1;
 
         await _service.saveBreathingPattern(
           routineId: routineId,
@@ -99,7 +100,6 @@ class RoutinesViewModel2 extends ChangeNotifier {
           category == 'relaxation' ||
           category == 'sleep_induction' ||
           category == 'terapia_sonido') {
-        
         if (externalAudioUrl != null) {
           // Opción A: URL de favoritos
           final label = audioName != null ? "$audioName external" : "external";

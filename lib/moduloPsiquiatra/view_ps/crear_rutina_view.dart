@@ -102,7 +102,10 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
                     itemBuilder: (context, i) {
                       final fav = vm.favorites[i];
                       return ListTile(
-                        leading: const Icon(Icons.music_note, color: Colors.blue),
+                        leading: const Icon(
+                          Icons.music_note,
+                          color: Colors.blue,
+                        ),
                         title: Text(fav['name'] ?? "Sin nombre"),
                         subtitle: Text(fav['category'] ?? ""),
                         onTap: () {
@@ -139,12 +142,11 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
       exhale: _selectedCategory == 'breathing' ? _exhale : null,
       holdOut: _selectedCategory == 'breathing' ? _holdOut : null,
       audioFile: (_selectedCategory != 'breathing') ? _selectedAudioFile : null,
-      externalAudioUrl: 
-          (_selectedCategory != 'breathing')
+      externalAudioUrl: (_selectedCategory != 'breathing')
           ? _selectedExternalUrl
           : null,
       audioName: (_selectedCategory != 'breathing') ? _selectedAudioName : null,
-      );
+    );
 
     if (mounted) {
       if (success) {
@@ -190,13 +192,19 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _titleController,
-                    decoration: _inputDecoration("Titulo de la rutina", Icons.title),
+                    decoration: _inputDecoration(
+                      "Titulo de la rutina",
+                      Icons.title,
+                    ),
                     validator: (v) => v!.isEmpty ? "Campo requerido" : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _descController,
-                    decoration: _inputDecoration("Descripcion o beneficios", Icons.description),
+                    decoration: _inputDecoration(
+                      "Descripcion o beneficios",
+                      Icons.description,
+                    ),
                     maxLines: 3,
                   ),
                   const SizedBox(height: 24),
@@ -211,8 +219,10 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
                         child: Text(c.replaceAll('_', ' ').toUpperCase()),
                       );
                     }).toList(),
-                    onChanged: (val) => setState(() => _selectedCategory = val!),
-                    validator: (v) => v == null ? "Selecciona una categoria" : null,
+                    onChanged: (val) =>
+                        setState(() => _selectedCategory = val!),
+                    validator: (v) =>
+                        v == null ? "Selecciona una categoria" : null,
                   ),
                   const SizedBox(height: 16),
                   CustomSlider(
@@ -221,7 +231,8 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
                     min: 1,
                     max: 45,
                     unit: "min",
-                    onChanged: (val) => setState(() => _durationMinutes = val.toInt()),
+                    onChanged: (val) =>
+                        setState(() => _durationMinutes = val.toInt()),
                   ),
                   const Divider(height: 48),
 
@@ -296,12 +307,17 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
                         backgroundColor: AppColors.mint,
                         foregroundColor: Colors.white,
                         minimumSize: const Size(double.infinity, 60),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                         elevation: 0,
                       ),
                       child: const Text(
                         "GUARDAR RUTINA",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   const SizedBox(height: 30),
@@ -314,7 +330,11 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.lavender),
+      style: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w800,
+        color: AppColors.lavender,
+      ),
     );
   }
 
