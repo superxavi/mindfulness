@@ -84,25 +84,57 @@ class RoutinesService {
   }) async {
     final fileName =
         '${DateTime.now().millisecondsSinceEpoch}_${p.basename(audioFile.path)}';
-    final storagePath = 'routines/$routineId/$fileName';
+    
+    // Nueva ruta organizada dentro de tu bucket 'psicologos'
+    final storagePath = 'sonidos/routines/$routineId/$fileName';
 
-    // 1. Subir al bucket 'routine-assets'
-    await _db.storage
-        .from('routine-assets')
-        .upload(
-          storagePath,
-          audioFile,
-          fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
-        );
+    try {
+      // 1. Subir al bucket 'psicologos'
+      await _db.storage
+          .from('psicologos')
+          .upload(
+            storagePath,
+            audioFile,
+            fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
+          );
 
-    // 2. Registrar en routine_assets
+      // 2. Registrar en routine_assets
+      await _db.from('routine_assets').insert({
+        'routine_id': routineId,
+        'storage_bucket': 'psicologos',
+        'storage_path': storagePath,
+        'file_type': 'audio',
+        'file_size_bytes': await audioFile.length(),
+      });
+    } catch (e) {
+      throw Exception("Error de Storage: Verifica que el bucket 'psicologos' exista y tenga políticas RLS. Detalle: $e");
+    }
+  }
+
+  /// Paso C (Opción Audio Externo): Registrar URL de favoritos en routine_assets
+  Future<void> saveExternalRoutineAudio({
+    required String routineId,
+    required String externalUrl,
+    required String bucketLabel,
+  }) async {
     await _db.from('routine_assets').insert({
       'routine_id': routineId,
-      'storage_bucket': 'routine-assets',
-      'storage_path': storagePath,
+      'storage_bucket': bucketLabel, // Guardamos el nombre + external
+      'storage_path': externalUrl,
       'file_type': 'audio',
-      'file_size_bytes': await audioFile.length(),
+      'file_size_bytes': 0,
     });
+  }
+
+  /// Obtiene los favoritos del profesional actual
+  Future<List<Map<String, dynamic>>> getProfessionalFavorites() async {
+    final userId = _db.auth.currentUser?.id;
+    if (userId == null) return [];
+
+    return await _db
+        .from('professional_favorites')
+        .select()
+        .eq('professional_id', userId);
   }
 
   Future<void> assignTask(String patientId, String routineId) async {

@@ -11,6 +11,8 @@ class RoutinesViewModel2 extends ChangeNotifier {
   bool isLoading = false;
   String? errorMessage;
 
+  List<Map<String, dynamic>> favorites = [];
+
   Future<void> loadRoutines() async {
     isLoading = true;
     errorMessage = null;
@@ -21,6 +23,8 @@ class RoutinesViewModel2 extends ChangeNotifier {
       if (categories.isEmpty) {
         categories = await _service.getEnumCategories();
       }
+      // Cargamos favoritos preventivamente
+      favorites = await _service.getProfessionalFavorites();
     } catch (e) {
       errorMessage = "No se pudieron cargar las plantillas";
     } finally {
@@ -33,6 +37,7 @@ class RoutinesViewModel2 extends ChangeNotifier {
   Future<void> loadCategories() async {
     try {
       categories = await _service.getEnumCategories();
+      favorites = await _service.getProfessionalFavorites();
       notifyListeners();
     } catch (_) {}
   }
@@ -50,6 +55,8 @@ class RoutinesViewModel2 extends ChangeNotifier {
     int? holdOut,
     // Para audio
     File? audioFile,
+    String? externalAudioUrl,
+    String? audioName,
   }) async {
     isLoading = true;
     errorMessage = null;
@@ -88,16 +95,30 @@ class RoutinesViewModel2 extends ChangeNotifier {
           holdOut: holdOut,
           cyclesRecommended: cyclesRecommended,
         );
-      } else if (category == 'soundscape' || category == 'relaxation') {
-        if (audioFile == null) {
+      } else if (category == 'soundscape' ||
+          category == 'relaxation' ||
+          category == 'sleep_induction' ||
+          category == 'terapia_sonido') {
+        
+        if (externalAudioUrl != null) {
+          // Opción A: URL de favoritos
+          final label = audioName != null ? "$audioName external" : "external";
+          await _service.saveExternalRoutineAudio(
+            routineId: routineId,
+            externalUrl: externalAudioUrl,
+            bucketLabel: label,
+          );
+        } else if (audioFile != null) {
+          // Opción B: Archivo físico
+          await _service.uploadRoutineAudio(
+            routineId: routineId,
+            audioFile: audioFile,
+          );
+        } else {
           throw Exception(
-            "Debes subir un archivo de audio para esta categoria",
+            "Debes seleccionar un favorito o subir un archivo de audio",
           );
         }
-        await _service.uploadRoutineAudio(
-          routineId: routineId,
-          audioFile: audioFile,
-        );
       }
 
       await loadRoutines();

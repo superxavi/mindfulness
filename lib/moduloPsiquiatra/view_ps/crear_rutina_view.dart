@@ -2,11 +2,13 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../viewmodels_ps/routines_viewmodel2.dart';
+import 'componets/breathing_cycles_info.dart';
+import 'componets/custom_slider.dart';
+import 'componets/multimedia_selector.dart';
 
 class CrearRutinaView extends StatefulWidget {
   const CrearRutinaView({super.key});
@@ -31,6 +33,8 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
 
   // Parámetros de audio
   File? _selectedAudioFile;
+  String? _selectedExternalUrl;
+  String? _selectedAudioName;
 
   @override
   void initState() {
@@ -59,11 +63,65 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
       if (result != null && result.files.single.path != null) {
         setState(() {
           _selectedAudioFile = File(result.files.single.path!);
+          _selectedExternalUrl = null;
+          _selectedAudioName = null;
         });
       }
     } catch (e) {
       debugPrint("Error al seleccionar archivo: $e");
     }
+  }
+
+  void _showFavoritesPicker(RoutinesViewModel2 vm) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "Mis Sonidos Favoritos",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              if (vm.favorites.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Text("No tienes sonidos guardados como favoritos."),
+                )
+              else
+                Flexible(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: vm.favorites.length,
+                    itemBuilder: (context, i) {
+                      final fav = vm.favorites[i];
+                      return ListTile(
+                        leading: const Icon(Icons.music_note, color: Colors.blue),
+                        title: Text(fav['name'] ?? "Sin nombre"),
+                        subtitle: Text(fav['category'] ?? ""),
+                        onTap: () {
+                          setState(() {
+                            _selectedExternalUrl = fav['preview_url'];
+                            _selectedAudioName = fav['name'];
+                            _selectedAudioFile = null;
+                          });
+                          Navigator.pop(context);
+                        },
+                      );
+                    },
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _submit() async {
@@ -80,13 +138,13 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
       holdIn: _selectedCategory == 'breathing' ? _holdIn : null,
       exhale: _selectedCategory == 'breathing' ? _exhale : null,
       holdOut: _selectedCategory == 'breathing' ? _holdOut : null,
-      audioFile:
-          (_selectedCategory == 'soundscape' ||
-              _selectedCategory == 'relaxation' ||
-              _selectedCategory == 'sleep_induction')
-          ? _selectedAudioFile
+      audioFile: (_selectedCategory != 'breathing') ? _selectedAudioFile : null,
+      externalAudioUrl: 
+          (_selectedCategory != 'breathing')
+          ? _selectedExternalUrl
           : null,
-    );
+      audioName: (_selectedCategory != 'breathing') ? _selectedAudioName : null,
+      );
 
     if (mounted) {
       if (success) {
@@ -132,26 +190,20 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _titleController,
-                    decoration: _inputDecoration(
-                      "Titulo de la rutina",
-                      Icons.title,
-                    ),
+                    decoration: _inputDecoration("Titulo de la rutina", Icons.title),
                     validator: (v) => v!.isEmpty ? "Campo requerido" : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _descController,
-                    decoration: _inputDecoration(
-                      "Descripcion o beneficios",
-                      Icons.description,
-                    ),
+                    decoration: _inputDecoration("Descripcion o beneficios", Icons.description),
                     maxLines: 3,
                   ),
                   const SizedBox(height: 24),
                   _buildSectionTitle("Categoria y Duracion"),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    initialValue: _selectedCategory,
+                    value: _selectedCategory,
                     decoration: _inputDecoration("Categoria", Icons.category),
                     items: categories.map((c) {
                       return DropdownMenuItem(
@@ -159,124 +211,78 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
                         child: Text(c.replaceAll('_', ' ').toUpperCase()),
                       );
                     }).toList(),
-                    onChanged: (val) =>
-                        setState(() => _selectedCategory = val!),
-                    validator: (v) =>
-                        v == null ? "Selecciona una categoria" : null,
+                    onChanged: (val) => setState(() => _selectedCategory = val!),
+                    validator: (v) => v == null ? "Selecciona una categoria" : null,
                   ),
                   const SizedBox(height: 16),
-                  _buildSlider(
-                    "Duracion total",
-                    _durationMinutes,
-                    1,
-                    45,
-                    "min",
-                    (val) => setState(() => _durationMinutes = val.toInt()),
+                  CustomSlider(
+                    label: "Duracion total",
+                    value: _durationMinutes,
+                    min: 1,
+                    max: 45,
+                    unit: "min",
+                    onChanged: (val) => setState(() => _durationMinutes = val.toInt()),
                   ),
                   const Divider(height: 48),
 
-                  // Lógica Dinámica según Categoría
                   if (_selectedCategory == 'breathing') ...[
                     _buildSectionTitle("Patron de Respiracion"),
                     const SizedBox(height: 16),
-                    _buildSlider(
-                      "Inhalar",
-                      _inhale,
-                      1,
-                      12,
-                      "seg",
-                      (v) => setState(() => _inhale = v.toInt()),
+                    CustomSlider(
+                      label: "Inhalar",
+                      value: _inhale,
+                      min: 1,
+                      max: 12,
+                      unit: "seg",
+                      onChanged: (v) => setState(() => _inhale = v.toInt()),
                     ),
-                    _buildSlider(
-                      "Sostener (lleno)",
-                      _holdIn,
-                      0,
-                      12,
-                      "seg",
-                      (v) => setState(() => _holdIn = v.toInt()),
+                    CustomSlider(
+                      label: "Sostener (lleno)",
+                      value: _holdIn,
+                      min: 0,
+                      max: 12,
+                      unit: "seg",
+                      onChanged: (v) => setState(() => _holdIn = v.toInt()),
                     ),
-                    _buildSlider(
-                      "Exhalar",
-                      _exhale,
-                      1,
-                      12,
-                      "seg",
-                      (v) => setState(() => _exhale = v.toInt()),
+                    CustomSlider(
+                      label: "Exhalar",
+                      value: _exhale,
+                      min: 1,
+                      max: 12,
+                      unit: "seg",
+                      onChanged: (v) => setState(() => _exhale = v.toInt()),
                     ),
-                    _buildSlider(
-                      "Sostener (vacio)",
-                      _holdOut,
-                      0,
-                      12,
-                      "seg",
-                      (v) => setState(() => _holdOut = v.toInt()),
+                    CustomSlider(
+                      label: "Sostener (vacio)",
+                      value: _holdOut,
+                      min: 0,
+                      max: 12,
+                      unit: "seg",
+                      onChanged: (v) => setState(() => _holdOut = v.toInt()),
                     ),
                     const SizedBox(height: 16),
-                    _buildCyclesInfo(),
+                    BreathingCyclesInfo(
+                      inhale: _inhale,
+                      holdIn: _holdIn,
+                      exhale: _exhale,
+                      holdOut: _holdOut,
+                      durationMinutes: _durationMinutes,
+                    ),
                   ] else if (_selectedCategory != null) ...[
                     _buildSectionTitle("Contenido Multimedia"),
                     const SizedBox(height: 16),
-                    Card(
-                      color: AppColors.surface,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        side: BorderSide(color: AppColors.outlineVariant),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          children: [
-                            if (_selectedAudioFile != null) ...[
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.audio_file,
-                                    color: Colors.blue,
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      p.basename(_selectedAudioFile!.path),
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () => setState(
-                                      () => _selectedAudioFile = null,
-                                    ),
-                                    icon: const Icon(
-                                      Icons.close,
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            ElevatedButton.icon(
-                              onPressed: _pickAudio,
-                              icon: const Icon(Icons.cloud_upload_outlined),
-                              label: Text(
-                                _selectedAudioFile == null
-                                    ? "Seleccionar Archivo de Audio"
-                                    : "Cambiar Audio",
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.lavender,
-                                foregroundColor: Colors.white,
-                                minimumSize: const Size(double.infinity, 50),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    MultimediaSelector(
+                      selectedAudioFile: _selectedAudioFile,
+                      selectedExternalUrl: _selectedExternalUrl,
+                      selectedAudioName: _selectedAudioName,
+                      onPickLocal: _pickAudio,
+                      onShowFavorites: _showFavoritesPicker,
+                      viewModel: viewModel,
+                      onClear: () => setState(() {
+                        _selectedAudioFile = null;
+                        _selectedExternalUrl = null;
+                        _selectedAudioName = null;
+                      }),
                     ),
                   ],
 
@@ -290,17 +296,12 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
                         backgroundColor: AppColors.mint,
                         foregroundColor: Colors.white,
                         minimumSize: const Size(double.infinity, 60),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                         elevation: 0,
                       ),
                       child: const Text(
                         "GUARDAR RUTINA",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ),
                   const SizedBox(height: 30),
@@ -310,70 +311,10 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
     );
   }
 
-  Widget _buildCyclesInfo() {
-    final int cycleTime = _inhale + _holdIn + _exhale + _holdOut;
-    final int totalSeconds = _durationMinutes * 60;
-    final int cycles = cycleTime > 0 ? (totalSeconds / cycleTime).floor() : 0;
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.mint.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.mint.withValues(alpha: 0.3)),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "Tiempo por ciclo:",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              Text("$cycleTime seg"),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "Ciclos totales estimadas:",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              Text(
-                "$cycles",
-                style: TextStyle(
-                  color: AppColors.mint,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            "Se realizarán $cycles ciclos completos en ${_durationMinutes} min.",
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.w800,
-        color: AppColors.lavender,
-      ),
+      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.lavender),
     );
   }
 
@@ -391,43 +332,6 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
         borderRadius: BorderRadius.circular(16),
         borderSide: BorderSide(color: AppColors.outlineVariant),
       ),
-    );
-  }
-
-  Widget _buildSlider(
-    String label,
-    int value,
-    double min,
-    double max,
-    String unit,
-    Function(double) onChanged,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-            Text(
-              "$value $unit",
-              style: TextStyle(
-                color: AppColors.mint,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        Slider(
-          value: value.toDouble(),
-          min: min,
-          max: max,
-          divisions: (max - min).toInt(),
-          activeColor: AppColors.mint,
-          inactiveColor: AppColors.mint.withValues(alpha: 0.2),
-          onChanged: onChanged,
-        ),
-      ],
     );
   }
 }
