@@ -65,6 +65,7 @@ class RoutinesService {
     required int holdIn,
     required int exhale,
     required int holdOut,
+    required int cyclesRecommended,
   }) async {
     await _db.from('breathing_patterns').insert({
       'routine_id': routineId,
@@ -72,7 +73,7 @@ class RoutinesService {
       'hold_in_sec': holdIn,
       'exhale_sec': exhale,
       'hold_out_sec': holdOut,
-      'cycles_recommended': 5,
+      'cycles_recommended': cyclesRecommended,
     });
   }
 

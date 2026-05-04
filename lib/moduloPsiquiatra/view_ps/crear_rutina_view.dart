@@ -211,6 +211,8 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
                       "seg",
                       (v) => setState(() => _holdOut = v.toInt()),
                     ),
+                    const SizedBox(height: 16),
+                    _buildCyclesInfo(),
                   ] else if (_selectedCategory != null) ...[
                     _buildSectionTitle("Contenido Multimedia"),
                     const SizedBox(height: 16),
@@ -305,6 +307,62 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
                 ],
               ),
             ),
+    );
+  }
+
+  Widget _buildCyclesInfo() {
+    final int cycleTime = _inhale + _holdIn + _exhale + _holdOut;
+    final int totalSeconds = _durationMinutes * 60;
+    final int cycles = cycleTime > 0 ? (totalSeconds / cycleTime).floor() : 0;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.mint.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.mint.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Tiempo por ciclo:",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text("$cycleTime seg"),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Ciclos totales estimadas:",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              Text(
+                "$cycles",
+                style: TextStyle(
+                  color: AppColors.mint,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            "Se realizarán $cycles ciclos completos en ${_durationMinutes} min.",
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey[600],
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ],
+      ),
     );
   }
 

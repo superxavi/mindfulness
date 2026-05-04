@@ -74,12 +74,19 @@ class RoutinesViewModel2 extends ChangeNotifier {
             holdOut == null) {
           throw Exception("Faltan datos del patron de respiracion");
         }
+
+        // CALCULO DE CICLOS: duracion / (suma de segundos del patron)
+        final cycleSeconds = inhale + holdIn + exhale + holdOut;
+        final cyclesRecommended =
+            cycleSeconds > 0 ? (durationSeconds / cycleSeconds).floor() : 1;
+
         await _service.saveBreathingPattern(
           routineId: routineId,
           inhale: inhale,
           holdIn: holdIn,
           exhale: exhale,
           holdOut: holdOut,
+          cyclesRecommended: cyclesRecommended,
         );
       } else if (category == 'soundscape' || category == 'relaxation') {
         if (audioFile == null) {
