@@ -13,90 +13,141 @@ class SoundCard extends StatelessWidget {
   // --- DIÁLOGO PARA ELEGIR O ESCRIBIR CATEGORÍA ---
   void _showCategoryDialog(BuildContext context, FreesoundViewModel vm) {
     final TextEditingController customController = TextEditingController();
+    String selectedFromChips = "";
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text("Guardar Recurso"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("Elige una categoría o escribe una nueva:"),
-            SizedBox(height: 15),
-            TextField(
-              controller: customController,
-              decoration: InputDecoration(
-                hintText: "Ej: Insomnio, Ansiedad...",
-                filled: true,
-                fillColor: AppColors.surfaceLow,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Text("Guardar Recurso"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text("Elige una categoría o escribe una nueva:"),
+              const SizedBox(height: 15),
+              TextField(
+                controller: customController,
+                onChanged: (val) {
+                  // Si el usuario escribe manualmente, desmarcamos los chips si no coinciden
+                  if (val != selectedFromChips) {
+                    setState(() => selectedFromChips = "");
+                  }
+                },
+                decoration: InputDecoration(
+                  hintText: "Ej: Insomnio, Ansiedad...",
+                  filled: true,
+                  fillColor: AppColors.surfaceLow,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
+              const SizedBox(height: 15),
+              const Text(
+                "Sugerencias:",
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              // Chips de selección (ChoiceChip)
+              Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                children: ["Relajación", "Naturaleza", "Focalización"].map((
+                  cat,
+                ) {
+                  final isSelected = selectedFromChips == cat;
+                  return ChoiceChip(
+                    label: Text(cat),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      setState(() {
+                        if (selected) {
+                          selectedFromChips = cat;
+                          customController.text = cat;
+                        } else {
+                          selectedFromChips = "";
+                        }
+                      });
+                    },
+                    selectedColor: AppColors.lavender.withValues(alpha: 0.3),
+                    labelStyle: TextStyle(
+                      color: isSelected ? AppColors.lavender : Colors.black87,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("Cancelar", style: TextStyle(color: AppColors.error)),
             ),
-            const SizedBox(height: 10),
-            // Chips de categorías rápidas
-            Wrap(
-              spacing: 8,
-              children: ["Relajación", "Naturaleza", "Focalización"].map((cat) {
-                return ActionChip(
-                  label: Text(cat),
-                  onPressed: () => _handleSave(context, vm, cat),
-                );
-              }).toList(),
+            ElevatedButton(
+              onPressed: () {
+                final text = customController.text.trim();
+                if (text.isNotEmpty) {
+                  // Capturamos el messenger ANTES de cerrar el diálogo
+                  final messenger = ScaffoldMessenger.of(context);
+                  Navigator.pop(context);
+                  _handleSave(messenger, vm, text);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Escribe una categoría")),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.mint,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text("Guardar"),
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text("Cancelar", style: TextStyle(color: AppColors.error)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final text = customController.text.trim();
-              if (text.isNotEmpty) _handleSave(context, vm, text);
-            },
-            child: const Text("Guardar"),
-          ),
-        ],
       ),
     );
   }
 
   // --- LÓGICA DE PERSISTENCIA CON CONFIRMACIONES ---
   void _handleSave(
-    BuildContext context,
+    ScaffoldMessengerState messenger,
     FreesoundViewModel vm,
     String category,
   ) async {
-    Navigator.pop(context); // Cerramos el diálogo
-
     try {
       await vm.markAsFavorite(sound, category);
 
-      // SNACKBAR DE ÉXITO
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("✅ Agregado a favoritos en '$category'"),
-            backgroundColor: AppColors.mint,
-            behavior: SnackBarBehavior.floating,
+      // Usamos el messenger capturado previamente
+      messenger.showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.white),
+              const SizedBox(width: 10),
+              Text("✅ Guardado en '$category'"),
+            ],
           ),
-        );
-      }
+          backgroundColor: AppColors.mint,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 2),
+        ),
+      );
     } catch (e) {
-      // SNACKBAR DE ERROR (Lo que faltaba)
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("❌ Ya existe en tus favoritos o hubo un error"),
-            backgroundColor: AppColors.error,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text("❌ Error: ${e.toString()}"),
+          backgroundColor: AppColors.error,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     }
   }
 

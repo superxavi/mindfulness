@@ -101,6 +101,7 @@ class _RoutineSessionViewState extends State<RoutineSessionView> {
       return AudioRunner(
         audioUrl: audioUrl,
         durationSeconds: widget.routine.durationSeconds,
+        category: widget.routine.category,
         onComplete: _onSessionFinished,
       );
     }
