@@ -211,7 +211,7 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
                   _buildSectionTitle("Categoria y Duracion"),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: _selectedCategory,
+                    initialValue: _selectedCategory,
                     decoration: _inputDecoration("Categoria", Icons.category),
                     items: categories.map((c) {
                       return DropdownMenuItem(
