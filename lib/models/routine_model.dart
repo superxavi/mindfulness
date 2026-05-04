@@ -7,6 +7,7 @@ class RoutineModel {
     required this.durationSeconds,
     this.breathingPattern,
     this.audioUrl,
+    this.createdBy,
   });
 
   final String id;
@@ -16,6 +17,7 @@ class RoutineModel {
   final int durationSeconds;
   final BreathingPatternModel? breathingPattern;
   final String? audioUrl;
+  final String? createdBy;
 
   factory RoutineModel.fromMap(
     Map<String, dynamic> map, {
@@ -30,6 +32,7 @@ class RoutineModel {
       durationSeconds: map['duration_seconds'] as int? ?? 180,
       breathingPattern: breathingPattern,
       audioUrl: audioUrl,
+      createdBy: map['created_by'] as String?,
     );
   }
 

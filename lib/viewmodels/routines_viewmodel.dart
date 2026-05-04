@@ -29,8 +29,11 @@ class RoutinesViewModel extends ChangeNotifier {
   List<AssignedActivityModel> get assignedActivities => _assignedActivities;
 
   List<RoutineModel> get filteredRoutines {
-    if (_selectedCategory == RoutineCategory.all) return _routines;
-    return _routines
+    // Filtrar primero por creador (solo default/null)
+    final baseRoutines = _routines.where((routine) => routine.createdBy == null);
+
+    if (_selectedCategory == RoutineCategory.all) return baseRoutines.toList();
+    return baseRoutines
         .where((routine) => routine.category == _selectedCategory)
         .toList();
   }
