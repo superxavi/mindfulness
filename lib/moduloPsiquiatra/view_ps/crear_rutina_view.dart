@@ -188,12 +188,12 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
               child: ListView(
                 padding: const EdgeInsets.all(24),
                 children: [
-                  _buildSectionTitle("Informacion Basica"),
+                  _buildSectionTitle("Información básica"),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _titleController,
                     decoration: _inputDecoration(
-                      "Titulo de la rutina",
+                      "Título de la rutina",
                       Icons.title,
                     ),
                     validator: (v) => v!.isEmpty ? "Campo requerido" : null,
@@ -202,7 +202,7 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
                   TextFormField(
                     controller: _descController,
                     decoration: _inputDecoration(
-                      "Descripcion o beneficios",
+                      "Descripción o beneficios",
                       Icons.description,
                     ),
                     maxLines: 3,

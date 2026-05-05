@@ -1,74 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:mindfulness_app/moduloCitas/viewmodels/appointments_viewmodel.dart';
-import 'package:mindfulness_app/moduloTareas/viewmodels/tasks_viewmodel.dart';
-import 'package:mindfulness_app/viewmodels/patient_history_viewmodel.dart';
-import 'package:mindfulness_app/viewmodels/reminders_viewmodel.dart';
-import 'package:mindfulness_app/viewmodels/routines_viewmodel.dart';
-import 'package:mindfulness_app/viewmodels/self_assessments_viewmodel.dart';
-import 'package:mindfulness_app/viewmodels/sleep_habits_viewmodel.dart';
-import 'package:mindfulness_app/viewmodels/thought_entries_viewmodel.dart';
 import 'package:mindfulness_app/views/modulo_paciente/reminders_view.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../viewmodels/auth_viewmodel.dart';
 import '../../viewmodels/theme_viewmodel.dart';
+import 'componet/patient_navigation_helper.dart';
 import 'sleep_habits_view.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
-
-  Future<void> _showLogoutDialog(
-    BuildContext context,
-    AuthViewModel authViewModel,
-  ) async {
-    final bool? confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(
-          'Cerrar sesion',
-          style: TextStyle(color: AppColors.textPrimary),
-        ),
-        content: Text(
-          'Confirma que deseas salir de tu cuenta.',
-          style: TextStyle(color: AppColors.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.error,
-              foregroundColor: AppColors.surfaceLowest,
-              minimumSize: const Size(96, 48),
-            ),
-            child: const Text('Salir'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirm == true) {
-      await authViewModel.signOut();
-
-      if (context.mounted) {
-        // Limpieza profunda del estado para evitar fugas de datos entre usuarios
-        context.read<RoutinesViewModel>().reset();
-        context.read<ThoughtEntriesViewModel>().reset();
-        context.read<TasksViewModel>().reset();
-        context.read<RemindersViewModel>().reset();
-        context.read<PatientHistoryViewModel>().reset();
-        context.read<SelfAssessmentsViewModel>().reset();
-        context.read<SleepHabitsViewModel>().reset();
-        context.read<AppointmentsViewModel>().reset();
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,12 +19,26 @@ class ProfileView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        title: Text(
+          'Mi Perfil',
+          style: TextStyle(color: AppColors.textPrimary),
+        ),
+        iconTheme: IconThemeData(color: AppColors.textPrimary),
+        actions: [
+          IconButton(
+            tooltip: 'Menú principal',
+            onPressed: () => PatientNavigationHelper.returnToMainMenu(context),
+            icon: const Icon(Icons.home_outlined),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: ListView(
           padding: EdgeInsets.all(24),
           children: [
-            Text('Mi Perfil', style: Theme.of(context).textTheme.displayMedium),
-            SizedBox(height: 32),
             Card(
               color: AppColors.surface,
               elevation: 0,
@@ -144,8 +99,8 @@ class ProfileView extends StatelessWidget {
             _buildSettingsTile(
               context: context,
               icon: Icons.hotel_rounded,
-              title: 'Mis habitos de sueno',
-              subtitle: 'Horarios y carga academica',
+              title: 'Mis hábitos de sueño',
+              subtitle: 'Horarios y carga académica',
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const SleepHabitsView()),
@@ -162,35 +117,6 @@ class ProfileView extends StatelessWidget {
                   MaterialPageRoute(builder: (_) => const RemindersView()),
                 );
               },
-            ),
-            SizedBox(height: 32),
-            OutlinedButton.icon(
-              onPressed: authViewModel.isLoading
-                  ? null
-                  : () => _showLogoutDialog(context, authViewModel),
-              icon: authViewModel.isLoading
-                  ? SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: AppColors.error,
-                      ),
-                    )
-                  : Icon(Icons.logout_rounded),
-              label: Text(
-                authViewModel.isLoading
-                    ? 'Cerrando sesion...'
-                    : 'Cerrar sesion',
-              ),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.error,
-                side: BorderSide(color: AppColors.error),
-                minimumSize: const Size(double.infinity, 56),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
             ),
             SizedBox(height: 24),
           ],

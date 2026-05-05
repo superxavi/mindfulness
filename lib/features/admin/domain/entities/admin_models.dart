@@ -79,6 +79,7 @@ enum AdminSection {
   settings,
   legal,
   metrics,
+  menu,
 }
 
 extension AdminSectionX on AdminSection {
@@ -89,9 +90,10 @@ extension AdminSectionX on AdminSection {
       AdminSection.roles => 'Roles',
       AdminSection.content => 'Contenidos',
       AdminSection.media => 'Multimedia',
-      AdminSection.settings => 'Configuracion',
+      AdminSection.settings => 'Configuración',
       AdminSection.legal => 'Consentimiento',
-      AdminSection.metrics => 'Metricas',
+      AdminSection.metrics => 'Métricas',
+      AdminSection.menu => 'Más',
     };
   }
 }
@@ -274,7 +276,7 @@ class AdminContentItem {
 
   String get durationLabel {
     final seconds = durationSeconds;
-    if (seconds == null) return 'Sin duracion';
+    if (seconds == null) return 'Sin duración';
     final minutes = (seconds / 60).ceil();
     return '$minutes min';
   }
@@ -286,7 +288,7 @@ class AdminContentItem {
     return AdminContentItem(
       id: map['id'] as String? ?? '',
       type: AdminContentType.routine,
-      title: map['title'] as String? ?? 'Rutina sin titulo',
+      title: map['title'] as String? ?? 'Rutina sin título',
       description: map['description'] as String? ?? '',
       category: map['category']?.toString() ?? 'relaxation',
       status: AdminContentStatusX.fromValue(map['content_status'] as String?),
@@ -303,7 +305,7 @@ class AdminContentItem {
     return AdminContentItem(
       id: map['id'] as String? ?? '',
       type: AdminContentType.message,
-      title: map['title'] as String? ?? 'Mensaje de orientacion',
+      title: map['title'] as String? ?? 'Mensaje de orientación',
       description: map['message_body'] as String? ?? '',
       category: map['category']?.toString() ?? 'general',
       status: AdminContentStatusX.fromValue(map['content_status'] as String?),
@@ -341,7 +343,7 @@ class AdminMediaAsset {
   final DateTime updatedAt;
 
   String get fileSizeLabel {
-    if (fileSizeBytes <= 0) return 'Sin tamano';
+    if (fileSizeBytes <= 0) return 'Sin tamaño';
     final mb = fileSizeBytes / (1024 * 1024);
     return '${mb.toStringAsFixed(1)} MB';
   }
@@ -398,7 +400,7 @@ class AdminSystemSettings {
       defaultTheme: 'light',
       darkModeEnabled: true,
       responsibleUseNotice:
-          'Esta aplicacion promueve bienestar y no reemplaza atencion profesional.',
+          'Esta aplicación promueve bienestar y no reemplaza atención profesional.',
       generalOrientationMessage:
           'Usa las rutinas como apoyo de autocuidado y busca ayuda profesional si lo necesitas.',
       recommendedSessionDurationMinutes: 10,
@@ -417,7 +419,7 @@ class AdminSystemSettings {
       darkModeEnabled: map['dark_mode_enabled'] as bool? ?? true,
       responsibleUseNotice:
           map['responsible_use_notice']?.toString() ??
-          'Esta aplicacion promueve bienestar y no reemplaza atencion profesional.',
+          'Esta aplicación promueve bienestar y no reemplaza atención profesional.',
       generalOrientationMessage:
           map['general_orientation_message']?.toString() ??
           'Usa las rutinas como apoyo de autocuidado y busca ayuda profesional si lo necesitas.',

@@ -41,17 +41,17 @@ class SelfAssessmentsViewModel extends ChangeNotifier {
   }) async {
     final normalizedEmotion = emotionId.trim();
     if (sessionId.trim().isEmpty) {
-      _errorMessage = 'No se pudo asociar la autoevaluacion a la sesion.';
+      _errorMessage = 'No se pudo asociar la autoevaluación a la sesión.';
       notifyListeners();
       return false;
     }
     if (normalizedEmotion.isEmpty) {
-      _errorMessage = 'Selecciona una emocion para continuar.';
+      _errorMessage = 'Selecciona una emoción para continuar.';
       notifyListeners();
       return false;
     }
     if (intensity < 1 || intensity > 10) {
-      _errorMessage = 'Selecciona una intensidad valida entre 1 y 10.';
+      _errorMessage = 'Selecciona una intensidad válida entre 1 y 10.';
       notifyListeners();
       return false;
     }
@@ -74,7 +74,7 @@ class SelfAssessmentsViewModel extends ChangeNotifier {
       return true;
     } catch (_) {
       _errorMessage =
-          'No se pudo guardar la autoevaluacion. Revisa tu conexion e intenta nuevamente.';
+          'No se pudo guardar la autoevaluación. Revisa tu conexión e intenta nuevamente.';
       return false;
     } finally {
       _isSaving = false;

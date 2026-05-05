@@ -26,7 +26,7 @@ class RoutineModel {
   }) {
     return RoutineModel(
       id: map['id'] as String,
-      title: map['title'] as String? ?? 'Rutina sin titulo',
+      title: map['title'] as String? ?? 'Rutina sin título',
       description: map['description'] as String? ?? '',
       category: RoutineCategoryX.fromValue(map['category'] as String?),
       durationSeconds: map['duration_seconds'] as int? ?? 180,

@@ -324,7 +324,7 @@ class _ThoughtEntriesViewState extends State<ThoughtEntriesView> {
             style: TextStyle(color: AppColors.textPrimary),
           ),
           content: Text(
-            'Esta accion elimina la entrada de forma permanente.',
+            'Esta acción elimina la entrada de forma permanente.',
             style: TextStyle(color: AppColors.textSecondary),
           ),
           actions: [
@@ -543,7 +543,7 @@ class _EmptyThoughtsState extends StatelessWidget {
             border: Border.all(color: AppColors.outlineVariant),
           ),
           child: Text(
-            'Aun no tienes entradas guardadas. Registra tu primer pensamiento para descargar tension emocional.',
+            'Aún no tienes entradas guardadas. Registra tu primer pensamiento para descargar tensión emocional.',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: AppColors.textSecondary,

@@ -121,7 +121,7 @@ class _AudioRunnerState extends State<AudioRunner>
         const Spacer(),
 
         Text(
-          widget.category?.label ?? 'Sesion de Audio',
+          widget.category?.label ?? 'Sesión de audio',
           style: TextStyle(
             color: Colors.white.withValues(alpha: 0.7),
             fontSize: 16,
@@ -156,7 +156,7 @@ class _AudioRunnerState extends State<AudioRunner>
 
         const Spacer(),
         PhaseProgressBar(
-          label: _isBuffering ? 'Cargando audio...' : 'Sesion en curso',
+          label: _isBuffering ? 'Cargando audio...' : 'Sesión en curso',
           time: '$minutes:${seconds.toString().padLeft(2, '0')}',
           progress: progress,
         ),

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../viewmodels/auth_viewmodel.dart';
 import '../../viewmodels/patient_history_viewmodel.dart';
+import 'patient_appointments_view.dart';
 import 'thought_entries_view.dart';
 
 class PatientHomeView extends StatefulWidget {
@@ -65,7 +66,7 @@ class _PatientHomeViewState extends State<PatientHomeView> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Accesos rapidos para tus rutinas de descanso y regulacion emocional.',
+              'Accesos rápidos para tus rutinas de descanso y regulación emocional.',
               style: TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 16,
@@ -103,6 +104,22 @@ class _PatientHomeViewState extends State<PatientHomeView> {
                 );
               },
             ),
+            const SizedBox(height: 12),
+            _HomeQuickCard(
+              icon: Icons.calendar_month_rounded,
+              title: 'Citas con Psicología',
+              subtitle:
+                  'Solicita, confirma y revisa tus horarios en un solo lugar.',
+              accent: AppColors.tertiary,
+              buttonLabel: 'Gestionar citas',
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const PatientAppointmentsView(),
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -130,7 +147,7 @@ class _HomeProgressSummaryCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Progreso reciente (7 dias)',
+            'Progreso reciente (7 días)',
             style: TextStyle(
               color: AppColors.textPrimary,
               fontSize: 18,
@@ -181,7 +198,7 @@ class _HomeProgressSummaryCard extends StatelessWidget {
                   child: _HomeMetricPill(
                     icon: Icons.calendar_today_outlined,
                     label: 'Frecuencia',
-                    value: '${metrics.activeDaysInRange} dias',
+                    value: '${metrics.activeDaysInRange} días',
                     color: AppColors.lavender,
                   ),
                 ),

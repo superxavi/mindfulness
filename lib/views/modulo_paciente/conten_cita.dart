@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mindfulness_app/views/modulo_paciente/mis_citas_view.dart';
-import 'package:mindfulness_app/views/modulo_paciente/solicitar_cita_view.dart';
 
 import '../../core/theme/app_colors.dart';
 import './componet/action_button.dart';
+import 'patient_appointments_view.dart';
 
 class CitaCont extends StatelessWidget {
   const CitaCont({super.key});
@@ -11,14 +10,23 @@ class CitaCont extends StatelessWidget {
   void _goToResources(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const SolicitarCitaView()),
+      MaterialPageRoute(
+        builder: (context) => const PatientAppointmentsView(
+          initialTab: PatientAppointmentsTab.requests,
+          openRequestComposerOnStart: true,
+        ),
+      ),
     );
   }
 
   void _goToFavorites(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const MisCitasView()),
+      MaterialPageRoute(
+        builder: (context) => const PatientAppointmentsView(
+          initialTab: PatientAppointmentsTab.requests,
+        ),
+      ),
     );
   }
 

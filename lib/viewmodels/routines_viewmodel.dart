@@ -53,7 +53,7 @@ class RoutinesViewModel extends ChangeNotifier {
     } catch (_) {
       _routines = RoutinesRepository.fallbackRoutines;
       _errorMessage =
-          'No se pudo sincronizar el catalogo con Supabase. Mostramos rutinas basicas disponibles en el dispositivo.';
+          'No se pudo sincronizar el catálogo con Supabase. Mostramos rutinas básicas disponibles en el dispositivo.';
     }
 
     try {
@@ -61,7 +61,7 @@ class RoutinesViewModel extends ChangeNotifier {
     } catch (_) {
       _assignedActivities = const [];
       _errorMessage ??=
-          'No se pudo cargar actividades asignadas por tu psicologa.';
+          'No se pudo cargar actividades asignadas por tu psicóloga.';
     } finally {
       _hasLoadedData = true;
       _isLoading = false;
@@ -100,7 +100,7 @@ class RoutinesViewModel extends ChangeNotifier {
       );
     } catch (_) {
       _errorMessage =
-          'No se pudo iniciar la sesion. Verifica tu conexion e intenta nuevamente.';
+          'No se pudo iniciar la sesión. Verifica tu conexión e intenta nuevamente.';
       return null;
     } finally {
       _isCompleting = false;
@@ -121,7 +121,7 @@ class RoutinesViewModel extends ChangeNotifier {
       return true;
     } catch (_) {
       _errorMessage =
-          'La rutina termino, pero no se pudo guardar el registro. Intenta nuevamente con conexion.';
+          'La rutina terminó, pero no se pudo guardar el registro. Intenta nuevamente con conexión.';
       return false;
     } finally {
       _isCompleting = false;

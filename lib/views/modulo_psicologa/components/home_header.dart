@@ -15,7 +15,7 @@ class HomeHeader extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "¡Hola Buenos Dias!",
+              "¡Hola, buenos días!",
               style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
             ),
             SizedBox(height: 4),
@@ -29,7 +29,7 @@ class HomeHeader extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Text(
-              "\"Un dia a la vez...\"",
+              "\"Un día a la vez...\"",
               style: TextStyle(
                 color: AppColors.lavender,
                 fontStyle: FontStyle.italic,

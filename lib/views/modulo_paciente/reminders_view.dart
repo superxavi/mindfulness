@@ -5,6 +5,7 @@ import '../../core/theme/app_colors.dart';
 import '../../models/reminder_model.dart';
 import '../../viewmodels/auth_viewmodel.dart';
 import '../../viewmodels/reminders_viewmodel.dart';
+import 'componet/patient_navigation_helper.dart';
 
 class RemindersView extends StatefulWidget {
   const RemindersView({super.key});
@@ -76,12 +77,40 @@ class _RemindersViewState extends State<RemindersView> {
                             ),
                           ),
                           SizedBox(width: 12),
-                          Text(
-                            'Recordatorios',
-                            style: TextStyle(
-                              color: AppColors.textPrimary,
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
+                          Expanded(
+                            child: Text(
+                              'Recordatorios',
+                              style: TextStyle(
+                                color: AppColors.textPrimary,
+                                fontSize: 24,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          SizedBox(
+                            width: 44,
+                            height: 44,
+                            child: OutlinedButton(
+                              onPressed: () =>
+                                  PatientNavigationHelper.returnToMainMenu(
+                                    context,
+                                  ),
+                              style: OutlinedButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                side: BorderSide(
+                                  color: AppColors.outlineVariant,
+                                ),
+                                backgroundColor: AppColors.surfaceLow,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+                              child: Icon(
+                                Icons.home_outlined,
+                                color: AppColors.textPrimary,
+                                size: 20,
+                              ),
                             ),
                           ),
                         ],
@@ -111,7 +140,7 @@ class _RemindersViewState extends State<RemindersView> {
                           ),
                           SizedBox(height: 8),
                           Text(
-                            'Configura avisos para higiene del sueno, inicio de rutina y pausas de relajacion.',
+                            'Configura avisos para higiene del sueño, inicio de rutina y pausas de relajación.',
                             style: TextStyle(
                               color: AppColors.textSecondary,
                               fontSize: 16,
@@ -182,7 +211,7 @@ class _RemindersViewState extends State<RemindersView> {
   }
 
   String _getDaysSummary(int daysOfWeek) {
-    if (daysOfWeek == 127) return 'Todos los dias';
+    if (daysOfWeek == 127) return 'Todos los días';
     if (daysOfWeek == 0) return 'Ningun dia';
 
     final days = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
@@ -318,7 +347,7 @@ class _EmptyState extends StatelessWidget {
             border: Border.all(color: AppColors.outlineVariant),
           ),
           child: Text(
-            'Aun no tienes recordatorios configurados. Usa "Nuevo aviso" para crear el primero.',
+            'Aún no tienes recordatorios configurados. Usa "Nuevo aviso" para crear el primero.',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: AppColors.textSecondary,
@@ -469,7 +498,7 @@ class _ReminderFormSheetState extends State<ReminderFormSheet> {
           ),
           SizedBox(height: 22),
           Text(
-            'Dias',
+            'Días',
             style: TextStyle(
               color: AppColors.lavender,
               fontSize: 14,

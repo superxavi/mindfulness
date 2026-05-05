@@ -161,7 +161,7 @@ class AdminPanelViewModel extends ChangeNotifier {
       _errorMessage = _friendlyLoadError(
         error,
         fallback:
-            'No se pudo cargar el resumen administrativo. Verifica la conexion y permisos.',
+            'No se pudo cargar el resumen administrativo. Verifica la conexión y permisos.',
       );
     } finally {
       _isLoadingDashboard = false;
@@ -181,7 +181,7 @@ class AdminPanelViewModel extends ChangeNotifier {
       _errorMessage = _friendlyLoadError(
         error,
         fallback:
-            'No se pudo cargar usuarios. Revisa permisos, conexion y migraciones.',
+            'No se pudo cargar usuarios. Revisa permisos, conexión y migraciones.',
       );
     } finally {
       _isLoadingUsers = false;
@@ -240,7 +240,7 @@ class AdminPanelViewModel extends ChangeNotifier {
       _settings = AdminSystemSettings.empty();
       _errorMessage = _friendlyLoadError(
         error,
-        fallback: 'No se pudo cargar la configuracion general del sistema.',
+        fallback: 'No se pudo cargar la configuración general del sistema.',
       );
     } finally {
       _isLoadingSettings = false;
@@ -450,7 +450,7 @@ class AdminPanelViewModel extends ChangeNotifier {
   Future<bool> saveSystemSettings(AdminSystemSettings settings) {
     return _runSavingOperation(
       () => _repository.saveSystemSettings(settings),
-      successMessage: 'Configuracion general guardada.',
+      successMessage: 'Configuración general guardada.',
       afterSuccess: loadSystemSettings,
     );
   }
@@ -465,7 +465,7 @@ class AdminPanelViewModel extends ChangeNotifier {
     required bool isCurrent,
   }) async {
     if (version.trim().isEmpty || title.trim().isEmpty || body.trim().isEmpty) {
-      _setError('Completa version, titulo y texto antes de guardar.');
+      _setError('Completa versión, título y texto antes de guardar.');
       return false;
     }
 
@@ -494,10 +494,10 @@ class AdminPanelViewModel extends ChangeNotifier {
     required AdminContentItem? existingItem,
   }) {
     if (title.trim().isEmpty || description.trim().isEmpty) {
-      return 'Completa titulo y descripcion antes de guardar.';
+      return 'Completa título y descripción antes de guardar.';
     }
     if (type == AdminContentType.routine && (durationSeconds ?? 0) <= 0) {
-      return 'La duracion de la rutina debe ser mayor a cero.';
+      return 'La duración de la rutina debe ser mayor a cero.';
     }
     if (status != AdminContentStatus.active) return null;
     if (type == AdminContentType.message) return null;
@@ -548,9 +548,9 @@ class AdminPanelViewModel extends ChangeNotifier {
     if (raw.contains('permission') ||
         raw.contains('row-level') ||
         raw.contains('Acceso')) {
-      return 'No tienes permisos administrativos para completar esta accion.';
+      return 'No tienes permisos administrativos para completar esta acción.';
     }
-    return 'No se pudo completar la accion. Revisa la conexion e intenta nuevamente.';
+    return 'No se pudo completar la acción. Revisa la conexión e intenta nuevamente.';
   }
 
   String _friendlyLoadError(Object error, {required String fallback}) {
@@ -610,6 +610,8 @@ class AdminPanelViewModel extends ChangeNotifier {
         if (!_isLoadingSettings && _legalDocuments.isEmpty) {
           await loadLegalDocuments();
         }
+        break;
+      case AdminSection.menu:
         break;
     }
   }

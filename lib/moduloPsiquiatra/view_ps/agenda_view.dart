@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mindfulness_app/core/theme/app_colors.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/theme/app_colors.dart';
 import '../../moduloCitas/viewmodels/appointments_viewmodel.dart';
+import '../../views/modulo_psicologa/components/professional_navigation_helper.dart';
 import '../componets_ps/agenda_card.dart';
 
 class AgendaView extends StatefulWidget {
@@ -26,20 +27,20 @@ class _AgendaViewState extends State<AgendaView> {
   void _showCompleteDialog(BuildContext context, String id) {
     final notesController = TextEditingController();
 
-    showDialog(
+    showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Finalizar Sesión"),
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Finalizar sesión'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("Escribe tus notas clínicas (privadas):"),
-            SizedBox(height: 10),
+            const Text('Escribe notas de seguimiento:'),
+            const SizedBox(height: 10),
             TextField(
               controller: notesController,
               maxLines: 4,
               decoration: InputDecoration(
-                hintText: "Resumen de la sesión...",
+                hintText: 'Resumen de la sesión...',
                 filled: true,
                 fillColor: AppColors.surfaceLow,
                 border: OutlineInputBorder(
@@ -51,8 +52,8 @@ class _AgendaViewState extends State<AgendaView> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancelar"),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancelar'),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -60,16 +61,13 @@ class _AgendaViewState extends State<AgendaView> {
                 id,
                 notesController.text.trim(),
               );
-              if (context.mounted) {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("✅ Cita completada y guardada en historial"),
-                  ),
-                );
-              }
+              if (!context.mounted) return;
+              Navigator.pop(dialogContext);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Cita completada y registrada.')),
+              );
             },
-            child: const Text("Guardar y Cerrar"),
+            child: const Text('Guardar y cerrar'),
           ),
         ],
       ),
@@ -79,20 +77,27 @@ class _AgendaViewState extends State<AgendaView> {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<AppointmentsViewModel>();
-    // Filtramos solo las CONFIRMADAS para la agenda activa
     final agendaActiva = viewModel.allAppointments
         .where((a) => a.status == 'CONFIRMADA')
         .toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Mi Agenda Confimada"),
+        title: const Text('Agenda confirmada'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            tooltip: 'Volver al panel',
+            onPressed: () =>
+                ProfessionalNavigationHelper.returnToHome(context, tabIndex: 3),
+            icon: const Icon(Icons.home_outlined),
+          ),
+        ],
       ),
       body: viewModel.isLoading
           ? const Center(child: CircularProgressIndicator())
           : agendaActiva.isEmpty
-          ? const Center(child: Text("No tienes citas confirmadas para hoy"))
+          ? const Center(child: Text('No tienes citas confirmadas por ahora.'))
           : ListView.builder(
               itemCount: agendaActiva.length,
               itemBuilder: (context, index) {

@@ -51,7 +51,7 @@ class FakeSelfAssessmentsRepository implements SelfAssessmentsRepository {
 
 const _routine = RoutineModel(
   id: 'routine-1',
-  title: 'Respiracion guiada',
+  title: 'Respiración guiada',
   description: 'desc',
   category: RoutineCategory.breathing,
   durationSeconds: 180,
@@ -88,7 +88,7 @@ void main() {
     await tester.pumpAndSettle();
 
     ElevatedButton startButton = tester.widget(
-      find.widgetWithText(ElevatedButton, 'Iniciar sesion'),
+      find.widgetWithText(ElevatedButton, 'Iniciar sesión'),
     );
     expect(startButton.onPressed, isNull);
 
@@ -96,7 +96,7 @@ void main() {
     await tester.pumpAndSettle();
 
     startButton = tester.widget(
-      find.widgetWithText(ElevatedButton, 'Iniciar sesion'),
+      find.widgetWithText(ElevatedButton, 'Iniciar sesión'),
     );
     expect(startButton.onPressed, isNotNull);
   });
@@ -109,7 +109,7 @@ void main() {
         const Scaffold(
           body: PostSessionAssessmentSheet(
             sessionId: 'session-1',
-            routineTitle: 'Respiracion guiada',
+            routineTitle: 'Respiración guiada',
           ),
         ),
       ),

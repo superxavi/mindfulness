@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:mindfulness_app/views/modulo_paciente/conten_cita.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/presentation/widgets/nocturne_bottom_nav.dart';
+import '../../core/presentation/widgets/nocturne_drawer.dart';
 import '../../core/theme/app_colors.dart';
+import '../../features/auth/presentation/consent_screen.dart';
+import '../../viewmodels/auth_viewmodel.dart';
 import '../../viewmodels/patient_history_viewmodel.dart';
 import '../../viewmodels/sleep_habits_viewmodel.dart';
-import 'patient_home_view.dart';
 import 'patient_history_view.dart';
+import 'patient_home_view.dart';
+import 'patient_support_view.dart';
 import 'profile_view.dart';
+import 'reminders_view.dart';
 import 'routines_library_view.dart';
 import 'sleep_habits_view.dart';
 
@@ -21,6 +26,13 @@ class PatientWrapper extends StatefulWidget {
 class _PatientWrapperState extends State<PatientWrapper> {
   int _selectedIndex = 0;
 
+  final List<Widget> _pages = const [
+    PatientHomeView(),
+    RoutinesLibraryView(),
+    SleepHabitsView(),
+    PatientHistoryView(),
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -30,14 +42,6 @@ class _PatientWrapperState extends State<PatientWrapper> {
       context.read<PatientHistoryViewModel>().loadHistory();
     });
   }
-
-  final List<Widget> _pages = [
-    const PatientHomeView(),
-    const RoutinesLibraryView(),
-    const CitaCont(),
-    const PatientHistoryView(),
-    const ProfileView(),
-  ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -50,7 +54,7 @@ class _PatientWrapperState extends State<PatientWrapper> {
     final sleepViewModel = context.watch<SleepHabitsViewModel>();
 
     if (!sleepViewModel.hasCompletedOnboarding && !sleepViewModel.isLoading) {
-      return SleepHabitsView();
+      return const SleepHabitsView();
     }
 
     if (sleepViewModel.isLoading && !sleepViewModel.hasCompletedOnboarding) {
@@ -62,48 +66,131 @@ class _PatientWrapperState extends State<PatientWrapper> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(color: AppColors.navBorder, width: 1.0),
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        iconTheme: IconThemeData(color: AppColors.textPrimary),
+      ),
+      drawer: NocturneDrawer(
+        userName:
+            context
+                .read<AuthViewModel>()
+                .currentUser
+                ?.userMetadata?['full_name'] ??
+            'Paciente',
+        userEmail: context.read<AuthViewModel>().currentUser?.email ?? '',
+        roleText: 'Paciente',
+        onLogout: () async {
+          await context.read<AuthViewModel>().signOut();
+        },
+        menuItems: [
+          ListTile(
+            leading: Icon(Icons.person_outline, color: AppColors.textPrimary),
+            title: Text(
+              'Perfil del paciente',
+              style: TextStyle(color: AppColors.textPrimary),
+            ),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfileView()),
+              );
+            },
           ),
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          backgroundColor: AppColors.background,
-          selectedItemColor: AppColors.mint,
-          unselectedItemColor: AppColors.textSecondary,
-          type: BottomNavigationBarType.fixed,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home),
-              label: 'Home',
+          ListTile(
+            leading: Icon(Icons.tune_outlined, color: AppColors.textPrimary),
+            title: Text(
+              'Preferencias de experiencia',
+              style: TextStyle(color: AppColors.textPrimary),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.task_alt_outlined),
-              activeIcon: Icon(Icons.task_alt),
-              label: 'Tareas',
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfileView()),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.notifications_active_outlined,
+              color: AppColors.textPrimary,
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today_outlined),
-              activeIcon: Icon(Icons.calendar_today),
-              label: 'Citas',
+            title: Text(
+              'Configuración de recordatorios',
+              style: TextStyle(color: AppColors.textPrimary),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.emoji_events_outlined),
-              activeIcon: Icon(Icons.emoji_events),
-              label: 'Logros',
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const RemindersView()),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.privacy_tip_outlined,
+              color: AppColors.textPrimary,
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              activeIcon: Icon(Icons.person),
-              label: 'Perfil',
+            title: Text(
+              'Privacidad y consentimiento',
+              style: TextStyle(color: AppColors.textPrimary),
             ),
-          ],
-        ),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ConsentScreen()),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.help_outline_rounded,
+              color: AppColors.textPrimary,
+            ),
+            title: Text(
+              'Ayuda o soporte',
+              style: TextStyle(color: AppColors.textPrimary),
+            ),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const PatientSupportView()),
+              );
+            },
+          ),
+        ],
+      ),
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: NocturneBottomNav(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: 'Inicio',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.self_improvement_outlined),
+            activeIcon: Icon(Icons.self_improvement),
+            label: 'Rutinas',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bedtime_outlined),
+            activeIcon: Icon(Icons.bedtime),
+            label: 'Hábitos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.trending_up_outlined),
+            activeIcon: Icon(Icons.trending_up),
+            label: 'Progreso',
+          ),
+        ],
       ),
     );
   }
