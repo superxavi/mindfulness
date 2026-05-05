@@ -35,7 +35,7 @@ class ActivityActionButtons extends StatelessWidget {
         // Botón Buscar Recursos
         Expanded(
           child: _ActionButton(
-            label: 'Buscar Recursos',
+            label: 'Buscar Recursos sonidos',
             icon: Icons.search,
             color: AppColors.lavender, // Un azul llamativo
             onTap: () => _goToResources(context),
@@ -45,7 +45,7 @@ class ActivityActionButtons extends StatelessWidget {
         // Botón Favoritos
         Expanded(
           child: _ActionButton(
-            label: 'Biblioteca',
+            label: 'Biblioteca de sonidos',
             icon: Icons.collections_bookmark,
             color: AppColors.error, // Un rojo suave
             onTap: () => _goToFavorites(context),
