@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mindfulness_app/moduloPsiquiatra/componets_ps/psychiatrist_components.dart';
 import 'package:mindfulness_app/moduloPsiquiatra/view_ps/asignar_tarea_view.dart';
+import 'package:mindfulness_app/views/modulo_psicologa/actividades/conten_asignados.dart';
 
 import '../../core/theme/app_colors.dart';
 import 'cuestionario/components/cuestionario_card_pro.dart';
@@ -17,6 +18,18 @@ class AsignarView extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            const SizedBox(height: 25),
+            PsychiatristActionCard(
+              title: "Ver Tareas Asignadas",
+              subtitle: "puedes ver las tareas asignadas",
+              icon: Icons.person_add,
+              color: Colors.orange,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const Asignarconten()),
+              ),
+            ),
+
             const SizedBox(height: 25),
             PsychiatristActionCard(
               title: "Asignar a Paciente",

@@ -76,53 +76,55 @@ class _ActividadesViewState extends State<ActividadesView> {
 
                 const SizedBox(height: 32),
 
-                // Subtítulo consistente
+                // Subtítulo consistente con estilo moderno
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      width: 4,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: AppColors.mint,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Explorar Catálogo de Rutinas ",
+                          style: textTheme.titleLarge?.copyWith(
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                        Text(
+                          "Basado en tus preferencias",
+                          style: textTheme.bodySmall?.copyWith(
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 10),
-                    Text(
-                      "Explorar Catálogo",
-                      style: textTheme.titleMedium?.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
+                    Icon(Icons.sort_rounded, color: AppColors.mint, size: 24),
                   ],
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 16),
 
                 // Lista de Actividades con diseño unificado
                 if (routinesVM.isLoading)
-                  const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(40.0),
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
-                else if (routinesVM.filteredRoutines.isEmpty)
                   Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(40.0),
-                      child: Text(
-                        routinesVM.routines.isEmpty
-                            ? "No has creado rutinas aún."
-                            : "No se encontraron rutinas con esos filtros.",
-                        style: TextStyle(color: AppColors.textSecondary),
+                      padding: const EdgeInsets.all(60.0),
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppColors.mint,
+                        ),
+                        strokeWidth: 3,
                       ),
                     ),
                   )
+                else if (routinesVM.filteredRoutines.isEmpty)
+                  _buildEmptyState(routinesVM.routines.isEmpty)
                 else
                   ListView.builder(
                     shrinkWrap: true,
+                    padding: EdgeInsets.zero,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: routinesVM.filteredRoutines.length,
                     itemBuilder: (context, index) {
@@ -134,6 +136,50 @@ class _ActividadesViewState extends State<ActividadesView> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(bool noRoutinesAtAll) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 60),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceLow,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                noRoutinesAtAll
+                    ? Icons.add_task_rounded
+                    : Icons.search_off_rounded,
+                size: 40,
+                color: AppColors.textSecondary.withValues(alpha: 0.5),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              noRoutinesAtAll
+                  ? "No has creado rutinas aún"
+                  : "No se encontraron resultados",
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              noRoutinesAtAll
+                  ? "Comienza agregando tu primera actividad"
+                  : "Intenta con otras palabras o filtros",
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+            ),
+          ],
         ),
       ),
     );
