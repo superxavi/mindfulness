@@ -39,7 +39,7 @@ void main() {
 
       expect(success, isFalse);
       expect(repository.createCalls, 0);
-      expect(viewModel.errorMessage, 'Selecciona una emocion para continuar.');
+      expect(viewModel.errorMessage, 'Selecciona una emoción para continuar.');
     });
 
     test('creates assessment successfully', () async {
@@ -74,7 +74,7 @@ void main() {
       expect(success, isFalse);
       expect(
         viewModel.errorMessage,
-        'No se pudo guardar la autoevaluacion. Revisa tu conexion e intenta nuevamente.',
+        'No se pudo guardar la autoevaluación. Revisa tu conexión e intenta nuevamente.',
       );
     });
   });

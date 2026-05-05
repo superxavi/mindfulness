@@ -105,7 +105,7 @@ class RoutinesService {
     required int durationSeconds,
   }) async {
     final userId = _db.auth.currentUser?.id;
-    if (userId == null) throw Exception("Sesion no iniciada");
+    if (userId == null) throw Exception("Sesión no iniciada");
 
     return await _db
         .from('routines')
@@ -205,7 +205,7 @@ class RoutinesService {
 
   Future<void> assignTask(String patientId, String routineId) async {
     final proId = _db.auth.currentUser?.id;
-    if (proId == null) throw Exception("Sesion profesional no valida");
+    if (proId == null) throw Exception("Sesión profesional no válida");
 
     await _db.from('assignments').insert({
       'patient_id': patientId,

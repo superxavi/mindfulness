@@ -141,7 +141,7 @@ class NotificationService {
   String _getReminderMessage(ReminderType type) {
     switch (type) {
       case ReminderType.sleepInduction:
-        return 'Es momento de tu induccion al sueno. Descansa.';
+        return 'Es momento de tu inducción al sueño. Descansa.';
       case ReminderType.routineStart:
         return 'Tu rutina nocturna esta por comenzar. Preparate.';
       case ReminderType.briefRelaxation:
@@ -225,7 +225,7 @@ class NotificationService {
     android: AndroidNotificationDetails(
       'reminders_channel',
       'Recordatorios',
-      channelDescription: 'Notificaciones de habitos de sueno',
+      channelDescription: 'Notificaciones de hábitos de sueño',
       importance: Importance.max,
       priority: Priority.high,
     ),

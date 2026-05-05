@@ -101,7 +101,7 @@ class _PreSessionAssessmentViewState extends State<PreSessionAssessmentView> {
               selectedEmotion: _emotionId,
               intensity: _intensity,
               isSaving: isBusy,
-              buttonLabel: 'Iniciar sesion',
+              buttonLabel: 'Iniciar sesión',
               onEmotionSelected: (value) => setState(() => _emotionId = value),
               onIntensityChanged: (value) => setState(() => _intensity = value),
               onSubmit: _canSubmit && !isBusy ? _startSession : null,

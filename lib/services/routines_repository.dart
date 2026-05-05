@@ -300,7 +300,7 @@ class RoutinesRepository implements RoutinesDataSource {
       id: '66666666-6666-4666-8666-666666666666',
       title: 'Silencio ambiental',
       description:
-          'Sesion sin guia verbal para permanecer en calma, observar la respiracion y dejar que el cuerpo reduzca el ritmo.',
+          'Sesión sin guía verbal para permanecer en calma, observar la respiración y dejar que el cuerpo reduzca el ritmo.',
       category: RoutineCategory.soundscape,
       durationSeconds: 480,
     ),

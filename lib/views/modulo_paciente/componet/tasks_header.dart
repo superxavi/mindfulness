@@ -32,7 +32,7 @@ class TasksHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Asignadas por tu psicologa y rutinas para tu descanso nocturno.',
+                  'Asignadas por tu psicóloga y rutinas para tu descanso nocturno.',
                   style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 16,

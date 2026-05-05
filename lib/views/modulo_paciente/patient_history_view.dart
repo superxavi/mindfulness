@@ -150,12 +150,12 @@ class _RangeSelector extends StatelessWidget {
           ButtonSegment<int>(
             value: 7,
             icon: Icon(Icons.calendar_view_week_rounded),
-            label: Text('7 dias'),
+            label: Text('7 días'),
           ),
           ButtonSegment<int>(
             value: 30,
             icon: Icon(Icons.calendar_month_rounded),
-            label: Text('30 dias'),
+            label: Text('30 días'),
           ),
         ],
         selected: {selectedDays},
@@ -205,7 +205,7 @@ class _ProgressMetricsCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Metricas iniciales',
+            'Métricas iniciales',
             style: TextStyle(
               color: AppColors.textPrimary,
               fontSize: 18,
@@ -217,7 +217,7 @@ class _ProgressMetricsCard extends StatelessWidget {
             icon: Icons.calendar_today_outlined,
             title: 'Frecuencia de uso',
             value:
-                '${metrics.activeDaysInRange} de $selectedRangeDays dias activos',
+                '${metrics.activeDaysInRange} de $selectedRangeDays días activos',
             progress: frequencyProgress,
             color: AppColors.lavender,
           ),
@@ -654,7 +654,7 @@ class _AssignmentContextChip extends StatelessWidget {
     final isAssigned = contextValue == 'assigned';
     final label = isAssigned
         ? 'Asignada por psicologia'
-        : 'Sesion autoiniciada';
+        : 'Sesión autoiniciada';
     final icon = isAssigned ? Icons.groups_rounded : Icons.self_improvement;
     final color = isAssigned ? AppColors.lavender : AppColors.mint;
 

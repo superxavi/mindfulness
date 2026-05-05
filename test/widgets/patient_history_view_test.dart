@@ -86,7 +86,7 @@ void main() {
         HistoryThoughtItem(
           id: 't1',
           createdAt: DateTime(2026, 4, 26, 21, 55),
-          preview: 'Respire profundo y me senti mejor.',
+          preview: 'Respiré profundo y me sentí mejor.',
         ),
       ];
 
@@ -94,7 +94,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Historial personal'), findsOneWidget);
-    expect(find.text('Metricas iniciales'), findsOneWidget);
+    expect(find.text('Métricas iniciales'), findsOneWidget);
     expect(find.text('Frecuencia de uso'), findsOneWidget);
     expect(find.text('Sesiones completadas'), findsOneWidget);
     expect(find.text('Constancia semanal'), findsOneWidget);
@@ -108,7 +108,7 @@ void main() {
       find.descendant(of: tabBar, matching: find.text('Pensamientos')),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Respire profundo y me senti mejor.'), findsOneWidget);
+    expect(find.text('Respiré profundo y me sentí mejor.'), findsOneWidget);
   });
 
   testWidgets('updates content when changing range filter 7/30', (
@@ -118,7 +118,7 @@ void main() {
       ..sessions = [
         HistorySessionItem(
           id: 's1',
-          routineTitle: 'Respiracion 4-7-8',
+          routineTitle: 'Respiración 4-7-8',
           startedAt: DateTime(2026, 4, 24, 22, 0),
           completedAt: DateTime(2026, 4, 24, 22, 8),
           status: HistorySessionStatus.completed,
@@ -130,7 +130,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(repository.lastRangeDays, 7);
-    await tester.tap(find.text('30 dias'));
+    await tester.tap(find.text('30 días'));
     await tester.pumpAndSettle();
     expect(repository.lastRangeDays, 30);
   });

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../models/routine_model.dart';
+import 'componet/patient_navigation_helper.dart';
 import 'self_assessment_flow.dart';
 
 class RoutineDetailView extends StatelessWidget {
@@ -37,13 +38,24 @@ class RoutineDetailView extends StatelessWidget {
                       tooltip: 'Volver',
                     ),
                     const SizedBox(width: 4),
-                    Text(
-                      'Detalle',
-                      style: TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: Text(
+                        'Detalle',
+                        style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
+                    ),
+                    IconButton(
+                      onPressed: () =>
+                          PatientNavigationHelper.returnToMainMenu(context),
+                      icon: Icon(
+                        Icons.home_outlined,
+                        color: AppColors.textPrimary,
+                      ),
+                      tooltip: 'Menú principal',
                     ),
                   ],
                 ),
@@ -138,7 +150,7 @@ class RoutineDetailView extends StatelessWidget {
                 ),
               ),
               child: const Text(
-                'Iniciar sesion',
+                'Iniciar sesión',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               ),
             ),

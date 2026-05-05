@@ -86,7 +86,7 @@ void main() {
       expect(sessionId, isNull);
       expect(
         viewModel.errorMessage,
-        'No se pudo iniciar la sesion. Verifica tu conexion e intenta nuevamente.',
+        'No se pudo iniciar la sesión. Verifica tu conexión e intenta nuevamente.',
       );
     });
   });

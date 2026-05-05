@@ -5,6 +5,7 @@ import '../../core/theme/app_colors.dart';
 import '../../moduloTareas/viewmodels/tasks_viewmodel.dart';
 import '../../viewmodels/auth_viewmodel.dart';
 import 'componet/tarea_card_widget.dart';
+import 'componet/patient_navigation_helper.dart';
 import 'routine_detail_view.dart';
 
 class TareasMainHub extends StatefulWidget {
@@ -60,6 +61,14 @@ class _TareasMainHubState extends State<TareasMainHub> {
             ),
           ),
           centerTitle: false,
+          actions: [
+            IconButton(
+              tooltip: 'Menú principal',
+              onPressed: () =>
+                  PatientNavigationHelper.returnToMainMenu(context),
+              icon: const Icon(Icons.home_outlined),
+            ),
+          ],
           bottom: TabBar(
             indicatorColor: AppColors.mint,
             indicatorWeight: 3,

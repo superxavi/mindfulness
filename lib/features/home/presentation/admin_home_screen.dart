@@ -6,6 +6,8 @@ import '../../../viewmodels/auth_viewmodel.dart';
 import '../../admin/domain/entities/admin_models.dart';
 import '../../admin/presentation/viewmodels/admin_panel_viewmodel.dart';
 import '../../auth/domain/entities/user_role.dart';
+import '../../../core/presentation/widgets/nocturne_bottom_nav.dart';
+import '../../../core/presentation/widgets/nocturne_drawer.dart';
 
 class AdminHomeScreen extends StatelessWidget {
   const AdminHomeScreen({super.key});
@@ -78,16 +80,111 @@ class _AdminAccessDenied extends StatelessWidget {
 class _AdminPanelShell extends StatelessWidget {
   const _AdminPanelShell();
 
+  bool _isBottomNavSection(AdminSection section) {
+    return section == AdminSection.dashboard ||
+        section == AdminSection.users ||
+        section == AdminSection.content ||
+        section == AdminSection.metrics ||
+        section == AdminSection.menu;
+  }
+
+  int _getNavIndex(AdminSection section) {
+    switch (section) {
+      case AdminSection.dashboard:
+        return 0;
+      case AdminSection.users:
+        return 1;
+      case AdminSection.content:
+        return 2;
+      case AdminSection.metrics:
+        return 3;
+      case AdminSection.menu:
+        return 4;
+      default:
+        return 0;
+    }
+  }
+
+  AdminSection _getSectionFromNav(int index) {
+    switch (index) {
+      case 0:
+        return AdminSection.dashboard;
+      case 1:
+        return AdminSection.users;
+      case 2:
+        return AdminSection.content;
+      case 3:
+        return AdminSection.metrics;
+      case 4:
+        return AdminSection.menu;
+      default:
+        return AdminSection.dashboard;
+    }
+  }
+
+  Widget _buildDrawerItem(
+    BuildContext context,
+    AdminPanelViewModel viewModel,
+    AdminSection section,
+    IconData icon,
+  ) {
+    return ListTile(
+      leading: Icon(icon, color: AppColors.textPrimary),
+      title: Text(
+        section.label,
+        style: TextStyle(color: AppColors.textPrimary),
+      ),
+      onTap: () {
+        Navigator.pop(context);
+        viewModel.selectSection(section);
+      },
+    );
+  }
+
+  Widget _buildDrawerSection(String label) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 6),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: AppColors.lavender,
+          fontSize: 13,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<AdminPanelViewModel>();
     final authViewModel = context.watch<AuthViewModel>();
+    final isNavSection = _isBottomNavSection(viewModel.selectedSection);
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
+        leading: isNavSection
+            ? null
+            : IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: AppColors.textPrimary,
+                ),
+                onPressed: () =>
+                    viewModel.selectSection(AdminSection.dashboard),
+              ),
         title: Text(viewModel.selectedSection.label),
         actions: [
+          if (viewModel.selectedSection != AdminSection.dashboard)
+            Tooltip(
+              message: 'Volver al dashboard',
+              child: IconButton(
+                onPressed: () =>
+                    viewModel.selectSection(AdminSection.dashboard),
+                icon: const Icon(Icons.home_outlined),
+              ),
+            ),
           Tooltip(
             message: 'Actualizar',
             child: IconButton(
@@ -97,129 +194,114 @@ class _AdminPanelShell extends StatelessWidget {
               icon: const Icon(Icons.refresh_rounded),
             ),
           ),
-          Tooltip(
-            message: 'Cerrar sesion',
-            child: IconButton(
-              onPressed: authViewModel.signOut,
-              icon: const Icon(Icons.logout_rounded),
-            ),
-          ),
         ],
       ),
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final content = _AdminSectionContent(viewModel: viewModel);
-            if (constraints.maxWidth >= 760) {
-              return Row(
-                children: [
-                  _AdminNavigationRail(viewModel: viewModel),
-                  VerticalDivider(
-                    width: 1,
-                    thickness: 1,
-                    color: AppColors.outlineVariant,
-                  ),
-                  Expanded(child: content),
-                ],
-              );
-            }
-
-            return Column(
-              children: [
-                _AdminSectionTabs(viewModel: viewModel),
-                Expanded(child: content),
+      drawer: isNavSection
+          ? NocturneDrawer(
+              userName:
+                  authViewModel.currentUser?.userMetadata?['full_name'] ??
+                  'Administrador',
+              userEmail:
+                  authViewModel.currentUser?.email ?? 'Gestión del Sistema',
+              roleText: 'Administrador',
+              onLogout: () async {
+                await authViewModel.signOut();
+              },
+              menuItems: [
+                _buildDrawerSection('Gestión extendida'),
+                _buildDrawerItem(
+                  context,
+                  viewModel,
+                  AdminSection.roles,
+                  Icons.security_outlined,
+                ),
+                _buildDrawerItem(
+                  context,
+                  viewModel,
+                  AdminSection.media,
+                  Icons.library_music_outlined,
+                ),
+                _buildDrawerItem(
+                  context,
+                  viewModel,
+                  AdminSection.settings,
+                  Icons.tune_rounded,
+                ),
+                _buildDrawerItem(
+                  context,
+                  viewModel,
+                  AdminSection.legal,
+                  Icons.gavel_rounded,
+                ),
+                _buildDrawerItem(
+                  context,
+                  viewModel,
+                  AdminSection.menu,
+                  Icons.menu_open_rounded,
+                ),
+                _buildDrawerSection('Navegacion principal'),
+                _buildDrawerItem(
+                  context,
+                  viewModel,
+                  AdminSection.dashboard,
+                  Icons.dashboard_outlined,
+                ),
+                _buildDrawerItem(
+                  context,
+                  viewModel,
+                  AdminSection.users,
+                  Icons.groups_outlined,
+                ),
+                _buildDrawerItem(
+                  context,
+                  viewModel,
+                  AdminSection.content,
+                  Icons.widgets_outlined,
+                ),
+                _buildDrawerItem(
+                  context,
+                  viewModel,
+                  AdminSection.metrics,
+                  Icons.analytics_outlined,
+                ),
               ],
-            );
-          },
-        ),
-      ),
+            )
+          : null,
+      body: SafeArea(child: _AdminSectionContent(viewModel: viewModel)),
+      bottomNavigationBar: isNavSection
+          ? NocturneBottomNav(
+              currentIndex: _getNavIndex(viewModel.selectedSection),
+              onTap: (index) =>
+                  viewModel.selectSection(_getSectionFromNav(index)),
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.dashboard_rounded),
+                  label: 'Dashboard',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.groups_2_outlined),
+                  label: 'Usuarios',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.widgets_outlined),
+                  label: 'Contenido',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.analytics_outlined),
+                  label: 'Reportes',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.menu_rounded),
+                  label: 'Más',
+                ),
+              ],
+            )
+          : null,
     );
   }
 }
 
-class _AdminNavigationRail extends StatelessWidget {
-  const _AdminNavigationRail({required this.viewModel});
-
-  final AdminPanelViewModel viewModel;
-
-  @override
-  Widget build(BuildContext context) {
-    return NavigationRail(
-      backgroundColor: AppColors.background,
-      selectedIndex: AdminSection.values.indexOf(viewModel.selectedSection),
-      onDestinationSelected: (index) =>
-          viewModel.selectSection(AdminSection.values[index]),
-      labelType: NavigationRailLabelType.all,
-      selectedIconTheme: IconThemeData(color: AppColors.mint),
-      selectedLabelTextStyle: TextStyle(
-        color: AppColors.mint,
-        fontSize: 14,
-        fontWeight: FontWeight.w700,
-      ),
-      unselectedIconTheme: IconThemeData(color: AppColors.textSecondary),
-      unselectedLabelTextStyle: TextStyle(
-        color: AppColors.textSecondary,
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-      ),
-      destinations: AdminSection.values
-          .map(
-            (section) => NavigationRailDestination(
-              icon: Icon(_sectionIcon(section)),
-              selectedIcon: Icon(_sectionSelectedIcon(section)),
-              label: Text(section.label),
-            ),
-          )
-          .toList(),
-    );
-  }
-}
-
-class _AdminSectionTabs extends StatelessWidget {
-  const _AdminSectionTabs({required this.viewModel});
-
-  final AdminPanelViewModel viewModel;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 58,
-      decoration: BoxDecoration(
-        color: AppColors.background,
-        border: Border(bottom: BorderSide(color: AppColors.outlineVariant)),
-      ),
-      child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) {
-          final section = AdminSection.values[index];
-          final selected = section == viewModel.selectedSection;
-          return FilterChip(
-            selected: selected,
-            showCheckmark: false,
-            avatar: Icon(
-              _sectionIcon(section),
-              size: 18,
-              color: selected ? AppColors.buttonPrimaryText : AppColors.mint,
-            ),
-            label: Text(section.label),
-            onSelected: (_) => viewModel.selectSection(section),
-            selectedColor: AppColors.buttonPrimary,
-            backgroundColor: AppColors.surface,
-            labelStyle: TextStyle(
-              color: selected
-                  ? AppColors.buttonPrimaryText
-                  : AppColors.textPrimary,
-              fontWeight: FontWeight.w700,
-            ),
-          );
-        },
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
-        itemCount: AdminSection.values.length,
-      ),
-    );
-  }
-}
+// Removed _AdminNavigationRail and _AdminSectionTabs
 
 class _AdminSectionContent extends StatelessWidget {
   const _AdminSectionContent({required this.viewModel});
@@ -237,6 +319,7 @@ class _AdminSectionContent extends StatelessWidget {
       AdminSection.settings => _AdminSettingsView(viewModel: viewModel),
       AdminSection.legal => _AdminLegalView(viewModel: viewModel),
       AdminSection.metrics => _AdminMetricsView(viewModel: viewModel),
+      AdminSection.menu => _AdminMenuHubView(viewModel: viewModel),
     };
 
     return Column(
@@ -324,7 +407,7 @@ class _AdminDashboardView extends StatelessWidget {
         _SectionHeader(
           title: 'Panel administrativo',
           subtitle:
-              'Control operativo del sistema sin exponer informacion sensible.',
+              'Control operativo del sistema sin exponer información sensible.',
           trailing: _RefreshButton(
             isLoading: viewModel.isLoadingDashboard,
             onPressed: viewModel.loadDashboard,
@@ -391,7 +474,7 @@ class _AdminDashboardView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Accesos rapidos',
+                  'Accesos rápidos',
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 12),
@@ -414,7 +497,7 @@ class _AdminDashboardView extends StatelessWidget {
                           viewModel.selectSection(AdminSection.content),
                     ),
                     _QuickActionData(
-                      title: 'Configuracion',
+                      title: 'Configuración',
                       icon: Icons.tune_rounded,
                       onTap: () =>
                           viewModel.selectSection(AdminSection.settings),
@@ -440,8 +523,8 @@ class _AdminUsersView extends StatelessWidget {
     return _AdminScrollPage(
       children: [
         _SectionHeader(
-          title: 'Gestion de usuarios',
-          subtitle: 'Datos administrativos: rol, estado y fecha de creacion.',
+          title: 'Gestión de usuarios',
+          subtitle: 'Datos administrativos: rol, estado y fecha de creación.',
           trailing: _RefreshButton(
             isLoading: viewModel.isLoadingUsers,
             onPressed: viewModel.loadUsers,
@@ -455,7 +538,7 @@ class _AdminUsersView extends StatelessWidget {
           const _EmptyBlock(
             icon: Icons.manage_search_rounded,
             title: 'Sin usuarios para mostrar',
-            subtitle: 'Ajusta la busqueda o limpia los filtros.',
+            subtitle: 'Ajusta la búsqueda o limpia los filtros.',
           )
         else
           ...viewModel.filteredUsers.map(
@@ -488,7 +571,7 @@ class _AdminRolesView extends StatelessWidget {
         _SectionHeader(
           title: 'Roles y permisos',
           subtitle:
-              'Cambios controlados con prevencion de configuraciones inseguras.',
+              'Cambios controlados con prevención de configuraciones inseguras.',
           trailing: _RefreshButton(
             isLoading: viewModel.isLoadingUsers,
             onPressed: viewModel.loadUsers,
@@ -555,7 +638,7 @@ class _AdminContentView extends StatelessWidget {
           const _EmptyBlock(
             icon: Icons.widgets_outlined,
             title: 'Sin contenidos',
-            subtitle: 'Crea una rutina o mensaje de orientacion.',
+            subtitle: 'Crea una rutina o mensaje de orientación.',
           )
         else
           ...viewModel.filteredContentItems.map(
@@ -584,7 +667,7 @@ class _AdminMediaView extends StatelessWidget {
       children: [
         _SectionHeader(
           title: 'Recursos multimedia',
-          subtitle: 'Asociacion controlada de audios a rutinas.',
+          subtitle: 'Asociación controlada de audios a rutinas.',
           trailing: ElevatedButton.icon(
             onPressed: viewModel.isSaving || routines.isEmpty
                 ? null
@@ -716,15 +799,15 @@ class _AdminSettingsViewState extends State<_AdminSettingsView> {
     return _AdminScrollPage(
       children: [
         _SectionHeader(
-          title: 'Configuracion general',
-          subtitle: 'Parametros globales controlados solo por Administradores.',
+          title: 'Configuración general',
+          subtitle: 'Parámetros globales controlados solo por Administradores.',
           trailing: _RefreshButton(
             isLoading: viewModel.isLoadingSettings,
             onPressed: viewModel.loadSystemSettings,
           ),
         ),
         if (viewModel.isLoadingSettings)
-          const _LoadingBlock(label: 'Cargando configuracion')
+          const _LoadingBlock(label: 'Cargando configuración')
         else
           _AdminCard(
             child: Column(
@@ -789,7 +872,7 @@ class _AdminSettingsViewState extends State<_AdminSettingsView> {
                   minLines: 3,
                   maxLines: 5,
                   decoration: const InputDecoration(
-                    labelText: 'Mensaje general de orientacion',
+                    labelText: 'Mensaje general de orientación',
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -801,20 +884,20 @@ class _AdminSettingsViewState extends State<_AdminSettingsView> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Preparacion modulo Profesional',
+                  'Preparación módulo Profesional',
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 SwitchListTile(
                   value: _professionalModuleEnabled,
                   onChanged: (value) =>
                       setState(() => _professionalModuleEnabled = value),
-                  title: const Text('Modulo Profesional habilitado'),
+                  title: const Text('Módulo Profesional habilitado'),
                 ),
                 SwitchListTile(
                   value: _assignmentEnabled,
                   onChanged: (value) =>
                       setState(() => _assignmentEnabled = value),
-                  title: const Text('Asignacion Paciente-Profesional'),
+                  title: const Text('Asignación Paciente-Profesional'),
                 ),
                 SwitchListTile(
                   value: _contentValidationEnabled,
@@ -851,7 +934,7 @@ class _AdminSettingsViewState extends State<_AdminSettingsView> {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(Icons.save_outlined),
-                  label: const Text('Guardar configuracion'),
+                  label: const Text('Guardar configuración'),
                 ),
               ],
             ),
@@ -873,7 +956,7 @@ class _AdminLegalView extends StatelessWidget {
         _SectionHeader(
           title: 'Consentimiento y avisos',
           subtitle:
-              'Versiones institucionales sobre confidencialidad y limites de uso.',
+              'Versiones institucionales sobre confidencialidad y límites de uso.',
           trailing: ElevatedButton.icon(
             onPressed: viewModel.isSaving
                 ? null
@@ -909,6 +992,105 @@ class _AdminLegalView extends StatelessWidget {
   }
 }
 
+class _AdminMenuHubView extends StatelessWidget {
+  const _AdminMenuHubView({required this.viewModel});
+
+  final AdminPanelViewModel viewModel;
+
+  @override
+  Widget build(BuildContext context) {
+    return _AdminScrollPage(
+      children: [
+        _SectionHeader(
+          title: 'Más opciones',
+          subtitle:
+              'Submenús administrativos por categoría para una operación ordenada.',
+        ),
+        _AdminCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _MenuCategoryTitle(title: 'Opciones para Paciente'),
+              _MenuEntry(
+                icon: Icons.manage_accounts_outlined,
+                title: 'Gestión de perfiles de paciente',
+                subtitle: 'Consultar cuentas y estado operativo',
+                onTap: () => viewModel.selectSection(AdminSection.users),
+              ),
+              _MenuEntry(
+                icon: Icons.query_stats_outlined,
+                title: 'Seguimiento de hábitos',
+                subtitle: 'Revisar métricas agregadas de uso',
+                onTap: () => viewModel.selectSection(AdminSection.metrics),
+              ),
+              _MenuEntry(
+                icon: Icons.tune_outlined,
+                title: 'Preferencias o segmentos',
+                subtitle: 'Ajustes globales y segmentacion',
+                onTap: () => viewModel.selectSection(AdminSection.settings),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        _AdminCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _MenuCategoryTitle(title: 'Opciones para Psicóloga'),
+              _MenuEntry(
+                icon: Icons.badge_outlined,
+                title: 'Gestión de profesionales',
+                subtitle: 'Cambiar roles y estado de cuentas',
+                onTap: () => viewModel.selectSection(AdminSection.roles),
+              ),
+              _MenuEntry(
+                icon: Icons.link_outlined,
+                title: 'Asignación de pacientes',
+                subtitle: 'Preparacion para integracion profesional',
+                onTap: () => viewModel.selectSection(AdminSection.roles),
+              ),
+              _MenuEntry(
+                icon: Icons.library_music_outlined,
+                title: 'Seguimiento profesional',
+                subtitle: 'Recursos multimedia y contenidos validados',
+                onTap: () => viewModel.selectSection(AdminSection.media),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        _AdminCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _MenuCategoryTitle(title: 'Auditoría y sistema'),
+              _MenuEntry(
+                icon: Icons.article_outlined,
+                title: 'Logs del sistema',
+                subtitle: 'Trazabilidad y eventos relevantes',
+                onTap: () => viewModel.selectSection(AdminSection.metrics),
+              ),
+              _MenuEntry(
+                icon: Icons.history_rounded,
+                title: 'Historial de acciones',
+                subtitle: 'Cambios administrativos recientes',
+                onTap: () => viewModel.selectSection(AdminSection.roles),
+              ),
+              _MenuEntry(
+                icon: Icons.settings_suggest_outlined,
+                title: 'Configuración del sistema',
+                subtitle: 'Permisos, parámetros y notificaciones',
+                onTap: () => viewModel.selectSection(AdminSection.settings),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _AdminMetricsView extends StatelessWidget {
   const _AdminMetricsView({required this.viewModel});
 
@@ -920,7 +1102,7 @@ class _AdminMetricsView extends StatelessWidget {
     return _AdminScrollPage(
       children: [
         _SectionHeader(
-          title: 'Metricas globales',
+          title: 'Métricas globales',
           subtitle:
               'Indicadores agregados. No se muestran pensamientos ni emociones individuales.',
           trailing: _RefreshButton(
@@ -929,7 +1111,7 @@ class _AdminMetricsView extends StatelessWidget {
           ),
         ),
         if (viewModel.isLoadingDashboard)
-          const _LoadingBlock(label: 'Cargando metricas')
+          const _LoadingBlock(label: 'Cargando métricas')
         else ...[
           _MetricGrid(
             cards: [
@@ -952,7 +1134,7 @@ class _AdminMetricsView extends StatelessWidget {
                 color: AppColors.mint,
               ),
               _MetricCardData(
-                title: 'Dias activos 30d',
+                title: 'Días activos 30d',
                 value: '${summary.activeDays30}',
                 icon: Icons.calendar_month_outlined,
                 color: AppColors.tertiary,
@@ -971,7 +1153,7 @@ class _AdminMetricsView extends StatelessWidget {
                 const SizedBox(height: 12),
                 if (summary.activityByPeriod.isEmpty)
                   Text(
-                    'Sin actividad agregada en los ultimos 7 dias.',
+                    'Sin actividad agregada en los últimos 7 días.',
                     style: TextStyle(color: AppColors.textSecondary),
                   )
                 else
@@ -2018,6 +2200,90 @@ class _RoleDistributionRow extends StatelessWidget {
   }
 }
 
+class _MenuCategoryTitle extends StatelessWidget {
+  const _MenuCategoryTitle({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Text(
+        title,
+        style: TextStyle(
+          color: AppColors.lavender,
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+}
+
+class _MenuEntry extends StatelessWidget {
+  const _MenuEntry({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.surfaceHigh,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: AppColors.outlineVariant),
+          ),
+          child: Row(
+            children: [
+              Icon(icon, color: AppColors.mint),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 enum _ChipTone { success, warning, alert, neutral }
 
 class _StatusChip extends StatelessWidget {
@@ -2091,7 +2357,7 @@ Future<void> _showUserDetailSheet(
               _DetailRow(label: 'Estado', value: user.status.label),
               _DetailRow(label: 'Segmento', value: user.segment),
               _DetailRow(label: 'Tema', value: user.themeMode),
-              _DetailRow(label: 'Creacion', value: _dateLabel(user.createdAt)),
+              _DetailRow(label: 'Creación', value: _dateLabel(user.createdAt)),
               const SizedBox(height: 16),
               Row(
                 children: [
@@ -2249,9 +2515,9 @@ class _ContentFormDialogState extends State<_ContentFormDialog> {
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _titleController,
-                  decoration: const InputDecoration(labelText: 'Titulo'),
+                  decoration: const InputDecoration(labelText: 'Título'),
                   validator: (value) => value == null || value.trim().isEmpty
-                      ? 'Ingresa un titulo'
+                      ? 'Ingresa un título'
                       : null,
                 ),
                 const SizedBox(height: 12),
@@ -2262,7 +2528,7 @@ class _ContentFormDialogState extends State<_ContentFormDialog> {
                   decoration: InputDecoration(
                     labelText: _type == AdminContentType.message
                         ? 'Mensaje'
-                        : 'Descripcion',
+                        : 'Descripción',
                   ),
                   validator: (value) => value == null || value.trim().isEmpty
                       ? 'Ingresa el contenido'
@@ -2273,8 +2539,8 @@ class _ContentFormDialogState extends State<_ContentFormDialog> {
                   controller: _categoryController,
                   decoration: InputDecoration(
                     labelText: _type == AdminContentType.message
-                        ? 'Categoria'
-                        : 'Categoria de rutina',
+                        ? 'Categoría'
+                        : 'Categoría de rutina',
                     helperText:
                         'Rutinas: relaxation, breathing, sleep_induction, soundscape',
                   ),
@@ -2605,9 +2871,9 @@ class _LegalDocumentFormDialogState extends State<_LegalDocumentFormDialog> {
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _titleController,
-                  decoration: const InputDecoration(labelText: 'Titulo'),
+                  decoration: const InputDecoration(labelText: 'Título'),
                   validator: (value) => value == null || value.trim().isEmpty
-                      ? 'Ingresa titulo'
+                      ? 'Ingresa título'
                       : null,
                 ),
                 const SizedBox(height: 12),
@@ -2701,32 +2967,6 @@ Future<void> _confirmAndRun(
   if (confirmed == true) {
     await onConfirm();
   }
-}
-
-IconData _sectionIcon(AdminSection section) {
-  return switch (section) {
-    AdminSection.dashboard => Icons.dashboard_outlined,
-    AdminSection.users => Icons.people_alt_outlined,
-    AdminSection.roles => Icons.security_outlined,
-    AdminSection.content => Icons.widgets_outlined,
-    AdminSection.media => Icons.library_music_outlined,
-    AdminSection.settings => Icons.tune_outlined,
-    AdminSection.legal => Icons.policy_outlined,
-    AdminSection.metrics => Icons.insights_outlined,
-  };
-}
-
-IconData _sectionSelectedIcon(AdminSection section) {
-  return switch (section) {
-    AdminSection.dashboard => Icons.dashboard_rounded,
-    AdminSection.users => Icons.people_alt_rounded,
-    AdminSection.roles => Icons.security_rounded,
-    AdminSection.content => Icons.widgets_rounded,
-    AdminSection.media => Icons.library_music_rounded,
-    AdminSection.settings => Icons.tune_rounded,
-    AdminSection.legal => Icons.policy_rounded,
-    AdminSection.metrics => Icons.insights_rounded,
-  };
 }
 
 String _roleLabel(UserRole role) {
