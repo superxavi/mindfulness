@@ -2,7 +2,23 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 
 class CategoryFilters extends StatelessWidget {
-  const CategoryFilters({super.key});
+  final String selectedCategory;
+  final Function(String) onCategorySelected;
+
+  const CategoryFilters({
+    super.key,
+    required this.selectedCategory,
+    required this.onCategorySelected,
+  });
+
+  static const Map<String, String> categoryLabels = {
+    'Todas': 'Todas',
+    'breathing': 'Respiración',
+    'relaxation': 'Relajación',
+    'sleep_induction': 'Sueño',
+    'soundscape': 'Paisajes',
+    'terapia_sonido': 'Terapia',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -18,18 +34,23 @@ class CategoryFilters extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 15),
-        Wrap(
-          spacing: 8, // Espacio horizontal entre chips
-          runSpacing: 10, // Espacio vertical si saltan de línea
-          children: [
-            _buildChip('Todas', true),
-            _buildChip('Sueño', false),
-            _buildChip('Respiración', false),
-            _buildChip('Audios', false),
-            _buildChip('Guías', false),
-            _buildChip('Anti-estrés', false),
-            _buildCreateButton(), // El botón negro del Figma
-          ],
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              ...categoryLabels.entries.map((entry) {
+                final isActive = selectedCategory == entry.key;
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: GestureDetector(
+                    onTap: () => onCategorySelected(entry.key),
+                    child: _buildChip(entry.value, isActive),
+                  ),
+                );
+              }),
+              _buildCreateButton(),
+            ],
+          ),
         ),
       ],
     );
@@ -37,7 +58,7 @@ class CategoryFilters extends StatelessWidget {
 
   Widget _buildChip(String label, bool isActive) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: isActive ? AppColors.figmaBlack : AppColors.figmaGrayBg,
         borderRadius: BorderRadius.circular(20),

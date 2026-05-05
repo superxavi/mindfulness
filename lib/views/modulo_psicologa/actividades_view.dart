@@ -63,10 +63,16 @@ class _ActividadesViewState extends State<ActividadesView> {
                 const ActivityActionButtons(),
 
                 const SizedBox(height: 30),
-                const CategoryFilters(),
+                CategoryFilters(
+                  selectedCategory: routinesVM.selectedCategory,
+                  onCategorySelected: (cat) =>
+                      routinesVM.setSelectedCategory(cat),
+                ),
 
                 const SizedBox(height: 20),
-                ActivitySearch(),
+                ActivitySearch(
+                  onChanged: (query) => routinesVM.setSearchQuery(query),
+                ),
 
                 const SizedBox(height: 32),
 
@@ -102,12 +108,14 @@ class _ActividadesViewState extends State<ActividadesView> {
                       child: CircularProgressIndicator(),
                     ),
                   )
-                else if (routinesVM.routines.isEmpty)
+                else if (routinesVM.filteredRoutines.isEmpty)
                   Center(
                     child: Padding(
                       padding: const EdgeInsets.all(40.0),
                       child: Text(
-                        "No has creado rutinas aún.",
+                        routinesVM.routines.isEmpty
+                            ? "No has creado rutinas aún."
+                            : "No se encontraron rutinas con esos filtros.",
                         style: TextStyle(color: AppColors.textSecondary),
                       ),
                     ),
@@ -116,9 +124,9 @@ class _ActividadesViewState extends State<ActividadesView> {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: routinesVM.routines.length,
+                    itemCount: routinesVM.filteredRoutines.length,
                     itemBuilder: (context, index) {
-                      final routine = routinesVM.routines[index];
+                      final routine = routinesVM.filteredRoutines[index];
                       return ActivityItemCard(routine: routine);
                     },
                   ),
