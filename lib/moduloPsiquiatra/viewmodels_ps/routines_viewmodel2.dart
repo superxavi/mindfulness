@@ -19,11 +19,14 @@ class RoutinesViewModel2 extends ChangeNotifier {
 
   List<RoutineTemplate> get filteredRoutines {
     return routines.where((routine) {
-      final matchesSearch = routine.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          routine.description.toLowerCase().contains(_searchQuery.toLowerCase());
-      
-      final matchesCategory = _selectedCategory == 'Todas' || 
-          routine.category == _selectedCategory;
+      final matchesSearch =
+          routine.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+          routine.description.toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          );
+
+      final matchesCategory =
+          _selectedCategory == 'Todas' || routine.category == _selectedCategory;
 
       return matchesSearch && matchesCategory;
     }).toList();

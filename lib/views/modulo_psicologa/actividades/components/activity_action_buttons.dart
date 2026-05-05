@@ -93,7 +93,10 @@ class _ActionButton extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: color.withValues(alpha: 0.12), width: 1.5),
+              border: Border.all(
+                color: color.withValues(alpha: 0.12),
+                width: 1.5,
+              ),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,

@@ -2,8 +2,63 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/model_psicologa/patient_model.dart';
 import '../../models/routine_model.dart';
 
+import '../../models/model_psicologa/assignment_group_model.dart';
+import '../../models/assigned_activity_model.dart';
+
 class PsychologistRepository {
   final _client = Supabase.instance.client;
+
+  Future<List<PatientAssignmentGroup>> getAllAssignmentsGrouped() async {
+    try {
+      final response = await _client
+          .from('assignments')
+          .select('''
+            id,
+            status,
+            assigned_at,
+            patient_id,
+            profiles:patient_id(full_name),
+            routines:routine_id(title, category)
+          ''')
+          .order('assigned_at', ascending: false);
+
+      final List<dynamic> data = response as List<dynamic>;
+
+      // Agrupar por paciente
+      final Map<String, List<PatientAssignmentDetail>> groups = {};
+      final Map<String, String> patientNames = {};
+
+      for (var item in data) {
+        final patientId = item['patient_id'] as String;
+        final profile = item['profiles'] as Map<String, dynamic>?;
+        final routine = item['routines'] as Map<String, dynamic>?;
+
+        if (profile != null) {
+          patientNames[patientId] = profile['full_name'] ?? 'Sin nombre';
+        }
+
+        final detail = PatientAssignmentDetail(
+          assignmentId: item['id'],
+          routineTitle: routine?['title'] ?? 'Sin título',
+          category: RoutineCategoryX.fromValue(routine?['category']),
+          status: AssignmentStatusX.fromValue(item['status']),
+          assignedAt: DateTime.parse(item['assigned_at']),
+        );
+
+        groups.putIfAbsent(patientId, () => []).add(detail);
+      }
+
+      return groups.entries.map((e) {
+        return PatientAssignmentGroup(
+          patientId: e.key,
+          patientName: patientNames[e.key] ?? 'Paciente Desconocido',
+          assignments: e.value,
+        );
+      }).toList();
+    } catch (e) {
+      throw Exception('Error al obtener asignaciones: $e');
+    }
+  }
 
   Future<List<PatientModel>> getPatients() async {
     try {

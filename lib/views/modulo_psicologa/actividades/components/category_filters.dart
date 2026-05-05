@@ -70,16 +70,20 @@ class CategoryFilters extends StatelessWidget {
         color: isActive ? AppColors.mint : AppColors.surfaceLowest,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isActive ? AppColors.mint : AppColors.outlineVariant.withValues(alpha: 0.3),
+          color: isActive
+              ? AppColors.mint
+              : AppColors.outlineVariant.withValues(alpha: 0.3),
           width: 1.5,
         ),
-        boxShadow: isActive ? [
-          BoxShadow(
-            color: AppColors.mint.withValues(alpha: 0.2),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          )
-        ] : [],
+        boxShadow: isActive
+            ? [
+                BoxShadow(
+                  color: AppColors.mint.withValues(alpha: 0.2),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : [],
       ),
       child: Text(
         label,
@@ -99,11 +103,7 @@ class CategoryFilters extends StatelessWidget {
         color: AppColors.textPrimary,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: const Icon(
-        Icons.add_rounded,
-        color: Colors.white,
-        size: 22,
-      ),
+      child: const Icon(Icons.add_rounded, color: Colors.white, size: 22),
     );
   }
 }

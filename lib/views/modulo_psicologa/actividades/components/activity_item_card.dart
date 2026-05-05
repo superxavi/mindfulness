@@ -7,10 +7,7 @@ import '../routine_preview_screen.dart';
 class ActivityItemCard extends StatelessWidget {
   final RoutineTemplate routine;
 
-  const ActivityItemCard({
-    super.key,
-    required this.routine,
-  });
+  const ActivityItemCard({super.key, required this.routine});
 
   String get _emoji {
     final category = RoutineCategoryX.fromValue(routine.category);
@@ -33,7 +30,7 @@ class ActivityItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final category = RoutineCategoryX.fromValue(routine.category);
-    
+
     // Color dinámico según categoría para el indicador lateral
     final categoryColor = switch (category) {
       RoutineCategory.breathing => AppColors.mint,
@@ -74,12 +71,9 @@ class ActivityItemCard extends StatelessWidget {
               child: Row(
                 children: [
                   // Indicador lateral de color
-                  Container(
-                    width: 6,
-                    color: categoryColor,
-                  ),
+                  Container(width: 6, color: categoryColor),
                   const SizedBox(width: 16),
-                  
+
                   // Icono con contenedor estilizado
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
@@ -124,7 +118,10 @@ class ActivityItemCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: categoryColor.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(6),
@@ -140,7 +137,7 @@ class ActivityItemCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 12),
-                          
+
                           // Badges de información
                           Row(
                             children: [

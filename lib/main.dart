@@ -7,10 +7,11 @@ import 'package:mindfulness_app/moduloPsiquiatra/viewmodels_ps/freesound_viewmod
 import 'package:mindfulness_app/moduloPsiquiatra/viewmodels_ps/routines_viewmodel2.dart';
 import 'package:mindfulness_app/moduloTareas/viewmodels/tasks_viewmodel.dart';
 import 'package:mindfulness_app/services/notification_service.dart';
+import 'package:mindfulness_app/services/services_psicologa/psychologist_repository.dart';
 import 'package:mindfulness_app/viewmodels/reminders_viewmodel.dart';
+import 'package:mindfulness_app/viewmodels/viewmodels_psicologa/assignments_viewmodel.dart';
 import 'package:mindfulness_app/viewmodels/viewmodels_psicologa/patient_details_viewmodel.dart';
 import 'package:mindfulness_app/viewmodels/viewmodels_psicologa/patients_viewmodel.dart';
-import 'package:mindfulness_app/services/services_psicologa/psychologist_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -70,6 +71,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => AssignmentsViewModel()),
         ChangeNotifierProvider(create: (_) => RoutinesViewModel2()),
         ChangeNotifierProvider(create: (_) => ThemeViewModel()..initialize()),
         ChangeNotifierProvider(create: (_) => AuthViewModel()..initialize()),
