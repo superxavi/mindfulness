@@ -35,19 +35,19 @@ class ActivityActionButtons extends StatelessWidget {
         // Botón Buscar Recursos
         Expanded(
           child: _ActionButton(
-            label: 'Buscar Recursos',
-            icon: Icons.search,
-            color: AppColors.lavender, // Un azul llamativo
+            label: 'Explorar Recursos',
+            icon: Icons.auto_awesome_mosaic_rounded,
+            color: AppColors.mint,
             onTap: () => _goToResources(context),
           ),
         ),
-        SizedBox(width: 15),
+        const SizedBox(width: 16),
         // Botón Favoritos
         Expanded(
           child: _ActionButton(
-            label: 'Biblioteca',
-            icon: Icons.collections_bookmark,
-            color: AppColors.error, // Un rojo suave
+            label: 'Mi Biblioteca',
+            icon: Icons.bookmarks_rounded,
+            color: AppColors.lavender,
             onTap: () => _goToFavorites(context),
           ),
         ),
@@ -74,57 +74,65 @@ class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: color.withValues(alpha: 0.12),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: color.withValues(alpha: 0.1),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
       child: Material(
         color: AppColors.surfaceLowest,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(20),
-          splashColor: color.withValues(alpha: 0.15),
-          highlightColor: color.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(24),
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: color.withValues(alpha: 0.15)),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: color.withValues(alpha: 0.12),
+                width: 1.5,
+              ),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
                   color.withValues(alpha: 0.05),
-                  color.withValues(alpha: 0.02),
+                  color.withValues(alpha: 0.01),
                 ],
               ),
             ),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Icon(icon, color: color, size: 30),
+                  child: Icon(icon, color: color, size: 28),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
                 Text(
                   label,
-                  textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: color,
-                    fontSize: 14,
+                    color: AppColors.textPrimary,
+                    fontSize: 15,
                     fontWeight: FontWeight.w800,
-                    letterSpacing: 0.3,
+                    letterSpacing: -0.3,
+                  ),
+                ),
+                Text(
+                  "Gestionar",
+                  style: TextStyle(
+                    color: color.withValues(alpha: 0.7),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],

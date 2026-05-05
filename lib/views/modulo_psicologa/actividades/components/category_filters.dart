@@ -2,52 +2,95 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 
 class CategoryFilters extends StatelessWidget {
-  const CategoryFilters({super.key});
+  final String selectedCategory;
+  final Function(String) onCategorySelected;
+
+  const CategoryFilters({
+    super.key,
+    required this.selectedCategory,
+    required this.onCategorySelected,
+  });
+
+  static const Map<String, String> categoryLabels = {
+    'Todas': 'Todas',
+    'breathing': 'Respiración',
+    'relaxation': 'Relajación',
+    'sleep_induction': 'Sueño',
+    'soundscape': 'Paisajes',
+    'terapia_sonido': 'Terapia',
+  };
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Categorías',
-          style: TextStyle(
-            color: AppColors.surfaceLowest,
-            fontSize: 13,
-            fontWeight: FontWeight.w700,
+        Padding(
+          padding: const EdgeInsets.only(left: 4),
+          child: Text(
+            'CATEGORÍAS',
+            style: TextStyle(
+              color: AppColors.textSecondary.withValues(alpha: 0.6),
+              fontSize: 11,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.2,
+            ),
           ),
         ),
-        const SizedBox(height: 15),
-        Wrap(
-          spacing: 8, // Espacio horizontal entre chips
-          runSpacing: 10, // Espacio vertical si saltan de línea
-          children: [
-            _buildChip('Todas', true),
-            _buildChip('Sueño', false),
-            _buildChip('Respiración', false),
-            _buildChip('Audios', false),
-            _buildChip('Guías', false),
-            _buildChip('Anti-estrés', false),
-            _buildCreateButton(), // El botón negro del Figma
-          ],
+        const SizedBox(height: 12),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          child: Row(
+            children: [
+              ...categoryLabels.entries.map((entry) {
+                final isActive = selectedCategory == entry.key;
+                return Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: GestureDetector(
+                    onTap: () => onCategorySelected(entry.key),
+                    child: _buildChip(entry.value, isActive),
+                  ),
+                );
+              }),
+              _buildCreateButton(),
+            ],
+          ),
         ),
       ],
     );
   }
 
   Widget _buildChip(String label, bool isActive) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
-        color: isActive ? AppColors.figmaBlack : AppColors.figmaGrayBg,
-        borderRadius: BorderRadius.circular(20),
+        color: isActive ? AppColors.mint : AppColors.surfaceLowest,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isActive
+              ? AppColors.mint
+              : AppColors.outlineVariant.withValues(alpha: 0.3),
+          width: 1.5,
+        ),
+        boxShadow: isActive
+            ? [
+                BoxShadow(
+                  color: AppColors.mint.withValues(alpha: 0.2),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : [],
       ),
       child: Text(
         label,
         style: TextStyle(
-          color: isActive ? AppColors.surfaceLowest : AppColors.figmaBlack,
-          fontSize: 11.5,
-          fontWeight: FontWeight.w500,
+          color: isActive ? Colors.white : AppColors.textPrimary,
+          fontSize: 13,
+          fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
         ),
       ),
     );
@@ -55,19 +98,12 @@ class CategoryFilters extends StatelessWidget {
 
   Widget _buildCreateButton() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 9),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: AppColors.textPrimary,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
       ),
-      child: Text(
-        'Crear',
-        style: TextStyle(
-          color: AppColors.surfaceLowest,
-          fontSize: 13,
-          fontWeight: FontWeight.w400,
-        ),
-      ),
+      child: const Icon(Icons.add_rounded, color: Colors.white, size: 22),
     );
   }
 }

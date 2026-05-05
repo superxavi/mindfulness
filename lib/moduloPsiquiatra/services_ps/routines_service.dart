@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../models/routine_model.dart';
 import '../model_ps/routine_model.dart';
 
 class RoutinesService {
@@ -18,7 +20,69 @@ class RoutinesService {
         .eq('created_by', userId)
         .eq('is_active', true);
 
-    return (res as List).map((j) => RoutineTemplate.fromJson(j)).toList();
+    final routinesData = List<Map<String, dynamic>>.from(res as List);
+    if (routinesData.isEmpty) return [];
+
+    final routineIds = routinesData.map((r) => r['id'] as String).toList();
+
+    // 1. Obtener patrones de respiración
+    final patternsResponse = await _db
+        .from('breathing_patterns')
+        .select()
+        .inFilter('routine_id', routineIds);
+
+    final patternRows = List<Map<String, dynamic>>.from(
+      patternsResponse as List,
+    );
+    final patternsByRoutine = {
+      for (final row in patternRows)
+        row['routine_id'] as String: BreathingPatternModel.fromMap(row),
+    };
+
+    // 2. Obtener assets de audio
+    final audiosByRoutine = await _fetchAudioAssets(routineIds);
+
+    return routinesData
+        .map(
+          (j) => RoutineTemplate.fromJson(
+            j,
+            breathingPattern: patternsByRoutine[j['id'] as String],
+            audioUrl: audiosByRoutine[j['id'] as String],
+          ),
+        )
+        .toList();
+  }
+
+  Future<Map<String, String>> _fetchAudioAssets(List<String> routineIds) async {
+    if (routineIds.isEmpty) return {};
+
+    try {
+      final assetsResponse = await _db
+          .from('routine_assets')
+          .select('routine_id, storage_path, storage_bucket, file_type')
+          .eq('is_active', true)
+          .inFilter('routine_id', routineIds);
+
+      final assetRows = List<Map<String, dynamic>>.from(assetsResponse as List);
+      final audiosByRoutine = <String, String>{};
+
+      for (final row in assetRows) {
+        final path = row['storage_path'] as String;
+        final bucket = row['storage_bucket'] as String? ?? 'routine-assets';
+
+        if (path.startsWith('http')) {
+          audiosByRoutine[row['routine_id'] as String] = path;
+        } else {
+          // Intentamos obtener la URL pública del bucket correspondiente
+          final url = _db.storage.from(bucket).getPublicUrl(path);
+          audiosByRoutine[row['routine_id'] as String] = url;
+        }
+      }
+      return audiosByRoutine;
+    } catch (e) {
+      debugPrint("Error fetching audio assets for pro: $e");
+      return {};
+    }
   }
 
   /// Obtiene las categorías del ENUM routine_category reflejando la estructura de Supabase

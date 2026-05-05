@@ -11,6 +11,37 @@ class RoutinesViewModel2 extends ChangeNotifier {
   bool isLoading = false;
   String? errorMessage;
 
+  String _searchQuery = '';
+  String _selectedCategory = 'Todas';
+
+  String get searchQuery => _searchQuery;
+  String get selectedCategory => _selectedCategory;
+
+  List<RoutineTemplate> get filteredRoutines {
+    return routines.where((routine) {
+      final matchesSearch =
+          routine.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+          routine.description.toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          );
+
+      final matchesCategory =
+          _selectedCategory == 'Todas' || routine.category == _selectedCategory;
+
+      return matchesSearch && matchesCategory;
+    }).toList();
+  }
+
+  void setSearchQuery(String query) {
+    _searchQuery = query;
+    notifyListeners();
+  }
+
+  void setSelectedCategory(String category) {
+    _selectedCategory = category;
+    notifyListeners();
+  }
+
   List<Map<String, dynamic>> favorites = [];
 
   Future<void> loadRoutines() async {

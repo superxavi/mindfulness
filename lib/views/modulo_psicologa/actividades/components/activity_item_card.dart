@@ -1,122 +1,201 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../models/routine_model.dart';
+import '../../../../moduloPsiquiatra/model_ps/routine_model.dart';
+import '../routine_preview_screen.dart';
 
 class ActivityItemCard extends StatelessWidget {
-  final String emoji;
-  final String title;
-  final String category;
-  final String duration;
-  final String stats;
+  final RoutineTemplate routine;
 
-  const ActivityItemCard({
-    super.key,
-    required this.emoji,
-    required this.title,
-    required this.category,
-    required this.duration,
-    required this.stats,
-  });
+  const ActivityItemCard({super.key, required this.routine});
+
+  String get _emoji {
+    final category = RoutineCategoryX.fromValue(routine.category);
+    return switch (category) {
+      RoutineCategory.breathing => '🌬️',
+      RoutineCategory.relaxation => '🧘',
+      RoutineCategory.sleepInduction => '🌙',
+      RoutineCategory.soundscape => '🎧',
+      RoutineCategory.terapiaSonido => '🎶',
+      _ => '✨',
+    };
+  }
+
+  String get _durationLabel {
+    final minutes = (routine.durationSeconds / 60).ceil();
+    return '$minutes min';
+  }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final category = RoutineCategoryX.fromValue(routine.category);
+
+    // Color dinámico según categoría para el indicador lateral
+    final categoryColor = switch (category) {
+      RoutineCategory.breathing => AppColors.mint,
+      RoutineCategory.relaxation => AppColors.lavender,
+      RoutineCategory.sleepInduction => const Color(0xFF3F51B5),
+      RoutineCategory.soundscape => AppColors.tertiary,
+      RoutineCategory.terapiaSonido => const Color(0xFFE91E63),
+      _ => AppColors.outline,
+    };
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: AppColors.outlineVariant.withValues(alpha: 0.5),
-        ),
+        color: AppColors.surfaceLowest,
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
-      child: Row(
-        children: [
-          // Cuadro del Icono (Fondo suave + Emoji)
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: AppColors.surfaceLow,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Center(
-              child: Text(emoji, style: const TextStyle(fontSize: 26)),
-            ),
-          ),
-          const SizedBox(width: 16),
-
-          // Info Central
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: textTheme.titleMedium?.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => RoutinePreviewScreen(routine: routine),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  category,
-                  style: textTheme.bodySmall?.copyWith(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 10),
+              );
+            },
+            child: IntrinsicHeight(
+              child: Row(
+                children: [
+                  // Indicador lateral de color
+                  Container(width: 6, color: categoryColor),
+                  const SizedBox(width: 16),
 
-                // Fila de tiempo y reproducciones con iconos modernos
-                Row(
-                  children: [
-                    Icon(Icons.timer_outlined, size: 14, color: AppColors.mint),
-                    const SizedBox(width: 4),
-                    Text(
-                      duration,
-                      style: textTheme.labelSmall?.copyWith(
-                        color: AppColors.textSecondary,
-                        fontWeight: FontWeight.w600,
+                  // Icono con contenedor estilizado
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        color: categoryColor.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: categoryColor.withValues(alpha: 0.1),
+                          width: 1,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          _emoji,
+                          style: const TextStyle(fontSize: 30),
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    Icon(
-                      Icons.bar_chart_rounded,
-                      size: 14,
-                      color: AppColors.lavender,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      stats.replaceAll('▶ ', '').replaceAll('👁 ', ''),
-                      style: textTheme.labelSmall?.copyWith(
-                        color: AppColors.textSecondary,
-                        fontWeight: FontWeight.w600,
+                  ),
+                  const SizedBox(width: 16),
+
+                  // Información Central
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            routine.title,
+                            style: textTheme.titleMedium?.copyWith(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 17,
+                              letterSpacing: -0.2,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: categoryColor.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              category.label.toUpperCase(),
+                              style: textTheme.labelSmall?.copyWith(
+                                color: categoryColor,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 9,
+                                letterSpacing: 0.8,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+
+                          // Badges de información
+                          Row(
+                            children: [
+                              _buildInfoBadge(
+                                icon: Icons.timer_rounded,
+                                label: _durationLabel,
+                                color: AppColors.textSecondary,
+                              ),
+                              const SizedBox(width: 12),
+                              _buildInfoBadge(
+                                icon: Icons.remove_red_eye_rounded,
+                                label: "Vista",
+                                color: AppColors.lavender,
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ],
+                  ),
+
+                  // Botón de acción minimalista
+                  Padding(
+                    padding: const EdgeInsets.only(right: 20),
+                    child: Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 16,
+                      color: AppColors.outlineVariant,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-
-          Icon(
-            Icons.arrow_forward_ios_rounded,
-            size: 14,
-            color: AppColors.outlineVariant,
-          ),
-        ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildInfoBadge({
+    required IconData icon,
+    required String label,
+    required Color color,
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 14, color: color.withValues(alpha: 0.6)),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: TextStyle(
+            color: color.withValues(alpha: 0.8),
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 }
