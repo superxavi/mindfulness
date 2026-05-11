@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mindfulness_app/moduloPsiquiatra/view_ps/agenda_view.dart';
+import 'package:mindfulness_app/moduloPsiquiatra/view_ps/solicitudes_view.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -51,12 +53,14 @@ class _DashboardTareasViewState extends State<DashboardTareasView> {
               value: appointmentsVM.pendingRequests.length.toString(),
               icon: Icons.pending_actions_rounded,
               color: AppColors.tertiary,
+              onTap: () => _gosolicitud(context),
             ),
             MetricCard(
               label: 'Citas hoy',
               value: appointmentsVM.confirmedAgenda.length.toString(),
               icon: Icons.calendar_today_rounded,
               color: AppColors.lavender,
+              onTap: () => _gomiagenda(context),
             ),
             MetricCard(
               label: 'Pacientes',
@@ -126,6 +130,25 @@ class _DashboardTareasViewState extends State<DashboardTareasView> {
           ),
         ),
       ],
+    );
+  }
+
+  ///funciones
+  void _gomiagenda(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AgendaView()),
+    );
+
+    // Navigator.push(context, MaterialPageRoute(builder: (context) => TuPantallaDeRecursos()));
+  }
+
+  // Función para navegar a la pantalla de Favoritos
+  void _gosolicitud(BuildContext context) {
+    // Navigator.push(context, MaterialPageRoute(builder: (context) => TuPantallaDeFavoritos()));
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SolicitudesView()),
     );
   }
 }
