@@ -134,21 +134,26 @@ class _DashboardTareasViewState extends State<DashboardTareasView> {
   }
 
   ///funciones
-  void _gomiagenda(BuildContext context) {
-    Navigator.push(
+  Future<void> _gomiagenda(BuildContext context) async {
+    await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => AgendaView()),
+      MaterialPageRoute(builder: (context) => const AgendaView()),
     );
-
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => TuPantallaDeRecursos()));
+    // Al volver, refrescamos los datos para que los contadores se actualicen
+    if (context.mounted) {
+      context.read<AppointmentsViewModel>().loadAll();
+    }
   }
 
   // Función para navegar a la pantalla de Favoritos
-  void _gosolicitud(BuildContext context) {
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => TuPantallaDeFavoritos()));
-    Navigator.push(
+  Future<void> _gosolicitud(BuildContext context) async {
+    await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SolicitudesView()),
+      MaterialPageRoute(builder: (context) => const SolicitudesView()),
     );
+    // Al volver, refrescamos los datos para que los contadores se actualicen
+    if (context.mounted) {
+      context.read<AppointmentsViewModel>().loadAll();
+    }
   }
 }

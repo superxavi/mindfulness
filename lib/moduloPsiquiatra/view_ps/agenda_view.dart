@@ -57,15 +57,41 @@ class _AgendaViewState extends State<AgendaView> {
           ),
           ElevatedButton(
             onPressed: () async {
-              await context.read<AppointmentsViewModel>().markAsDone(
-                id,
-                notesController.text.trim(),
-              );
-              if (!context.mounted) return;
-              Navigator.pop(dialogContext);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Cita completada y registrada.')),
-              );
+              // 1. Ocultar el teclado de inmediato
+              FocusManager.instance.primaryFocus?.unfocus();
+
+              final notes = notesController.text.trim();
+              
+              // 2. Cerrar el diálogo de inmediato para dar feedback visual
+              Navigator.of(dialogContext).pop();
+
+              try {
+                // 3. Ejecutar la operación
+                await context.read<AppointmentsViewModel>().markAsDone(
+                      id,
+                      notes,
+                    );
+                
+                if (!context.mounted) return;
+
+                // 4. Cerrar la vista principal de agenda
+                Navigator.of(context).pop();
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Cita completada y registrada.'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              } catch (e) {
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error al finalizar la cita: $e'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
             },
             child: const Text('Guardar y cerrar'),
           ),
