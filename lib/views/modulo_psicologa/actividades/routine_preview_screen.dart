@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mindfulness_app/core/theme/app_colors.dart';
 import 'package:mindfulness_app/models/routine_model.dart';
 import 'package:mindfulness_app/moduloPsiquiatra/model_ps/routine_model.dart';
-import 'package:mindfulness_app/views/modulo_paciente/componet/audio_runner.dart';
 import 'package:mindfulness_app/views/modulo_paciente/componet/breathing_runner.dart';
-import 'package:mindfulness_app/views/modulo_paciente/componet/timed_runner.dart';
+import 'package:mindfulness_app/views/modulo_paciente/componet/view_audio_runner.dart';
+import 'package:mindfulness_app/views/modulo_paciente/componet/viewtimed_runner.dart';
 
 class RoutinePreviewScreen extends StatelessWidget {
   final RoutineTemplate routine;
@@ -14,8 +14,11 @@ class RoutinePreviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(
-        0xFF0F172A,
+      backgroundColor: const Color.fromARGB(
+        255,
+        204,
+        206,
+        208,
       ), // Fondo oscuro consistente con reproductores
       body: SafeArea(
         child: Padding(
@@ -40,14 +43,16 @@ class RoutinePreviewScreen extends StatelessWidget {
       children: [
         IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.close, color: Colors.white70),
+          //color de la x de cierre
+          icon: const Icon(Icons.close, color: Color.fromARGB(179, 11, 11, 11)),
         ),
         Expanded(
           child: Text(
             routine.title,
             textAlign: TextAlign.center,
             style: const TextStyle(
-              color: Colors.white,
+              //color de titulo de arriva
+              color: Color.fromARGB(255, 120, 203, 43),
               fontSize: 18,
               fontWeight: FontWeight.w600,
             ),

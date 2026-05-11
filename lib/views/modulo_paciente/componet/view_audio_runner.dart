@@ -1,6 +1,9 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:mindfulness_app/core/theme/app_colors.dart';
+
 import '../../../models/routine_model.dart';
 import 'session_progress_widgets.dart';
 
@@ -109,58 +112,53 @@ class _AudioRunnerState extends State<AudioRunner>
     final progress = (_elapsed / widget.durationSeconds).clamp(0.0, 1.0);
 
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Spacer(),
         if (_isBuffering)
-          const CircularProgressIndicator(color: Colors.cyanAccent)
+          const CircularProgressIndicator(color: Color(0xFFB2EBF2))
         else
           _CategoryVisualizer(
             category: widget.category ?? RoutineCategory.terapiaSonido,
             animation: _animationController,
           ),
-        const Spacer(),
+        const SizedBox(height: 40),
 
         Text(
-          widget.category?.label ?? 'Sesión de audio',
+          widget.category?.label.toUpperCase() ?? 'SESIÓN DE AUDIO',
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.7),
-            fontSize: 16,
-            letterSpacing: 2,
+            color: AppColors.textPrimary.withValues(alpha: 0.5),
+            fontSize: 14,
+            letterSpacing: 4,
             fontWeight: FontWeight.w300,
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 30),
 
         // Controles de audio
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(
-              icon: Icon(
-                _isPlaying
-                    ? Icons.pause_circle_filled
-                    : Icons.play_circle_filled,
-              ),
-              iconSize: 80,
-              color: Colors.cyanAccent,
-              onPressed: () {
-                if (_isPlaying) {
-                  _player.pause();
-                } else {
-                  _player.play();
-                }
-              },
-            ),
-          ],
+        IconButton(
+          icon: Icon(
+            _isPlaying
+                ? Icons.pause_circle_filled_rounded
+                : Icons.play_circle_filled_rounded,
+          ),
+          iconSize: 90,
+          color: const Color(0xFFE1BEE7), // Lavanda pastel
+          onPressed: () {
+            if (_isPlaying) {
+              _player.pause();
+            } else {
+              _player.play();
+            }
+          },
         ),
 
-        const Spacer(),
+        const SizedBox(height: 50),
+
         PhaseProgressBar(
-          label: _isBuffering ? 'Cargando audio...' : 'Sesión en curso',
+          label: _isBuffering ? 'Cargando audio...' : 'Tiempo restante',
           time: '$minutes:${seconds.toString().padLeft(2, '0')}',
           progress: progress,
         ),
-        const SizedBox(height: 48),
       ],
     );
   }
@@ -191,35 +189,30 @@ class _CategoryVisualizer extends StatelessWidget {
       RoutineCategory.all => Icons.audiotrack_rounded,
     };
 
+    const color = Color.fromARGB(255, 14, 15, 15); // Cian pastel
+
     return AnimatedBuilder(
       animation: animation,
       builder: (context, child) {
         return Container(
-          width: 200,
-          height: 200,
+          width: 220,
+          height: 220,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
+            color: color.withValues(alpha: 0.1),
             boxShadow: [
               BoxShadow(
-                color: Colors.cyanAccent.withValues(
-                  alpha: 0.15 * animation.value,
-                ),
-                blurRadius: 40,
+                color: color.withValues(alpha: 0.2 * animation.value),
+                blurRadius: 50,
                 spreadRadius: 20 * animation.value,
               ),
             ],
             border: Border.all(
-              color: Colors.cyanAccent.withValues(alpha: 0.3 * animation.value),
-              width: 2,
+              color: color.withValues(alpha: 0.4 * animation.value),
+              width: 1.5,
             ),
           ),
-          child: Icon(
-            icon,
-            size: 80,
-            color: Colors.cyanAccent.withValues(
-              alpha: 0.6 + (0.4 * animation.value),
-            ),
-          ),
+          child: Icon(icon, size: 80, color: color.withValues(alpha: 0.8)),
         );
       },
     );

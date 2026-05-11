@@ -2,8 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
-
 enum BreathingShape { circle, square, heart, spiral }
 
 class BreathingVisualizer extends StatelessWidget {
@@ -23,57 +21,64 @@ class BreathingVisualizer extends StatelessWidget {
     return AnimatedBuilder(
       animation: animation,
       builder: (context, child) {
-        return Stack(
-          alignment: Alignment.center,
-          children: [
-            // Fondo con degradado que se adapta al espacio disponible
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: RadialGradient(
-                    colors: [
-                      _getShapeColor().withValues(alpha: 0.15),
-                      Colors.transparent,
-                    ],
-                    center: Alignment.center,
-                    radius: 1.2,
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            // Calculamos tamaños dinámicos basados en el espacio disponible
+            final availableHeight = constraints.maxHeight;
+            final textHeight = 40.0;
+            final gapHeight = availableHeight > 400 ? 40.0 : 20.0;
+
+            // La figura tomará el espacio restante, con un tope máximo de 300
+            final shapeSize = (availableHeight - textHeight - gapHeight - 40)
+                .clamp(100.0, 300.0);
+
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                // Fondo con degradado
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: RadialGradient(
+                        colors: [
+                          _getShapeColor().withValues(alpha: 0.15),
+                          Colors.transparent,
+                        ],
+                        center: Alignment.center,
+                        radius: 1.2,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-            // Contenido central
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Texto fuera de la figura con mejor tipografía
-                  Text(
-                    label.toUpperCase(),
-                    style: TextStyle(
-                      color: _getShapeColor().withValues(alpha: 0.8),
-                      fontSize: 28,
-                      fontWeight: FontWeight.w300,
-                      letterSpacing: 6.0,
+
+                // Contenido central
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Texto fuera de la figura
+                    Text(
+                      label.toUpperCase(),
+                      style: TextStyle(
+                        color: _getShapeColor().withValues(alpha: 0.8),
+                        fontSize: availableHeight > 400 ? 28 : 20,
+                        fontWeight: FontWeight.w300,
+                        letterSpacing: 6.0,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 40),
-                  CustomPaint(
-                    painter: _BreathingPainter(
-                      progress: animation.value,
-                      shape: shape,
-                      color: _getShapeColor(),
+                    SizedBox(height: gapHeight),
+                    CustomPaint(
+                      painter: _BreathingPainter(
+                        progress: animation.value,
+                        shape: shape,
+                        color: _getShapeColor(),
+                      ),
+                      child: SizedBox(width: shapeSize, height: shapeSize),
                     ),
-                    child: const SizedBox(
-                      width: 250, // Ajustado para evitar desbordes en móviles pequeños
-                      height: 250,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+                  ],
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -82,10 +87,20 @@ class BreathingVisualizer extends StatelessWidget {
   Color _getShapeColor() {
     return switch (shape) {
       // Colores pastel claros y bellos
-      BreathingShape.circle => const Color(0xFFB2EBF2), // Cian pastel
+      BreathingShape.circle => const Color.fromARGB(
+        255,
+        52,
+        87,
+        92,
+      ), // Cian pastel
       BreathingShape.square => const Color(0xFFE1BEE7), // Lavanda pastel
       BreathingShape.heart => const Color(0xFFFFCDD2), // Rosa pastel
-      BreathingShape.spiral => const Color(0xFFC8E6C9), // Menta pastel
+      BreathingShape.spiral => const Color.fromARGB(
+        255,
+        43,
+        212,
+        49,
+      ), // Menta pastel
     };
   }
 }

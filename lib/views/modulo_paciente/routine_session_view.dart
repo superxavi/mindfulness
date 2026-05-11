@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mindfulness_app/views/modulo_paciente/componet/audio_runner.dart';
+import 'package:mindfulness_app/views/modulo_paciente/componet/view_audio_runner.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -7,7 +7,7 @@ import '../../models/routine_model.dart';
 import '../../moduloTareas/viewmodels/tasks_viewmodel.dart';
 import '../../viewmodels/routines_viewmodel.dart';
 import 'componet/breathing_runner.dart';
-import 'componet/timed_runner.dart';
+import 'componet/viewtimed_runner.dart';
 import 'self_assessment_flow.dart';
 
 class RoutineSessionView extends StatefulWidget {
@@ -71,14 +71,21 @@ class _RoutineSessionViewState extends State<RoutineSessionView> {
     if (!_countdownDone) return _buildCountdown();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor:
+          Colors.white, // Cambiado de azul oscuro a blanco para ser "bello"
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Column(
             children: [
               _buildHeader(),
-              Expanded(child: _buildRunner()),
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(vertical: 20),
+                  child: _buildRunner(),
+                ),
+              ),
+              const SizedBox(height: 10),
               _buildFinishButton(),
             ],
           ),
@@ -119,41 +126,47 @@ class _RoutineSessionViewState extends State<RoutineSessionView> {
       children: [
         IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.close, color: Colors.white70),
-        ),
-        Text(
-          widget.routine.title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+          icon: Icon(
+            Icons.close,
+            color: AppColors.textPrimary.withValues(alpha: 0.5),
           ),
         ),
-        const SizedBox(width: 48),
+        Expanded(
+          child: Text(
+            widget.routine.title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.1,
+            ),
+          ),
+        ),
+        const SizedBox(width: 48), // Balance para el botón de cerrar
       ],
     );
   }
 
   Widget _buildFinishButton() {
-    return SizedBox(
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
       width: double.infinity,
-      height: 54,
+      height: 56,
       child: ElevatedButton(
         onPressed: _onSessionFinished,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.cyanAccent.withValues(alpha: 0.1),
-          side: const BorderSide(color: Colors.cyanAccent, width: 1),
+          backgroundColor: AppColors.lavender.withValues(alpha: 0.1),
+          foregroundColor: AppColors.lavender,
+          elevation: 0,
+          side: BorderSide(color: AppColors.lavender.withValues(alpha: 0.3)),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
           ),
         ),
         child: const Text(
           "FINALIZAR SESIÓN",
-          style: TextStyle(
-            color: Colors.cyanAccent,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.2,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.5),
         ),
       ),
     );
