@@ -44,6 +44,9 @@ class RoutinesViewModel2 extends ChangeNotifier {
 
   List<Map<String, dynamic>> favorites = [];
 
+  /// Indica si el profesional no tiene ninguna rutina creada
+  bool get hasNoRoutines => routines.isEmpty && !isLoading;
+
   Future<void> loadRoutines() async {
     isLoading = true;
     errorMessage = null;

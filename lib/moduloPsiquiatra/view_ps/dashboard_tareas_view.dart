@@ -10,6 +10,7 @@ import '../../../viewmodels/viewmodels_psicologa/patients_viewmodel.dart';
 import '../../../views/modulo_psicologa/actividades_view.dart';
 import '../componets_ps/psychiatrist_components.dart';
 import '../viewmodels_ps/routines_viewmodel2.dart';
+import 'componets/welcome_onboarding_card.dart';
 import 'asignar_tarea_view.dart';
 import 'crear_rutina_view.dart';
 import 'gestion_rutinas_view.dart';
@@ -80,6 +81,16 @@ class _DashboardTareasViewState extends State<DashboardTareasView> {
           ],
         ),
         const SizedBox(height: 25),
+        
+        // BIENVENIDA / ONBOARDING (Solo si no hay rutinas)
+        if (routinesVM.hasNoRoutines)
+          WelcomeOnboardingCard(
+            onCreateTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const CrearRutinaView()),
+            ),
+          ),
+
         Text(
           'Accesos rápidos',
           style: TextStyle(
