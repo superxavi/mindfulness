@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mindfulness_app/moduloPsiquiatra/view_ps/agenda_view.dart';
 import 'package:mindfulness_app/moduloPsiquiatra/view_ps/solicitudes_view.dart';
+import 'package:mindfulness_app/views/modulo_psicologa/pacientes_view.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -67,12 +68,14 @@ class _DashboardTareasViewState extends State<DashboardTareasView> {
               value: patientsVM.patients.length.toString(),
               icon: Icons.people_alt_rounded,
               color: AppColors.mint,
+              onTap: () => _gopaciente(context),
             ),
             MetricCard(
               label: 'Tus rutinas',
               value: routinesVM.routines.length.toString(),
               icon: Icons.auto_awesome_motion_rounded,
               color: AppColors.lavender,
+              onTap: () => _gorutinas(context),
             ),
           ],
         ),
@@ -150,6 +153,29 @@ class _DashboardTareasViewState extends State<DashboardTareasView> {
     await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const SolicitudesView()),
+    );
+    // Al volver, refrescamos los datos para que los contadores se actualicen
+    if (context.mounted) {
+      context.read<AppointmentsViewModel>().loadAll();
+    }
+  }
+
+  //nuevas funciones
+  Future<void> _gopaciente(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const PacientesView()),
+    );
+    // Al volver, refrescamos los datos para que los contadores se actualicen
+    if (context.mounted) {
+      context.read<AppointmentsViewModel>().loadAll();
+    }
+  }
+
+  Future<void> _gorutinas(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ActividadesView()),
     );
     // Al volver, refrescamos los datos para que los contadores se actualicen
     if (context.mounted) {
