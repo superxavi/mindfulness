@@ -26,16 +26,19 @@ class _PatientHomeViewState extends State<PatientHomeView> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      _lastUserId = authViewModel.currentUser?.id;
-      historyViewModel.loadHomeMetrics();
+      final userId = authViewModel.currentUser?.id;
+      if (userId != null) {
+        _lastUserId = userId;
+        historyViewModel.loadHomeMetrics();
+      }
     });
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final authViewModel = context.watch<AuthViewModel>();
-    final currentUserId = authViewModel.currentUser?.id;
+    // Solo recargar si el usuario cambia (logout/login sin reiniciar app)
+    final currentUserId = context.read<AuthViewModel>().currentUser?.id;
 
     if (currentUserId != null && currentUserId != _lastUserId) {
       _lastUserId = currentUserId;

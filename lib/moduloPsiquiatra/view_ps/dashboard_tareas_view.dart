@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mindfulness_app/moduloPsiquiatra/view_ps/agenda_view.dart';
+import 'package:mindfulness_app/moduloPsiquiatra/view_ps/solicitudes_view.dart';
+import 'package:mindfulness_app/views/modulo_psicologa/pacientes_view.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -7,6 +10,7 @@ import '../../../viewmodels/viewmodels_psicologa/patients_viewmodel.dart';
 import '../../../views/modulo_psicologa/actividades_view.dart';
 import '../componets_ps/psychiatrist_components.dart';
 import '../viewmodels_ps/routines_viewmodel2.dart';
+import 'componets/welcome_onboarding_card.dart';
 import 'asignar_tarea_view.dart';
 import 'crear_rutina_view.dart';
 import 'gestion_rutinas_view.dart';
@@ -51,28 +55,42 @@ class _DashboardTareasViewState extends State<DashboardTareasView> {
               value: appointmentsVM.pendingRequests.length.toString(),
               icon: Icons.pending_actions_rounded,
               color: AppColors.tertiary,
+              onTap: () => _gosolicitud(context),
             ),
             MetricCard(
               label: 'Citas hoy',
               value: appointmentsVM.confirmedAgenda.length.toString(),
               icon: Icons.calendar_today_rounded,
               color: AppColors.lavender,
+              onTap: () => _gomiagenda(context),
             ),
             MetricCard(
               label: 'Pacientes',
               value: patientsVM.patients.length.toString(),
               icon: Icons.people_alt_rounded,
               color: AppColors.mint,
+              onTap: () => _gopaciente(context),
             ),
             MetricCard(
               label: 'Tus rutinas',
               value: routinesVM.routines.length.toString(),
               icon: Icons.auto_awesome_motion_rounded,
               color: AppColors.lavender,
+              onTap: () => _gorutinas(context),
             ),
           ],
         ),
         const SizedBox(height: 25),
+
+        // BIENVENIDA / ONBOARDING (Solo si no hay rutinas)
+        if (routinesVM.hasNoRoutines)
+          WelcomeOnboardingCard(
+            onCreateTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const CrearRutinaView()),
+            ),
+          ),
+
         Text(
           'Accesos rápidos',
           style: TextStyle(
@@ -127,5 +145,52 @@ class _DashboardTareasViewState extends State<DashboardTareasView> {
         ),
       ],
     );
+  }
+
+  ///funciones
+  Future<void> _gomiagenda(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AgendaView()),
+    );
+    // Al volver, refrescamos los datos para que los contadores se actualicen
+    if (context.mounted) {
+      context.read<AppointmentsViewModel>().loadAll();
+    }
+  }
+
+  // Función para navegar a la pantalla de Favoritos
+  Future<void> _gosolicitud(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const SolicitudesView()),
+    );
+    // Al volver, refrescamos los datos para que los contadores se actualicen
+    if (context.mounted) {
+      context.read<AppointmentsViewModel>().loadAll();
+    }
+  }
+
+  //nuevas funciones
+  Future<void> _gopaciente(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const PacientesView()),
+    );
+    // Al volver, refrescamos los datos para que los contadores se actualicen
+    if (context.mounted) {
+      context.read<AppointmentsViewModel>().loadAll();
+    }
+  }
+
+  Future<void> _gorutinas(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ActividadesView()),
+    );
+    // Al volver, refrescamos los datos para que los contadores se actualicen
+    if (context.mounted) {
+      context.read<AppointmentsViewModel>().loadAll();
+    }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'breathing_sphere.dart';
 import 'session_progress_widgets.dart';
 
@@ -32,7 +33,8 @@ class TimedSessionUI extends StatelessWidget {
         BreathingSphere(animation: animationController, label: ''),
         const Spacer(),
         PhaseProgressBar(
-          label: 'Sesión en curso',
+          label:
+              'Sesión de seguridad por si algo falla en la principal o no alla nada ok',
           time: '$minutes:${seconds.toString().padLeft(2, '0')}',
           progress: progress,
         ),

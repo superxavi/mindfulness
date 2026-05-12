@@ -1,9 +1,12 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
+
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/material.dart';
+
 import '../../../models/routine_model.dart';
-import 'breathing_sphere.dart';
-import 'session_progress_widgets.dart';
+import 'breathing_session_ui.dart';
+// BreathingRunner: Gestiona el tiempo de inhalar/exhalar.
+///No tiene interfaz propia, solo le pasa los datos al BreathingSessionUI.
 
 enum _BreathPhase { inhale, holdIn, exhale, holdOut }
 
@@ -116,23 +119,17 @@ class _BreathingRunnerState extends State<BreathingRunner>
         ? (_phaseElapsed / duration).clamp(0.0, 1.0)
         : 0.0;
 
-    return Column(
-      children: [
-        const Spacer(),
-        BreathingSphere(animation: _sphereController, label: _getPhaseLabel()),
-        const Spacer(),
-        PhaseProgressBar(
-          label: _getPhaseLabel(),
-          time: '${duration - _phaseElapsed}s',
-          progress: progress,
-        ),
-        const SizedBox(height: 16),
-        CycleSegmentsBar(
-          total: widget.pattern.cyclesRecommended,
-          completed: _cyclesCompleted,
-        ),
-        const SizedBox(height: 32),
-      ],
+    return BreathingSessionUI(
+      currentLabel: _getPhaseLabel(),
+      remainingTime: '${duration - _phaseElapsed}s',
+      phaseProgress: progress,
+      completedCycles: _cyclesCompleted,
+      totalCycles: widget.pattern.cyclesRecommended,
+      animationController: _sphereController,
+      onFinish: () {
+        _timer?.cancel();
+        widget.onComplete();
+      },
     );
   }
 

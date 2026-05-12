@@ -1,6 +1,8 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'breathing_visualizer.dart';
 
-class BreathingSphere extends StatelessWidget {
+class BreathingSphere extends StatefulWidget {
   final Animation<double> animation;
   final String label;
 
@@ -11,42 +13,26 @@ class BreathingSphere extends StatelessWidget {
   });
 
   @override
+  State<BreathingSphere> createState() => _BreathingSphereState();
+}
+
+class _BreathingSphereState extends State<BreathingSphere> {
+  late final BreathingShape _randomShape;
+
+  @override
+  void initState() {
+    super.initState();
+    // Elegimos una forma al azar al iniciar para que cada sesión sea diferente
+    final shapes = BreathingShape.values;
+    _randomShape = shapes[Random().nextInt(shapes.length)];
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ScaleTransition(
-            scale: animation,
-            child: Container(
-              width: 140,
-              height: 140,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.cyanAccent.withValues(alpha: 0.1),
-                border: Border.all(color: Colors.cyanAccent, width: 2),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.cyanAccent.withValues(alpha: 0.2),
-                    blurRadius: 40,
-                    spreadRadius: 15,
-                  ),
-                ],
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                label,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.5,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+    return BreathingVisualizer(
+      animation: widget.animation,
+      label: widget.label,
+      shape: _randomShape,
     );
   }
 }

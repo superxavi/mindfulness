@@ -30,7 +30,8 @@ class TasksService {
             )
           ''')
           .eq('patient_id', user.id)
-          .order('assigned_at', ascending: false);
+          .order('assigned_at', ascending: false)
+          .limit(30);
 
       return (response as List)
           .map((json) => Assignment.fromJson(json))

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/theme/app_colors.dart';
 
 class ActivitySearch extends StatelessWidget {
@@ -41,15 +42,7 @@ class ActivitySearch extends StatelessWidget {
               ),
             ),
           ),
-          if (onChanged != null)
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppColors.mint.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(Icons.tune_rounded, color: AppColors.mint, size: 18),
-            ),
+          if (onChanged != null) Container(padding: const EdgeInsets.all(8)),
         ],
       ),
     );

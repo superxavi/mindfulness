@@ -74,11 +74,17 @@ class AppointmentsViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
+      debugPrint("Finalizando cita $appointmentId...");
       await _service.completeAppointment(appointmentId, notes);
-      await loadAll(); // Recargamos la lista para que desaparezca de la agenda activa
+      debugPrint("Cita finalizada en base de datos. Recargando...");
+
+      // En lugar de llamar a loadAll que vuelve a poner isLoading=true,
+      // podemos simplemente actualizar la lista local o llamar a _service directamente
+      allAppointments = await _service.getAppointments();
+      debugPrint("Lista recargada.");
     } catch (e) {
       debugPrint("Error al finalizar cita: $e");
-      rethrow; // Para que la vista sepa que hubo un error si lo necesita
+      rethrow;
     } finally {
       isLoading = false;
       notifyListeners();

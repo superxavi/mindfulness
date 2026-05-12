@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'breathing_sphere.dart';
 import 'session_progress_widgets.dart';
 
@@ -27,8 +28,17 @@ class BreathingSessionUI extends StatelessWidget {
     return Column(
       children: [
         const Spacer(),
-        BreathingSphere(animation: animationController, label: currentLabel),
+        // Visualizador central adaptable
+        Expanded(
+          flex: 4,
+          child: BreathingSphere(
+            animation: animationController,
+            label: currentLabel,
+          ),
+        ),
         const Spacer(),
+
+        // Indicadores de progreso
         PhaseProgressBar(
           label: currentLabel,
           time: remainingTime,
@@ -36,30 +46,8 @@ class BreathingSessionUI extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         CycleSegmentsBar(total: totalCycles, completed: completedCycles),
-        const SizedBox(height: 32),
-        _buildFinishButton(),
+        // Eliminamos el botón de aquí porque RoutineSessionView ya tiene uno
       ],
     );
   }
-
-  Widget _buildFinishButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 54,
-      child: ElevatedButton(
-        onPressed: onFinish,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.cyanAccent.withValues(alpha: 0.2),
-          side: const BorderSide(color: Colors.cyanAccent, width: 1),
-        ),
-        child: const Text(
-          "FINALIZAR",
-          style: TextStyle(
-            color: Colors.cyanAccent,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
-  }
-}
+} // Eliminado _buildFinishButton y el Stack inmersivo de aquí

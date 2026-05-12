@@ -89,6 +89,9 @@ class _SolicitudesViewState extends State<SolicitudesView> {
             ),
             ElevatedButton(
               onPressed: () async {
+                // 1. Ocultar el teclado de inmediato
+                FocusManager.instance.primaryFocus?.unfocus();
+
                 final scheduled = DateTime(
                   selectedDate.year,
                   selectedDate.month,
@@ -97,19 +100,36 @@ class _SolicitudesViewState extends State<SolicitudesView> {
                   selectedTime.minute,
                 );
 
-                await context.read<AppointmentsViewModel>().proposeFromPro(
-                  appointmentId,
-                  scheduled,
-                  selectedDuration,
-                );
+                // 2. Cerrar el diálogo de inmediato
+                Navigator.of(dialogContext).pop();
 
-                if (!context.mounted) return;
-                Navigator.pop(dialogContext);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Propuesta enviada al paciente.'),
-                  ),
-                );
+                try {
+                  await context.read<AppointmentsViewModel>().proposeFromPro(
+                    appointmentId,
+                    scheduled,
+                    selectedDuration,
+                  );
+
+                  if (!context.mounted) return;
+
+                  // 3. Cerrar la vista de solicitudes
+                  Navigator.of(context).pop();
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Propuesta enviada al paciente.'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                } catch (e) {
+                  if (!context.mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error al enviar propuesta: $e'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
               },
               child: const Text('Enviar propuesta'),
             ),

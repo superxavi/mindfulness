@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
+
 import 'breathing_sphere.dart';
 import 'session_progress_widgets.dart';
 
@@ -51,16 +53,20 @@ class _TimedRunnerState extends State<TimedRunner>
     final progress = (_elapsed / widget.durationSeconds).clamp(0.0, 1.0);
 
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Spacer(),
-        BreathingSphere(animation: _animationController, label: ''),
+        SizedBox(
+          height: 300,
+          child: BreathingSphere(animation: _animationController, label: ''),
+        ),
         const Spacer(),
         PhaseProgressBar(
-          label: 'Sesión en curso',
+          label: 'Sesión en curso elementos nulos',
           time: '$minutes:${seconds.toString().padLeft(2, '0')}',
           progress: progress,
         ),
-        const SizedBox(height: 48),
+        const SizedBox(height: 20),
       ],
     );
   }
