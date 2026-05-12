@@ -95,22 +95,22 @@ class _StressBallViewState extends State<StressBallView>
                       color: AppColors.mint, // Color base
                       gradient: RadialGradient(
                         colors: [
-                          AppColors.mint.withOpacity(0.5),
+                          AppColors.mint.withValues(alpha: 0.5),
                           AppColors.mint,
-                          AppColors.mint.withOpacity(0.8),
+                          AppColors.mint.withValues(alpha: 0.8),
                         ],
                         stops: const [0.0, 0.6, 1.0],
                         center: const Alignment(-0.2, -0.3),
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
+                          color: Colors.black.withValues(alpha: 0.3),
                           blurRadius: 15,
                           offset: const Offset(5, 10),
                         ),
                         // Brillo interno
                         BoxShadow(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           blurRadius: 10,
                           offset: const Offset(-5, -5),
                           spreadRadius: -2,
@@ -121,8 +121,8 @@ class _StressBallViewState extends State<StressBallView>
                       child: Icon(
                         Icons.touch_app,
                         size: 50,
-                        color: Colors.white.withOpacity(
-                          _isSqueezing ? 0.3 : 0.7,
+                        color: Colors.white.withValues(
+                          alpha: _isSqueezing ? 0.3 : 0.7,
                         ),
                       ),
                     ),

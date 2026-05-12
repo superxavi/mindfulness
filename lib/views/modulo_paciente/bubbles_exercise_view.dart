@@ -131,23 +131,23 @@ class _BubblesExerciseViewState extends State<BubblesExerciseView> {
                               shape: BoxShape.circle,
                               gradient: RadialGradient(
                                 colors: [
-                                  AppColors.mint.withOpacity(0.3),
-                                  AppColors.mint.withOpacity(0.7),
+                                  AppColors.mint.withValues(alpha: 0.3),
+                                  AppColors.mint.withValues(alpha: 0.7),
                                 ],
                                 center: const Alignment(-0.3, -0.3),
                               ),
                               border: Border.all(
-                                color: AppColors.mint.withOpacity(0.5),
+                                color: AppColors.mint.withValues(alpha: 0.5),
                                 width: 2,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.white.withOpacity(0.1),
+                                  color: Colors.white.withValues(alpha: 0.1),
                                   blurRadius: 2,
                                   offset: const Offset(-1, -1),
                                 ),
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
+                                  color: Colors.black.withValues(alpha: 0.2),
                                   blurRadius: 4,
                                   offset: const Offset(2, 2),
                                 ),

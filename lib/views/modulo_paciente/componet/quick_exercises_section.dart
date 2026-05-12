@@ -126,7 +126,7 @@ class _QuickExerciseCard extends StatelessWidget {
           color: AppColors.surface, // Fondo de la tarjeta usando tu tema
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: AppColors.outlineVariant ?? Colors.grey.withOpacity(0.3),
+            color: AppColors.outlineVariant,
           ),
         ),
         child: Column(
@@ -135,7 +135,7 @@ class _QuickExerciseCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.mint.withOpacity(0.1),
+                color: AppColors.mint.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(exercise.icon, size: 32, color: AppColors.mint),
