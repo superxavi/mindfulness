@@ -125,9 +125,7 @@ class _QuickExerciseCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.surface, // Fondo de la tarjeta usando tu tema
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: AppColors.outlineVariant,
-          ),
+          border: Border.all(color: AppColors.outlineVariant),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
