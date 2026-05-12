@@ -10,6 +10,7 @@ import 'componet/category_filters.dart';
 import 'componet/emotional_dump_card.dart';
 import 'componet/library_routine_card.dart';
 import 'componet/questionnaire_card.dart';
+import 'componet/quick_exercises_section.dart'; // <-- Agrega esta línea
 import 'componet/section_title.dart';
 import 'componet/tasks_header.dart';
 import 'routine_detail_view.dart';
@@ -141,6 +142,18 @@ class _RoutinesLibraryViewState extends State<RoutinesLibraryView> {
                     itemCount: viewModel.filteredRoutines.length,
                   ),
                 ),
+
+              //nuevo catr
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    bottom: 30.0,
+                  ), // Un pequeño espacio al final
+                  child: QuickExercisesSection(),
+                ),
+              ),
+
+              //fin nuevo card
             ],
           ),
         ),
