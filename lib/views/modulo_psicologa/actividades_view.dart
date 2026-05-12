@@ -61,17 +61,16 @@ class _ActividadesViewState extends State<ActividadesView> {
 
                 const SizedBox(height: 30),
                 const ActivityActionButtons(),
+                const SizedBox(height: 20),
+                ActivitySearch(
+                  onChanged: (query) => routinesVM.setSearchQuery(query),
+                ),
 
                 const SizedBox(height: 30),
                 CategoryFilters(
                   selectedCategory: routinesVM.selectedCategory,
                   onCategorySelected: (cat) =>
                       routinesVM.setSelectedCategory(cat),
-                ),
-
-                const SizedBox(height: 20),
-                ActivitySearch(
-                  onChanged: (query) => routinesVM.setSearchQuery(query),
                 ),
 
                 const SizedBox(height: 32),
@@ -84,7 +83,7 @@ class _ActividadesViewState extends State<ActividadesView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Explorar Catálogo de Rutinas ",
+                          "Catálogo de Rutinas Creadas ",
                           style: textTheme.titleLarge?.copyWith(
                             color: AppColors.textPrimary,
                             fontWeight: FontWeight.w900,
@@ -100,7 +99,7 @@ class _ActividadesViewState extends State<ActividadesView> {
                         ),
                       ],
                     ),
-                    Icon(Icons.sort_rounded, color: AppColors.mint, size: 24),
+                    //Icon(Icons.sort_rounded, color: AppColors.mint, size: 24),
                   ],
                 ),
 

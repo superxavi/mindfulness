@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/theme/app_colors.dart';
 
 class CategoryFilters extends StatelessWidget {
@@ -28,7 +29,7 @@ class CategoryFilters extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 4),
           child: Text(
-            'CATEGORÍAS',
+            'FILTRO DE CATEGORÍAS',
             style: TextStyle(
               color: AppColors.textSecondary.withValues(alpha: 0.6),
               fontSize: 11,
