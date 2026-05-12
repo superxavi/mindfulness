@@ -20,12 +20,9 @@ class TasksViewModel extends ChangeNotifier {
       final all = await _service.getAllPatientTasks();
       debugPrint("DEBUG: Tareas crudas recibidas: ${all.length}");
 
-      // Creamos NUEVAS LISTAS para que Flutter detecte el cambio de referencia
-      final newPending = all.where((t) => t.status == 'pending').toList();
-      final newCompleted = all.where((t) => t.status == 'completed').toList();
-
-      pendingTasks = List.from(newPending);
-      completedTasks = List.from(newCompleted);
+      // .toList() ya crea una nueva instancia de lista, suficiente para que Provider detecte el cambio
+      pendingTasks = all.where((t) => t.status == 'pending').toList();
+      completedTasks = all.where((t) => t.status == 'completed').toList();
 
       debugPrint(
         "DEBUG: Pendientes: ${pendingTasks.length}, Completadas: ${completedTasks.length}",

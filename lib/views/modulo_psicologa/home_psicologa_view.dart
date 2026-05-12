@@ -18,7 +18,7 @@ class HomePsicologaView extends StatelessWidget {
               Icon(
                 Icons.info_outline,
                 size: 48,
-                color: AppColors.textPrimary.withOpacity(0.5),
+                color: AppColors.textPrimary.withValues(alpha: 0.5),
               ),
               const SizedBox(height: 16),
               Text(

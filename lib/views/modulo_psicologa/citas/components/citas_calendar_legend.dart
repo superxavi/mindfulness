@@ -26,13 +26,25 @@ class CitasCalendarLegend extends StatelessWidget {
         runSpacing: 8,
         children: [
           if (hasSolicitadas)
-            _LegendItem(label: 'Solicitada', eventType: CalendarEventType.solicitada),
+            _LegendItem(
+              label: 'Solicitada',
+              eventType: CalendarEventType.solicitada,
+            ),
           if (hasPropuestas)
-            _LegendItem(label: 'Propuesta', eventType: CalendarEventType.propuesta),
+            _LegendItem(
+              label: 'Propuesta',
+              eventType: CalendarEventType.propuesta,
+            ),
           if (hasConfirmadas)
-            _LegendItem(label: 'Confirmada', eventType: CalendarEventType.confirmada),
+            _LegendItem(
+              label: 'Confirmada',
+              eventType: CalendarEventType.confirmada,
+            ),
           if (hasCompletadas)
-            _LegendItem(label: 'Completada', eventType: CalendarEventType.completada),
+            _LegendItem(
+              label: 'Completada',
+              eventType: CalendarEventType.completada,
+            ),
           if (!hasSolicitadas &&
               !hasPropuestas &&
               !hasConfirmadas &&

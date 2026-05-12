@@ -41,7 +41,11 @@ class WelcomeOnboardingCard extends StatelessWidget {
                   color: AppColors.mint.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.auto_awesome, color: AppColors.mint, size: 24),
+                child: Icon(
+                  Icons.auto_awesome,
+                  color: AppColors.mint,
+                  size: 24,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -65,23 +69,30 @@ class WelcomeOnboardingCard extends StatelessWidget {
               height: 1.5,
             ),
           ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: onCreateTap,
-              icon: const Icon(Icons.add_circle_outline),
-              label: const Text('CREAR MI PRIMERA RUTINA'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.mint,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
+          const SizedBox(height: 30),
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: onCreateTap,
+                  icon: const Icon(Icons.add_circle_outline),
+                  label: const Text('CREAR MI PRIMERA RUTINA'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.mint,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
                 ),
               ),
-            ),
+              // Dedo apuntando con animación
+              const Positioned(right: 10, top: -45, child: _PointingHand()),
+            ],
           ),
           const SizedBox(height: 12),
           Center(
@@ -96,6 +107,63 @@ class WelcomeOnboardingCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _PointingHand extends StatefulWidget {
+  const _PointingHand();
+
+  @override
+  State<_PointingHand> createState() => _PointingHandState();
+}
+
+class _PointingHandState extends State<_PointingHand>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..repeat(reverse: true);
+
+    _animation = Tween<double>(
+      begin: 0,
+      end: 15,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Transform.translate(
+          offset: Offset(0, _animation.value),
+          child: Icon(
+            Icons.touch_app,
+            size: 60,
+            color: Colors.orange.shade400,
+            shadows: const [
+              Shadow(
+                blurRadius: 15,
+                color: Colors.black12,
+                offset: Offset(0, 8),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

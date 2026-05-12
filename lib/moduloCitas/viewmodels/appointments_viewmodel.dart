@@ -77,7 +77,7 @@ class AppointmentsViewModel extends ChangeNotifier {
       debugPrint("Finalizando cita $appointmentId...");
       await _service.completeAppointment(appointmentId, notes);
       debugPrint("Cita finalizada en base de datos. Recargando...");
-      
+
       // En lugar de llamar a loadAll que vuelve a poner isLoading=true,
       // podemos simplemente actualizar la lista local o llamar a _service directamente
       allAppointments = await _service.getAppointments();

@@ -105,13 +105,13 @@ class _SolicitudesViewState extends State<SolicitudesView> {
 
                 try {
                   await context.read<AppointmentsViewModel>().proposeFromPro(
-                        appointmentId,
-                        scheduled,
-                        selectedDuration,
-                      );
+                    appointmentId,
+                    scheduled,
+                    selectedDuration,
+                  );
 
                   if (!context.mounted) return;
-                  
+
                   // 3. Cerrar la vista de solicitudes
                   Navigator.of(context).pop();
 

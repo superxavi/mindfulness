@@ -61,17 +61,17 @@ class _AgendaViewState extends State<AgendaView> {
               FocusManager.instance.primaryFocus?.unfocus();
 
               final notes = notesController.text.trim();
-              
+
               // 2. Cerrar el diálogo de inmediato para dar feedback visual
               Navigator.of(dialogContext).pop();
 
               try {
                 // 3. Ejecutar la operación
                 await context.read<AppointmentsViewModel>().markAsDone(
-                      id,
-                      notes,
-                    );
-                
+                  id,
+                  notes,
+                );
+
                 if (!context.mounted) return;
 
                 // 4. Cerrar la vista principal de agenda

@@ -21,18 +21,22 @@ class _TareasMainHubState extends State<TareasMainHub> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
+    final authViewModel = context.read<AuthViewModel>();
+    final tasksViewModel = context.read<TasksViewModel>();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      _lastUserId = context.read<AuthViewModel>().currentUser?.id;
-      context.read<TasksViewModel>().loadTasks();
+      _lastUserId = authViewModel.currentUser?.id;
+      tasksViewModel.loadTasks();
     });
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final authViewModel = context.watch<AuthViewModel>();
-    final currentUserId = authViewModel.currentUser?.id;
+    // Usamos read para evitar que este widget se reconstruya cada vez que cambie AuthViewModel,
+    // ya que solo nos interesa reaccionar si el ID de usuario es físicamente distinto.
+    final currentUserId = context.read<AuthViewModel>().currentUser?.id;
 
     if (currentUserId != null && currentUserId != _lastUserId) {
       _lastUserId = currentUserId;

@@ -81,7 +81,7 @@ class _DashboardTareasViewState extends State<DashboardTareasView> {
           ],
         ),
         const SizedBox(height: 25),
-        
+
         // BIENVENIDA / ONBOARDING (Solo si no hay rutinas)
         if (routinesVM.hasNoRoutines)
           WelcomeOnboardingCard(
