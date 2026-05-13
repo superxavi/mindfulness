@@ -89,8 +89,8 @@ class RoutinesService {
   Future<List<String>> getEnumCategories() async {
     // Sincronizado manualmente con el CREATE TYPE routine_category de Supabase
     return [
-      'relaxation',
       'breathing',
+      'relaxation',
       'sleep_induction',
       'soundscape',
       'terapia_sonido',

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mindfulness_app/core/theme/app_colors.dart';
 import 'package:mindfulness_app/moduloPsiquiatra/viewmodels_ps/routines_viewmodel2.dart';
+import 'package:mindfulness_app/views/modulo_paciente/componet/quick_exercises_section.dart';
 import 'package:mindfulness_app/views/modulo_psicologa/actividades/components/activity_action_buttons.dart';
 import 'package:mindfulness_app/views/modulo_psicologa/actividades/components/category_filters.dart';
 import 'package:provider/provider.dart';
@@ -99,6 +100,7 @@ class _ActividadesViewState extends State<ActividadesView> {
                         ),
                       ],
                     ),
+
                     //Icon(Icons.sort_rounded, color: AppColors.mint, size: 24),
                   ],
                 ),
@@ -132,6 +134,13 @@ class _ActividadesViewState extends State<ActividadesView> {
                     },
                   ),
                 const SizedBox(height: 40),
+                //nuevo catr
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 30.0),
+                  child: QuickExercisesSection(),
+                ),
+
+                //fin nuevo card
               ],
             ),
           ),
