@@ -229,7 +229,7 @@ class _CrearRutinaViewState extends State<CrearRutinaView> {
                     label: "Duracion total",
                     value: _durationMinutes,
                     min: 1,
-                    max: 45,
+                    max: 10,
                     unit: "min",
                     onChanged: (val) =>
                         setState(() => _durationMinutes = val.toInt()),
